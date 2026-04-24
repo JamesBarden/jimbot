@@ -1,8 +1,8 @@
-# pokernow-bot (Jimbot)
+# Jimbot
 
 A Python bot that plays Texas Hold'em on [pokernow.com](https://www.pokernow.com) against human opponents. It uses **Playwright** for browser automation, **DOM scraping** for game state, and a **multi-layer GTO-inspired decision engine** that applies pre-solved solver data on the flop, position-aware GTO range tables preflop, and pseudo-GTO heuristics on the turn and river.
 
-**📊 [Performance dashboard →](https://JamesBarden.github.io/pokernow-bot/)** — cumulative BB, session-by-session breakdown, and version-comparison charts, updated from the aggregated session logs.
+**📊 [Performance dashboard →](https://jamesbarden.github.io/jimbot/)** — cumulative BB, session-by-session breakdown, and version-comparison charts, updated from the aggregated session logs.
 
 ---
 
@@ -123,7 +123,7 @@ A visible Chromium window opens. You handle login, buy-in, and taking a seat you
 ## Module map
 
 ```
-pokernow-bot/
+jimbot/
 ├── main.py              entry point — poll loop, stuck detection, hand counter
 ├── scraper.py           DOM → GameState (all Playwright reads)
 ├── state.py             Card and GameState dataclasses; pot_odds() helper
@@ -797,7 +797,7 @@ The flop solver lookup is **optional** — without it, the Monte Carlo fallback 
 ```bash
 # 1. Download TexasSolver binary
 #    https://github.com/bupticybee/TexasSolver/releases
-#    Unzip into pokernow-bot/TexasSolver/ and chmod +x TexasSolver/console_solver
+#    Unzip into jimbot/TexasSolver/ and chmod +x TexasSolver/console_solver
 #    (ARM64 Mac: use the native arm64 binary at TexasSolver/console_solver_arm64)
 
 # 2. Run the solver across all 108 representative flop spots (~2 hours at --parallel 2)

@@ -24,7 +24,7 @@ Turn and river always use their own heuristics regardless.
 
 ```bash
 # 1. Download TexasSolver binary from: https://github.com/bupticybee/TexasSolver/releases
-#    Unzip into pokernow-bot/TexasSolver/ and chmod +x TexasSolver/console_solver
+#    Unzip into jimbot/TexasSolver/ and chmod +x TexasSolver/console_solver
 #    (ARM64 Mac: native binary is at TexasSolver/console_solver_arm64)
 
 # 2. Run the solver for all 108 representative flop spots (~2 hours at --parallel 2)
@@ -147,7 +147,7 @@ Auto-deploy only stages `docs/data/metrics.json` — never `VERSION` or code fil
 
 ## Dashboard
 
-A static single-page dashboard lives in `docs/` and is served by GitHub Pages at `https://JamesBarden.github.io/pokernow-bot/`.
+A static single-page dashboard lives in `docs/` and is served by GitHub Pages at `https://jamesbarden.github.io/jimbot/`.
 
 - `docs/index.html` — layout + Chart.js CDN
 - `docs/style.css` — dark theme matching the console log aesthetic
