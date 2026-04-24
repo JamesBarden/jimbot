@@ -48,6 +48,7 @@ class GameState:
     phase: str              # 'preflop', 'flop', 'turn', 'river'
     is_my_turn: bool
     can_check: bool
+    position: str = "unknown"  # 'BTN','CO','HJ','UTG','BB','SB', or 'unknown'
 
     def pot_odds(self) -> float:
         if self.to_call == 0:
@@ -60,5 +61,5 @@ class GameState:
         return (
             f"[{self.phase.upper()}] Hand: {hand}  Board: {board}  "
             f"Pot: {self.pot}  ToCall: {self.to_call}  Stack: {self.my_stack}  "
-            f"Opponents: {self.num_opponents}"
+            f"Opponents: {self.num_opponents}  Position: {self.position}"
         )

@@ -1,19 +1,42 @@
 """
 Poker decision engine.
 
+Decision priority:
+  1. GTO lookup (solver_lookup.py) — uses pre-computed TexasSolver strategies
+     indexed by board texture, SPR, villain tier, and hand class.
+     Only available for postflop after running scripts/presolve.py and
+     scripts/build_lookup.py.
+
+  2. Monte Carlo fallback — range-weighted equity simulation with mixed-strategy
+     randomisation (used preflop always, and postflop when lookup misses).
+
 Preflop:  Chen formula scores hole cards on a 0-1 scale.
 Postflop: Range-weighted Monte Carlo equity — instead of dealing opponents
           random hands, we sample from an inferred range (e.g. "tight" if
-          they made a large raise preflop). This gives a much more accurate
-          equity estimate than pure random sampling.
+          they made a large raise preflop).
 
-Tuning all decision thresholds: see the THRESHOLDS section below.
+Decision model: mixed strategies (GTO-style).
+  Action frequencies are computed from equity distance from each threshold
+  with a blend zone (BLEND_WIDTH) around each boundary, then a random roll
+  selects the action. This prevents deterministic exploitability.
+
+  SPR (stack-to-pot ratio) tightens the raise threshold in deep spots.
+
+Tuning thresholds: see the THRESHOLDS section below.
 """
 import random
 from treys import Card as TreysCard, Evaluator
 
 from state import Card, GameState
 from ranges import get_combos
+from solver_lookup import SolverLookup
+from hand_classifier import classify, board_texture as flop_texture, turn_card_texture, river_card_texture
+import preflop_ranges
+import turn_heuristic
+import river_heuristic
+from bet_sizing import pick_bet_fraction, pick_preflop_size
+
+_lut = SolverLookup()
 
 _evaluator = Evaluator()
 
@@ -22,20 +45,23 @@ _evaluator = Evaluator()
 # THRESHOLDS — edit these to change how aggressive the bot plays
 # ---------------------------------------------------------------------------
 
-# Preflop (Chen score, 0-1 scale)
-PREFLOP_RAISE_THRESHOLD = 0.55   # raise if Chen >= this (AA/KK/QQ/AK/AQs etc.)
-PREFLOP_CALL_THRESHOLD  = 0.30   # call if Chen >= this, else fold
-
 # Postflop (Monte Carlo equity, 0-1 scale)
 POSTFLOP_RAISE_THRESHOLD = 0.60  # raise if equity >= this
 POSTFLOP_CALL_EDGE       = 0.05  # call if equity > pot_odds + this margin
 
-# Raise sizing
-PREFLOP_RAISE_BB_MULT = 3        # open-raise to N × big blind preflop
-POSTFLOP_BET_FRACTION = 0.75     # bet this fraction of pot on postflop raises
-
 # Monte Carlo simulation count — lower = faster, higher = more accurate
 MONTE_CARLO_SIMS = 1500
+
+# Mixed-strategy blending
+BLEND_WIDTH = 0.08   # equity range over which actions are mixed near each threshold
+                     # e.g. with BLEND_WIDTH=0.08 and POSTFLOP_RAISE_THRESHOLD=0.60,
+                     # the bot raises 50% of the time at equity=0.64, 100% at equity=0.68+
+
+# SPR (stack-to-pot ratio) adjustment
+# When SPR > this value we raise threshold shifts up by SPR_RAISE_ADJUST
+# (in deep spots, protect equity more carefully across multiple streets)
+SPR_DEEP_THRESHOLD   = 10.0
+SPR_RAISE_ADJUST     = 0.04
 # ---------------------------------------------------------------------------
 
 
@@ -116,43 +142,56 @@ def monte_carlo_equity(
     return wins / valid if valid else 0.5
 
 
-# ---------- Chen formula (preflop only) ----------
+# ---------- mixed-strategy helpers ----------
 
-_RANK_ORDER = "23456789TJQKA"
+def _clamp01(x: float) -> float:
+    return max(0.0, min(1.0, x))
 
-def _chen_score(hole_cards: list[Card]) -> float:
+
+def _action_freqs(
+    equity: float,
+    strong_threshold: float,
+    call_threshold: float,
+    can_check: bool,
+) -> tuple[float, float, float]:
     """
-    Scores a two-card starting hand using the Chen formula, normalised to [0, 1].
+    Convert equity → (raise_freq, call_freq, fold_freq) summing to 1.0.
 
-    The raw Chen formula assigns integer points based on:
-      - Highest card rank (A=10, K=8, Q=7, J=6, T=5, others = rank/2)
-      - Pair bonus (double base score, minimum 5)
-      - Suited bonus (+2)
-      - Connector / gap penalty (0 gap = +1, 1 gap = -1, 2 = -2, 3 = -4, 4+ = -5)
-      - Low connector bonus (both cards < 9, gap <= 1: +1)
-
-    Max raw score ≈ 20 (AA), so we divide by 20 to get a 0-1 scale.
+    Raise ramps from 0 to 1 across [strong_threshold, strong_threshold + BLEND_WIDTH].
+    Fold  ramps from 0 to 1 across [call_threshold - BLEND_WIDTH, call_threshold].
+    Fold is always 0 when can_check (free check dominates folding).
+    Call fills whatever is left.
     """
-    c1, c2 = hole_cards
-    r1 = _RANK_ORDER.index(c1.rank)
-    r2 = _RANK_ORDER.index(c2.rank)
-    if r1 < r2:
-        r1, r2 = r2, r1   # ensure r1 is the higher rank index
-
-    base = {12: 10, 11: 8, 10: 7, 9: 6, 8: 5}.get(r1, r1 / 2 + 1)
-
-    if r1 == r2:
-        score = max(base * 2, 5)
+    raise_freq = _clamp01((equity - strong_threshold) / BLEND_WIDTH)
+    if can_check:
+        fold_freq = 0.0
     else:
-        score = base
-        gap = r1 - r2 - 1
-        if c1.suit == c2.suit:
-            score += 2
-        score += {0: 1, 1: -1, 2: -2, 3: -4}.get(gap, -5)
-        if r1 < 9 and gap <= 1:
-            score += 1
+        fold_freq = _clamp01((call_threshold - equity) / BLEND_WIDTH)
+    call_freq = max(0.0, 1.0 - raise_freq - fold_freq)
+    total = raise_freq + call_freq + fold_freq
+    return raise_freq / total, call_freq / total, fold_freq / total
 
-    return min(max(score / 20.0, 0.0), 1.0)
+
+# ---------- logging ----------
+
+_W = 62  # log box width
+
+def _log(lines: list[str]):
+    """Print a bordered decision log block."""
+    print("┌" + "─" * _W + "┐")
+    for line in lines:
+        print(f"│  {line:<{_W - 2}}│")
+    print("└" + "─" * _W + "┘")
+
+
+def _fmt_cards(cards) -> str:
+    return "  ".join(str(c) for c in cards)
+
+
+def _fmt_board(board) -> str:
+    if len(board) == 0:   return "(no board)"
+    if len(board) <= 3:   return _fmt_cards(board)
+    return _fmt_cards(board[:3]) + "  |  " + _fmt_cards(board[3:])
 
 
 # ---------- decision ----------
@@ -161,46 +200,220 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
     """
     Evaluate the current game state and return an action.
 
-    opponent_tier: range tier inferred by HandTracker — passed through to
-      monte_carlo_equity so simulations use a realistic opponent hand pool.
-
     Returns one of:
       ('fold',  0)
       ('check', 0)
       ('call',  to_call_amount)
       ('raise', raise_to_amount)
     """
-    bb = state.big_blind if state.big_blind > 0 else 0.01
+    bb  = state.big_blind if state.big_blind > 0 else 0.01
+    spr = state.my_stack / state.pot if state.pot > 0 else 99.0
+    source = "monte_carlo"
+    log: list[str] = []
 
-    if state.phase == "preflop":
-        equity           = _chen_score(state.hole_cards)
-        strong_threshold = PREFLOP_RAISE_THRESHOLD
-        call_threshold   = PREFLOP_CALL_THRESHOLD
-    else:
+    # ── Header ───────────────────────────────────────────────────────────────
+    hand_str  = _fmt_cards(state.hole_cards)
+    board_str = _fmt_board(state.board_cards)
+    log.append(f"DECISION  [{state.phase.upper()}]")
+    log.append(f"  Hand   {hand_str}")
+    log.append(f"  Board  {board_str}")
+    log.append(f"  Pos    {state.position}  {'(IP)' if state.position in ('BTN','CO','HJ') else '(OOP)'}")
+    log.append(f"  Stack  {state.my_stack:.2f}   Pot {state.pot:.2f}   "
+               f"ToCall {state.to_call:.2f}   SPR {spr:.1f}")
+    log.append(f"  Odds   pot_odds={state.pot_odds():.1%}   "
+               f"can_check={state.can_check}")
+    log.append(f"  Villain  tier={opponent_tier}   opponents={state.num_opponents}")
+    log.append("─" * (_W - 2))
+
+    # ── Postflop: try GTO flop lookup ────────────────────────────────────────
+    if state.phase == "flop":
+        ftex      = flop_texture(state.board_cards)
+        hclass    = classify(state.hole_cards, state.board_cards)
+        spr_b     = "low" if spr < 4 else ("high" if spr >= 11 else "medium")
+        facing_b  = state.to_call > 0
+        log.append(f"  [flop]  texture={ftex}")
+        log.append(f"          hand_class={hclass}   spr_bucket={spr_b}   facing_bet={facing_b}")
+
+        lut_freqs = _lut.query(state, state.hole_cards, opponent_tier)
+        if lut_freqs is not None:
+            raise_freq, call_freq, fold_freq = lut_freqs
+            log.append(f"  Solver  HIT  key=({ftex}, {spr_b}, {opponent_tier}, {facing_b})")
+            log.append(f"          raw  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
+            if state.can_check:
+                fold_freq = 0.0
+                total = raise_freq + call_freq
+                if total > 0:
+                    raise_freq /= total
+                    call_freq  /= total
+                log.append(f"          can_check → fold zeroed, renorm")
+            source = "solver"
+        else:
+            log.append(f"  Solver  MISS  → falling back to monte_carlo")
+
+    # ── Preflop: position-aware GTO range table ───────────────────────────────
+    if source == "monte_carlo" and state.phase == "preflop":
+        hkey         = preflop_ranges.hand_key(state.hole_cards)
+        facing_raise = state.to_call > state.big_blind
+        raise_freq, call_freq, fold_freq = preflop_ranges.lookup(
+            state.hole_cards, state.position, facing_raise
+        )
+        log.append(f"  [preflop]  hand={hkey}   facing_raise={facing_raise}")
+        log.append(f"  Range table  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
+        if state.can_check:
+            fold_freq = 0.0
+            total = raise_freq + call_freq
+            if total > 0:
+                raise_freq /= total
+                call_freq  /= total
+            else:
+                call_freq = 1.0
+            log.append(f"  BB option (can check) → fold zeroed, renorm")
+        source = "preflop_gto"
+
+    # ── Turn: pseudo-GTO heuristic ────────────────────────────────────────────
+    if source == "monte_carlo" and state.phase == "turn":
+        hclass       = classify(state.hole_cards, state.board_cards)
+        ttex         = turn_card_texture(state.board_cards)
+        turn_str     = str(state.board_cards[3])
+        facing_b     = state.to_call > 0
+        bet_frac     = round(state.to_call / state.pot, 2) if facing_b and state.pot > 0 else 0.0
+        bet_tier_s   = (("small" if bet_frac <= 0.35 else "medium" if bet_frac <= 0.75
+                         else "large" if bet_frac <= 1.15 else "overbet") if facing_b else "-")
+        is_ip        = state.position in ("BTN", "CO", "HJ")
+        spr_tag      = "low" if spr < 4 else ("high" if spr > 10 else "medium")
+
+        log.append(f"  [turn]  card={turn_str}  texture={ttex}")
+        log.append(f"          hand_class={hclass}   facing_bet={facing_b}"
+                   + (f"  bet={bet_frac:.2f}×pot ({bet_tier_s})" if facing_b else ""))
+        log.append(f"          IP={is_ip}   SPR={spr:.1f}({spr_tag})   villain={opponent_tier}")
+
+        raise_freq, call_freq, fold_freq = turn_heuristic.query(
+            hole_cards   = state.hole_cards,
+            board_cards  = state.board_cards,
+            position     = state.position,
+            villain_tier = opponent_tier,
+            facing_bet   = facing_b,
+            spr          = spr,
+            bet_fraction = bet_frac,
+        )
+        log.append(f"  Heuristic  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
+        if state.can_check:
+            fold_freq = 0.0
+            total = raise_freq + call_freq
+            raise_freq = raise_freq / total if total > 0 else 0.0
+            call_freq  = 1.0 - raise_freq
+            log.append(f"  can_check → fold zeroed, renorm  "
+                       f"R={raise_freq:.0%}  C={call_freq:.0%}")
+        source = "turn_heuristic"
+
+    # ── River: pseudo-GTO heuristic ──────────────────────────────────────────
+    if source == "monte_carlo" and state.phase == "river":
+        hclass       = classify(state.hole_cards, state.board_cards)
+        rtex         = river_card_texture(state.board_cards)
+        river_str    = str(state.board_cards[4]) if len(state.board_cards) >= 5 else "?"
+        facing_b     = state.to_call > 0
+        bet_frac     = round(state.to_call / state.pot, 2) if facing_b and state.pot > 0 else 0.0
+        bet_tier_s   = (("small" if bet_frac <= 0.35 else "medium" if bet_frac <= 0.75
+                         else "large" if bet_frac <= 1.15 else "overbet") if facing_b else "-")
+        is_ip        = state.position in ("BTN", "CO", "HJ")
+        spr_tag      = "low" if spr < 4 else ("high" if spr > 10 else "medium")
+
+        log.append(f"  [river]  card={river_str}  texture={rtex}")
+        log.append(f"          hand_class={hclass}   facing_bet={facing_b}"
+                   + (f"  bet={bet_frac:.2f}×pot ({bet_tier_s})" if facing_b else ""))
+        log.append(f"          IP={is_ip}   SPR={spr:.1f}({spr_tag})   villain={opponent_tier}")
+
+        raise_freq, call_freq, fold_freq = river_heuristic.query(
+            hole_cards   = state.hole_cards,
+            board_cards  = state.board_cards,
+            position     = state.position,
+            villain_tier = opponent_tier,
+            facing_bet   = facing_b,
+            spr          = spr,
+            bet_fraction = bet_frac,
+        )
+        log.append(f"  Heuristic  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
+        if state.can_check:
+            fold_freq = 0.0
+            total = raise_freq + call_freq
+            raise_freq = raise_freq / total if total > 0 else 0.0
+            call_freq  = 1.0 - raise_freq
+            log.append(f"  can_check → fold zeroed, renorm  "
+                       f"R={raise_freq:.0%}  C={call_freq:.0%}")
+        source = "river_heuristic"
+
+    # ── Postflop fallback: Monte Carlo ────────────────────────────────────────
+    if source == "monte_carlo":
+        log.append(f"  [monte_carlo]  running {MONTE_CARLO_SIMS} sims  "
+                   f"vs tier={opponent_tier}")
         equity           = monte_carlo_equity(
             state.hole_cards, state.board_cards,
             state.num_opponents, opponent_tier=opponent_tier,
         )
         strong_threshold = POSTFLOP_RAISE_THRESHOLD
         call_threshold   = state.pot_odds() + POSTFLOP_CALL_EDGE
+        spr_adj_applied  = ""
+        if state.pot > 0 and spr > SPR_DEEP_THRESHOLD:
+            strong_threshold += SPR_RAISE_ADJUST
+            spr_adj_applied   = f"  (deep SPR +{SPR_RAISE_ADJUST} raise thresh)"
 
-    print(
-        f"  equity={equity:.2f}  pot_odds={state.pot_odds():.2f}  "
-        f"range={opponent_tier}  raise>={strong_threshold:.2f}  call>={call_threshold:.2f}"
-    )
+        raise_freq, call_freq, fold_freq = _action_freqs(
+            equity, strong_threshold, call_threshold, state.can_check
+        )
+        log.append(f"  equity={equity:.1%}   raise_thresh={strong_threshold:.2f}"
+                   f"   call_thresh={call_threshold:.2f}{spr_adj_applied}")
 
-    if equity >= strong_threshold:
+    # ── Frequencies summary ───────────────────────────────────────────────────
+    log.append("─" * (_W - 2))
+    log.append(f"  Source  {source}")
+    log.append(f"  Freq    RAISE={raise_freq:.0%}   CALL={call_freq:.0%}   FOLD={fold_freq:.0%}")
+
+    # ── Random roll ───────────────────────────────────────────────────────────
+    roll = random.random()
+    r_thresh = raise_freq
+    c_thresh = raise_freq + call_freq
+    if roll < r_thresh:
+        roll_result = f"RAISE  ({roll:.4f} < {r_thresh:.4f})"
+    elif roll < c_thresh:
+        roll_result = f"{'CHECK' if state.can_check else 'CALL'}  ({roll:.4f} in [{r_thresh:.4f}, {c_thresh:.4f}))"
+    else:
+        roll_result = f"{'CHECK' if state.can_check else 'FOLD'}  ({roll:.4f} >= {c_thresh:.4f})"
+    log.append(f"  Roll    {roll:.4f}  →  {roll_result}")
+
+    # ── Compute raise amount ──────────────────────────────────────────────────
+    if roll < raise_freq:
         if state.phase == "preflop":
-            raise_to = bb * PREFLOP_RAISE_BB_MULT
+            facing_raise = state.to_call > state.big_blind
+            raise_to, sizing_log = pick_preflop_size(
+                state.position, facing_raise, state.to_call, bb
+            )
         else:
-            raise_to = max(round(state.pot * POSTFLOP_BET_FRACTION, 2), bb * 2)
-        # Poker rule: must raise to at least 2× the current bet (min-raise)
+            _hc = classify(state.hole_cards, state.board_cards)
+            bet_frac, sizing_log = pick_bet_fraction(
+                _hc, state.board_cards, state.to_call > 0
+            )
+            raise_to = max(round(state.pot * bet_frac, 2), bb * 2)
+        log.extend(sizing_log)
         min_legal_raise = state.to_call * 2 if state.to_call > 0 else bb * 2
         raise_to = max(raise_to, min_legal_raise)
         raise_to = round(min(raise_to, state.my_stack), 2)
+        log.append(f"  Action  ► RAISE  to {raise_to:.2f}")
+        _log(log)
         return ("raise", raise_to)
 
-    if equity >= call_threshold:
-        return ("check", 0) if state.can_check else ("call", state.to_call)
+    if roll < raise_freq + call_freq:
+        if state.can_check:
+            log.append(f"  Action  ► CHECK")
+            _log(log)
+            return ("check", 0)
+        log.append(f"  Action  ► CALL  {state.to_call:.2f}")
+        _log(log)
+        return ("call", state.to_call)
 
-    return ("check", 0) if state.can_check else ("fold", 0)
+    if state.can_check:
+        log.append(f"  Action  ► CHECK  (folded region → free check)")
+        _log(log)
+        return ("check", 0)
+    log.append(f"  Action  ► FOLD")
+    _log(log)
+    return ("fold", 0)

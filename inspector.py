@@ -34,6 +34,35 @@ async def inspect(url: str):
             name = (await name_el.inner_text()).strip() if await name_el.count() > 0 else "—"
             print(f"  [{i}] classes={classes!r:60s}  name={name!r}  stack={stack!r}")
 
+        print("\n===== DEALER BUTTON (position detection) =====")
+        # Try common pokernow dealer selectors — one of these should highlight the dealer seat
+        dealer_candidates = [
+            ".table-player.dealer",
+            ".table-player.is-dealer",
+            ".dealer-btn-ctn",
+            ".table-player-dealer-button-ctn",
+            "[class*='dealer']",
+        ]
+        for sel in dealer_candidates:
+            el = page.locator(sel)
+            cnt = await el.count()
+            if cnt > 0:
+                classes = await el.first.get_attribute("class") or ""
+                html = await el.first.inner_html()
+                print(f"  FOUND {sel!r} ({cnt} elements)")
+                print(f"    classes={classes!r}")
+                print(f"    html={html[:300]!r}")
+            else:
+                print(f"  not found: {sel!r}")
+
+        print("\n  (full HTML of all .table-player elements for manual inspection)")
+        for i in range(n):
+            p = players.nth(i)
+            html = await p.inner_html()
+            classes = await p.get_attribute("class") or ""
+            if "you-player" in classes:
+                print(f"  [YOU seat {i}]: {html[:400]}")
+
         print("\n===== HOLE CARDS =====")
         hole = page.locator(".you-player .card")
         for i in range(await hole.count()):

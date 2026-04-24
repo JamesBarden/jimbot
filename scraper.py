@@ -29,6 +29,7 @@ SEL_POT_ADDON     = ".table-pot-size .add-on .chips-value"      # chips bet on t
 SEL_BLINDS        = ".blind-value .chips-value"                 # [0]=small blind, [1]=big blind
 SEL_OTHER_PLAYERS = ".table-player:not(.you-player):not(.table-player-seat)"
 SEL_PLAYER_STACK  = ".table-player-stack"
+SEL_DEALER_BTN    = ".dealer-button-ctn"   # has class 'dealer-position-N' matching table-player-N
 # ---------------------------------------------------------------------------
 
 
@@ -156,6 +157,82 @@ async def get_phase(page: Page) -> str:
     return {0: "preflop", 3: "flop", 4: "turn", 5: "river"}.get(count, "preflop")
 
 
+def _seat_num(classes: str) -> Optional[int]:
+    """Extract the seat number from 'table-player-N' in a class string."""
+    for cls in classes.split():
+        if cls.startswith("table-player-") and cls != "table-player-seat":
+            try:
+                return int(cls.split("-")[-1])
+            except ValueError:
+                pass
+    return None
+
+
+async def get_position(page: Page) -> str:
+    """
+    Determine our seat position relative to the dealer button.
+
+    pokernow marks the dealer with a floating .dealer-button-ctn element that
+    has a class 'dealer-position-N', where N matches the 'table-player-N'
+    class on the corresponding player seat. Seat numbers are sorted to derive
+    clockwise order; offset from dealer → position name.
+
+    Returns 'unknown' if detection fails (e.g. between hands, animations).
+    """
+    # 1. Find which seat number has the dealer button
+    dealer_el = page.locator(SEL_DEALER_BTN)
+    if await dealer_el.count() == 0:
+        return "unknown"
+    dealer_classes = await dealer_el.first.get_attribute("class") or ""
+    dealer_seat_num = None
+    for cls in dealer_classes.split():
+        if cls.startswith("dealer-position-"):
+            try:
+                dealer_seat_num = int(cls.split("-")[-1])
+            except ValueError:
+                pass
+    if dealer_seat_num is None:
+        return "unknown"
+
+    # 2. Find our seat number
+    our_el = page.locator(".table-player.you-player")
+    if await our_el.count() == 0:
+        return "unknown"
+    our_seat_num = _seat_num(await our_el.first.get_attribute("class") or "")
+    if our_seat_num is None:
+        return "unknown"
+
+    # 3. Collect all active seat numbers; sorted order = clockwise around table
+    all_seats = page.locator(".table-player:not(.table-player-seat)")
+    seat_nums = []
+    for i in range(await all_seats.count()):
+        n = _seat_num(await all_seats.nth(i).get_attribute("class") or "")
+        if n is not None:
+            seat_nums.append(n)
+    seat_nums = sorted(set(seat_nums))
+    total = len(seat_nums)
+    if total == 0:
+        return "unknown"
+
+    # 4. Clockwise offset from dealer to us
+    try:
+        offset = (seat_nums.index(our_seat_num) - seat_nums.index(dealer_seat_num)) % total
+    except ValueError:
+        return "unknown"
+
+    # 5. Map offset to position name
+    if total <= 2:
+        return "BTN" if offset == 0 else "BB"
+    pos = {0: "BTN", 1: "SB", 2: "BB"}
+    if total >= 6:
+        pos.update({3: "UTG", 4: "HJ", 5: "CO"})
+    elif total == 5:
+        pos.update({3: "UTG", 4: "CO"})
+    elif total == 4:
+        pos[3] = "CO"
+    return pos.get(offset, "MP")
+
+
 async def get_num_opponents(page: Page) -> int:
     """
     Count active (non-folded) opponents.
@@ -211,6 +288,7 @@ async def get_game_state(page: Page) -> Optional[GameState]:
             phase=await get_phase(page),
             is_my_turn=turn,
             can_check=await can_check(page),
+            position=await get_position(page),
         )
     except Exception as e:
         print(f"[scraper] error reading state: {e}")
