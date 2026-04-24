@@ -196,20 +196,42 @@ def _fmt_board(board) -> str:
 
 # ---------- decision ----------
 
-def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
+def decide(state: GameState, opponent_tier: str = "random",
+           context=None, decision_sink=None) -> tuple:
     """
     Evaluate the current game state and return an action.
 
-    Returns one of:
-      ('fold',  0)
-      ('check', 0)
-      ('call',  to_call_amount)
-      ('raise', raise_to_amount)
+    Parameters
+      state          : current GameState snapshot
+      opponent_tier  : 'premium' | 'tight' | 'medium' | 'wide' | 'random'
+      context        : optional HandContext for cross-street awareness
+      decision_sink  : optional callable(dict) — fed a structured record of
+                       the decision (source, frequencies, roll, action, etc.)
+                       so the session logger can persist it to JSONL
+
+    Returns
+      (action, amount) where action ∈ {'fold','check','call','raise'}.
     """
     bb  = state.big_blind if state.big_blind > 0 else 0.01
     spr = state.my_stack / state.pot if state.pot > 0 else 99.0
     source = "monte_carlo"
     log: list[str] = []
+
+    # Cross-street context snapshot (used by heuristics + logged)
+    ctx_summary = {}
+    if context is not None:
+        ctx_summary = {
+            "pfa":                 context.preflop_aggressor,
+            "hero_cbet_flop":      context.hero_cbet("flop"),
+            "hero_cbet_turn":      context.hero_cbet("turn"),
+            "double_barrel_spot":  context.is_double_barrel_spot(state.phase),
+            "villain_check_called": context.villain_check_called_last_street(state.phase),
+        }
+        if state.phase != "preflop":
+            log.append(f"  Ctx    PFA={ctx_summary['pfa']}"
+                       f"  cbet(flop)={ctx_summary['hero_cbet_flop']}"
+                       f"  cbet(turn)={ctx_summary['hero_cbet_turn']}"
+                       f"  barrel_spot={ctx_summary['double_barrel_spot']}")
 
     # ── Header ───────────────────────────────────────────────────────────────
     hand_str  = _fmt_cards(state.hole_cards)
@@ -292,6 +314,7 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
             facing_bet   = facing_b,
             spr          = spr,
             bet_fraction = bet_frac,
+            context      = context,
         )
         log.append(f"  Heuristic  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
         if state.can_check:
@@ -328,6 +351,7 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
             facing_bet   = facing_b,
             spr          = spr,
             bet_fraction = bet_frac,
+            context      = context,
         )
         log.append(f"  Heuristic  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
         if state.can_check:
@@ -399,7 +423,40 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
         roll_result = f"{'CHECK' if state.can_check else 'FOLD'}  ({roll:.4f} >= {c_thresh:.4f})"
     log.append(f"  Roll    {roll:.4f}  →  {roll_result}")
 
-    # ── Compute raise amount ──────────────────────────────────────────────────
+    # ── Emit structured record + return action ────────────────────────────────
+    def _emit(action: str, amount: float):
+        if decision_sink is None:
+            return
+        try:
+            hclass_out = (classify(state.hole_cards, state.board_cards)
+                          if state.phase != "preflop" else "preflop")
+        except Exception:
+            hclass_out = "?"
+        decision_sink({
+            "hand_id":       getattr(context, "hand_id", None),
+            "phase":         state.phase,
+            "position":      state.position,
+            "hole":          " ".join(str(c) for c in state.hole_cards),
+            "board":         " ".join(str(c) for c in state.board_cards),
+            "pot":           round(state.pot, 2),
+            "to_call":       round(state.to_call, 2),
+            "my_stack":      round(state.my_stack, 2),
+            "bb":            round(bb, 2),
+            "spr":           round(spr, 2),
+            "can_check":     state.can_check,
+            "villain_tier":  opponent_tier,
+            "num_opponents": state.num_opponents,
+            "hand_class":    hclass_out,
+            "source":        source,
+            "raise_freq":    round(raise_freq, 3),
+            "call_freq":     round(call_freq, 3),
+            "fold_freq":     round(fold_freq, 3),
+            "roll":          round(roll, 4),
+            "action":        action,
+            "amount":        round(amount, 2),
+            "context":       ctx_summary,
+        })
+
     if roll < raise_freq:
         if state.phase == "preflop":
             facing_raise = state.to_call > state.big_blind
@@ -422,21 +479,26 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
         raise_to = round(min(raise_to, state.my_stack), 2)
         log.append(f"  Action  ► RAISE  to {raise_to:.2f}")
         _log(log)
+        _emit("raise", raise_to)
         return ("raise", raise_to)
 
     if roll < raise_freq + call_freq:
         if state.can_check:
             log.append(f"  Action  ► CHECK")
             _log(log)
+            _emit("check", 0)
             return ("check", 0)
         log.append(f"  Action  ► CALL  {state.to_call:.2f}")
         _log(log)
+        _emit("call", state.to_call)
         return ("call", state.to_call)
 
     if state.can_check:
         log.append(f"  Action  ► CHECK  (folded region → free check)")
         _log(log)
+        _emit("check", 0)
         return ("check", 0)
     log.append(f"  Action  ► FOLD")
     _log(log)
+    _emit("fold", 0)
     return ("fold", 0)

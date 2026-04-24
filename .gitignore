@@ -6,3 +6,12 @@ __pycache__/
 TexasSolver/
 solutions/raw/
 solutions/lookup.pkl
+
+# Raw session data stays local — we push only the aggregated docs/data/metrics.json
+Logs/
+
+# Anonymization salt — keeps username → pseudo-ID mapping unreversible outside this machine
+.anon_salt
+
+# Stray output file from earlier commands; not part of the project
+/-

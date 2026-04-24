@@ -93,3 +93,75 @@ River differences from turn: no semi-bluffs (draws resolved), higher base fold o
 ## Key fragility: DOM selectors
 
 pokernow is a React app and class names change between site updates. All selectors live in `scraper.py` at the top of the file. If the bot stops reading cards, pot, or buttons correctly, run `inspector.py` to dump the live DOM and compare against the selectors. The raise input selectors (`SEL_RAISE_INPUT`, `SEL_RAISE_SUBMIT`) are in `actions.py` and are separately fragile — the inspector prompts you to open the raise panel manually so it can dump those too.
+
+## Session artifacts
+
+**`hand_context.py`** — per-hand memory. Tracks our actions per street, infers villain activity from state deltas, records who the preflop aggressor is, exposes `hero_cbet(street)` / `is_double_barrel_spot(street)` / `villain_check_called_last_street(street)` queries used by the turn/river heuristics. Reset on every new hand.
+
+**`opponent_profiles.py`** — session-persistent registry keyed by anonymized username. Tracks VPIP, PFR, AF, 3bet%, fold-to-cbet% across hands. Saves/loads `Logs/profiles.json` so profiles survive across bot runs. Derives a tier live from the accumulated stats; blended with the per-hand tightener in `main.py` via `_blend_tier()` (takes whichever is tighter).
+
+**`session_logger.py`** — writes three streams per session (all tagged with the current version from `VERSION`):
+- `Logs/decisions_<stamp>.jsonl` — one JSON line per `engine.decide()` call
+- `Logs/hands_<stamp>.csv` — one row per completed hand (stack_delta, bb_delta, actions per street, villain names)
+- `Logs/console_<stamp>.log` — tee of everything printed to stdout
+
+Running totals (`hands`, `bb_delta_total`, `hands_won`, `hands_to_showdown`) are printed as `[session] …` after every completed hand.
+
+**`anonymize.py`** — `anon(username)` returns a stable pseudo-ID (e.g. `player_3a7f`) keyed by a local salt at `.anon_salt` (gitignored). Only the pseudo-ID appears in anything committed to the repo.
+
+## Versioning and deploys
+
+The bot is versioned in `VERSION` (semver `MAJOR.MINOR[.PATCH]`, e.g. `1.3` or `2.0`). Every session log records the version it ran under, so the dashboard can compare performance across deployments.
+
+**After any code change you make**, bump the version and push:
+
+```bash
+python3 scripts/bump_version.py minor    # default — any non-trivial code change
+python3 scripts/bump_version.py major    # breaking or structural overhaul
+python3 scripts/bump_version.py patch    # tiny fix; optional
+
+git add -A
+git commit -m "Jimbot v$(cat VERSION): <one-line summary of what changed>"
+git push
+```
+
+Rules of thumb for picking the level:
+- **patch** — typo/log-format/comment-only changes
+- **minor** (default) — bug fix, tuning, new heuristic parameter, new small file
+- **major** — architectural change, schema change to logs, new top-level feature (dashboard, LLM layer, etc.)
+
+The commit message MUST start with `Jimbot v<version>:` so later commits link cleanly to the dashboard's version comparison view.
+
+**After a play session** (not a code change): **nothing — auto-deploy handles it.**
+
+When `main.py` shuts down after a session with ≥1 hand played, it automatically runs `scripts/deploy_session.py`, which rebuilds `docs/data/metrics.json` (anonymizing opponent names) and commits + pushes it so the GitHub Pages dashboard updates. Errors (network, auth, timeout) are caught and logged as warnings — they never break the shutdown path.
+
+Escape hatches for when you're iterating locally and don't want commits:
+```bash
+python3 main.py <url> --no-deploy          # skip autodeploy for this run
+JIMBOT_NO_DEPLOY=1 python3 main.py <url>   # env var form, same effect
+python3 scripts/deploy_session.py --no-push   # rebuild + commit locally, skip push
+```
+
+Auto-deploy only stages `docs/data/metrics.json` — never `VERSION` or code files. Those must be committed separately via the code-change workflow above, so the commit history cleanly separates "code change" commits (`Jimbot v1.3: fix barrel logic`) from "data refresh" commits (`Jimbot v1.3: session data refresh`).
+
+## Dashboard
+
+A static single-page dashboard lives in `docs/` and is served by GitHub Pages at `https://JamesBarden.github.io/pokernow-bot/`.
+
+- `docs/index.html` — layout + Chart.js CDN
+- `docs/style.css` — dark theme matching the console log aesthetic
+- `docs/dashboard.js` — fetches `data/metrics.json`, renders charts + tables
+- `docs/data/metrics.json` — committed output of `scripts/build_dashboard_data.py`
+
+Sections: overview (cumulative BB, session bars), decisions (source pie, per-street action stacks, hero stat cards), version comparison (table + bar chart — this is the point of the versioning system), opponents (top 20 anonymized), sessions (full list).
+
+Raw `Logs/` data is gitignored — only the aggregated `metrics.json` is pushed.
+
+To view locally before pushing:
+```bash
+cd docs && python3 -m http.server 8000
+# then open http://localhost:8000
+```
+
+Direct `file://` opening will fail because `fetch('data/metrics.json')` needs an HTTP origin.

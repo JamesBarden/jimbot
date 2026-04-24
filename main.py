@@ -7,21 +7,37 @@ Usage:
 The browser opens visibly so you can log in, buy in, and take a seat.
 Once you're seated and ready, press ENTER in the terminal and the bot takes over.
 Press Ctrl+C at any time to stop.
+
+Persistence during a session:
+  HandContext      — per-hand memory (our actions, villain actions, PFA)
+  ProfileRegistry  — per-opponent session stats (VPIP/PFR/AF/cbet%)
+  SessionLogger    — decisions_*.jsonl, hands_*.csv, console_*.log
 """
+import argparse
 import asyncio
+import os
 import random
+import subprocess
 import sys
 import time
+from datetime import datetime
 from playwright.async_api import async_playwright
 
 import scraper
 import engine
 import actions
 from hand_tracker import HandTracker
+from hand_context import HandContext
+from opponent_profiles import ProfileRegistry
+from session_logger import SessionLogger
 
 POLL_INTERVAL = 1.0   # seconds between state checks
 ACTION_DELAY  = 1.2   # seconds to wait before acting (looks more human)
 DEBUG         = True  # set False to silence diagnostic messages
+DEPLOY_TIMEOUT = 60   # seconds — upper bound on autodeploy network operations
+
+HERE     = os.path.dirname(os.path.abspath(__file__))
+LOG_DIR  = os.path.join(HERE, "Logs")
 
 
 def dbg(msg: str):
@@ -29,11 +45,53 @@ def dbg(msg: str):
         print(f"  [dbg] {msg}")
 
 
-async def run(url: str):
+def _blend_tier(profile_tier: str, hand_tier: str) -> str:
+    """
+    Blend a session-level profile tier with the current-hand dynamic tier.
+    Strategy: take whichever is tighter (smaller index), so preflop aggression
+    still tightens us up even against an otherwise-loose regular.
+    """
+    ordered = ["premium", "tight", "medium", "wide", "random"]
+    try:
+        return ordered[min(ordered.index(profile_tier), ordered.index(hand_tier))]
+    except ValueError:
+        return hand_tier
+
+
+def _autodeploy():
+    """
+    Rebuild the dashboard data and push to origin. Swallow all errors so a
+    network/auth hiccup at shutdown never breaks the user's session.
+    """
+    if os.environ.get("JIMBOT_NO_DEPLOY"):
+        print("[deploy] skipped — JIMBOT_NO_DEPLOY is set")
+        return
+    script = os.path.join(HERE, "scripts", "deploy_session.py")
+    if not os.path.isfile(script):
+        return
+    try:
+        print("[deploy] auto-deploying dashboard ...")
+        result = subprocess.run(
+            [sys.executable, script],
+            cwd=HERE,
+            timeout=DEPLOY_TIMEOUT,
+        )
+        if result.returncode != 0:
+            print(f"[deploy] WARN: deploy exited with code {result.returncode} — "
+                  f"run manually: python3 scripts/deploy_session.py")
+    except subprocess.TimeoutExpired:
+        print(f"[deploy] WARN: deploy timed out (>{DEPLOY_TIMEOUT}s) — "
+              f"check network/auth, then run: python3 scripts/deploy_session.py")
+    except Exception as e:
+        print(f"[deploy] WARN: auto-deploy failed ({e}) — "
+              f"run manually: python3 scripts/deploy_session.py")
+
+
+async def run(url: str, no_deploy: bool = False):
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=False, slow_mo=50)
-        context = await browser.new_context()
-        page = await context.new_page()
+        context_browser = await browser.new_context()
+        page = await context_browser.new_page()
 
         print(f"Opening {url} ...")
         await page.goto(url)
@@ -44,135 +102,223 @@ async def run(url: str):
 
         print("Bot is running. Press Ctrl+C to stop.\n")
 
-        tracker = HandTracker()
-        last_state_str   = ""
-        last_acted_str   = None
+        # Session-level objects
+        logger      = SessionLogger(LOG_DIR)
+        profile_path = os.path.join(LOG_DIR, "profiles.json")
+        profiles    = ProfileRegistry(persist_path=profile_path)
+
+        tracker         = HandTracker()
+        hand_ctx: HandContext | None = None
+        last_state      = None          # most recent non-None GameState (for hand finalize)
+        last_state_str  = ""
+        last_acted_str  = None
         hands_since_refresh = 0
-        last_hole_key    = None
+        last_hole_key   = None
         last_change_time = time.time()
-        last_heartbeat   = time.time()
-        none_streak      = 0       # consecutive polls returning None
-        REFRESH_EVERY    = 30
-        STUCK_TIMEOUT    = 30
-        HEARTBEAT_EVERY  = 10      # print "still alive" if idle this long
+        last_heartbeat  = time.time()
+        none_streak     = 0
+        REFRESH_EVERY   = 30
+        STUCK_TIMEOUT   = 30
+        HEARTBEAT_EVERY = 10
 
-        while True:
-            try:
-                state = await scraper.get_game_state(page)
+        def finalize_hand(current_state):
+            """Called when a new hand is detected — closes out the previous one."""
+            nonlocal hand_ctx
+            if hand_ctx is None or current_state is None:
+                return
+            row = hand_ctx.finalize(
+                end_stack=current_state.my_stack,
+                final_board=(last_state.board_cards if last_state else []),
+                final_pot=(last_state.pot if last_state else 0.0),
+                villain_tier_end=tracker.current_tier,
+            )
+            logger.log_hand(row)
+            profiles.ingest_hand(hand_ctx)
+            hand_ctx = None
 
-                if state is None:
-                    none_streak += 1
-                    idle = time.time() - last_change_time
+        try:
+            while True:
+                try:
+                    state = await scraper.get_game_state(page)
 
-                    # Periodic heartbeat so you can see the bot is alive
-                    if time.time() - last_heartbeat > HEARTBEAT_EVERY:
-                        dbg(f"waiting — no valid state for {idle:.0f}s "
-                            f"(None streak: {none_streak})")
-                        last_heartbeat = time.time()
+                    if state is None:
+                        none_streak += 1
+                        idle = time.time() - last_change_time
 
-                    if idle > STUCK_TIMEOUT:
-                        print(f"[stuck] No valid state for {STUCK_TIMEOUT}s — reloading.")
+                        if time.time() - last_heartbeat > HEARTBEAT_EVERY:
+                            dbg(f"waiting — no valid state for {idle:.0f}s "
+                                f"(None streak: {none_streak})")
+                            last_heartbeat = time.time()
+
+                        if idle > STUCK_TIMEOUT:
+                            print(f"[stuck] No valid state for {STUCK_TIMEOUT}s — reloading.")
+                            await page.reload()
+                            await page.wait_for_load_state("networkidle")
+                            last_change_time = time.time()
+                            last_heartbeat   = time.time()
+                            last_state_str   = ""
+                            last_acted_str   = None
+                            none_streak      = 0
+                            tracker = HandTracker()
+                            hand_ctx = None
+                            await asyncio.sleep(3)
+                        else:
+                            await asyncio.sleep(POLL_INTERVAL)
+                        continue
+
+                    none_streak = 0
+
+                    # New-hand detection — close out previous context, start a new one
+                    hole_key = tuple(str(c) for c in state.hole_cards)
+                    if hole_key != last_hole_key:
+                        dbg(f"new hand detected: {' '.join(hole_key)}")
+                        finalize_hand(state)
+
+                        hand_ctx = HandContext(
+                            hand_id       = datetime.now().strftime("%H%M%S") + "_" + "".join(hole_key),
+                            hole_cards    = hole_key,
+                            start_stack   = state.my_stack,
+                            bb            = state.big_blind,
+                            position      = state.position,
+                            num_opponents = state.num_opponents,
+                            villain_names = tuple(state.villain_names),
+                        )
+
+                        last_hole_key  = hole_key
+                        last_acted_str = None
+                        hands_since_refresh += 1
+                        if hands_since_refresh >= REFRESH_EVERY:
+                            print(f"[refresh] {hands_since_refresh} hands played — reloading to clear DOM.")
+                            await page.reload()
+                            await page.wait_for_load_state("networkidle")
+                            hands_since_refresh = 0
+                            last_state_str   = ""
+                            last_acted_str   = None
+                            last_change_time = time.time()
+                            tracker = HandTracker()
+                            hand_ctx = None
+                            await asyncio.sleep(3)
+                            continue
+
+                    # Feed observation to hand context even when it's not our turn,
+                    # so villain activity on earlier streets is inferred correctly.
+                    if hand_ctx is not None:
+                        hand_ctx.observe(state)
+
+                    opponent_tier = tracker.update(state)
+                    # Blend in session-level profile if heads-up against a known name
+                    if state.num_opponents == 1 and state.villain_names:
+                        prof_tier = profiles.tier_for(state.villain_names[0])
+                        opponent_tier = _blend_tier(prof_tier, opponent_tier)
+
+                    last_state = state
+
+                    state_str = str(state)
+                    if state_str != last_state_str:
+                        print(state_str)
+                        last_state_str   = state_str
+                        last_change_time = time.time()
+                        last_heartbeat   = time.time()
+                    elif time.time() - last_change_time > STUCK_TIMEOUT:
+                        print(f"[stuck] State frozen for {STUCK_TIMEOUT}s — reloading.")
                         await page.reload()
                         await page.wait_for_load_state("networkidle")
                         last_change_time = time.time()
                         last_heartbeat   = time.time()
                         last_state_str   = ""
                         last_acted_str   = None
-                        none_streak      = 0
                         tracker = HandTracker()
-                        await asyncio.sleep(3)
-                    else:
-                        await asyncio.sleep(POLL_INTERVAL)
-                    continue
-
-                none_streak = 0
-
-                # Detect new hand
-                hole_key = tuple(str(c) for c in state.hole_cards)
-                if hole_key != last_hole_key:
-                    dbg(f"new hand detected: {' '.join(hole_key)}")
-                    last_hole_key  = hole_key
-                    last_acted_str = None
-                    hands_since_refresh += 1
-                    if hands_since_refresh >= REFRESH_EVERY:
-                        print(f"[refresh] {hands_since_refresh} hands played — reloading to clear DOM.")
-                        await page.reload()
-                        await page.wait_for_load_state("networkidle")
-                        hands_since_refresh = 0
-                        last_state_str   = ""
-                        last_acted_str   = None
-                        last_change_time = time.time()
-                        tracker = HandTracker()
+                        hand_ctx = None
                         await asyncio.sleep(3)
                         continue
 
-                opponent_tier = tracker.update(state)
+                    if not state.is_my_turn:
+                        if time.time() - last_heartbeat > HEARTBEAT_EVERY:
+                            dbg(f"not our turn — watching "
+                                f"({time.time()-last_change_time:.0f}s since last change)")
+                            last_heartbeat = time.time()
+                        await asyncio.sleep(POLL_INTERVAL)
+                        continue
 
-                state_str = str(state)
-                if state_str != last_state_str:
-                    print(state_str)
-                    last_state_str   = state_str
-                    last_change_time = time.time()
-                    last_heartbeat   = time.time()
-                elif time.time() - last_change_time > STUCK_TIMEOUT:
-                    print(f"[stuck] State frozen for {STUCK_TIMEOUT}s — reloading.")
-                    await page.reload()
-                    await page.wait_for_load_state("networkidle")
-                    last_change_time = time.time()
-                    last_heartbeat   = time.time()
-                    last_state_str   = ""
-                    last_acted_str   = None
-                    tracker = HandTracker()
-                    await asyncio.sleep(3)
-                    continue
+                    if state_str == last_acted_str:
+                        dbg("already acted on this state — waiting for DOM to update")
+                        await asyncio.sleep(POLL_INTERVAL)
+                        continue
 
-                if not state.is_my_turn:
-                    if time.time() - last_heartbeat > HEARTBEAT_EVERY:
-                        dbg(f"not our turn — watching ({time.time()-last_change_time:.0f}s since last change)")
-                        last_heartbeat = time.time()
+                    dbg(f"our turn detected — waiting before acting")
+                    await asyncio.sleep(ACTION_DELAY + random.uniform(-0.4, 1.2))
+
+                    # Re-read right before acting
+                    state = await scraper.get_game_state(page)
+                    if state is None:
+                        dbg("state became None after delay — skipping")
+                        continue
+                    if not state.is_my_turn:
+                        dbg("no longer our turn after delay — skipping")
+                        continue
+
+                    if hand_ctx is not None:
+                        hand_ctx.observe(state)
+                    opponent_tier = tracker.update(state)
+                    if state.num_opponents == 1 and state.villain_names:
+                        prof_tier = profiles.tier_for(state.villain_names[0])
+                        opponent_tier = _blend_tier(prof_tier, opponent_tier)
+
+                    action, amount = engine.decide(
+                        state,
+                        opponent_tier = opponent_tier,
+                        context       = hand_ctx,
+                        decision_sink = logger.log_decision,
+                    )
+                    if hand_ctx is not None:
+                        hand_ctx.record_hero(state.phase, action, amount)
+
+                    await actions.execute(page, action, amount,
+                                          pot=state.pot, my_stack=state.my_stack)
+
+                    last_state     = state
+                    last_acted_str = state_str
+                    last_heartbeat = time.time()
                     await asyncio.sleep(POLL_INTERVAL)
-                    continue
 
-                if state_str == last_acted_str:
-                    dbg("already acted on this state — waiting for DOM to update")
+                except KeyboardInterrupt:
+                    raise
+                except Exception as e:
+                    print(f"[loop error] {e}")
+                    import traceback
+                    if DEBUG:
+                        traceback.print_exc()
                     await asyncio.sleep(POLL_INTERVAL)
-                    continue
 
-                dbg(f"our turn detected — waiting before acting")
-                await asyncio.sleep(ACTION_DELAY + random.uniform(-0.4, 1.2))
+        except KeyboardInterrupt:
+            print("\nStopping bot.")
 
-                # Re-read right before acting
-                state = await scraper.get_game_state(page)
-                if state is None:
-                    dbg("state became None after delay — skipping")
-                    continue
-                if not state.is_my_turn:
-                    dbg("no longer our turn after delay — skipping")
-                    continue
+        finally:
+            # Close out the in-progress hand if there is one
+            if hand_ctx is not None and last_state is not None:
+                finalize_hand(last_state)
+            hands_played = logger.hands
+            profiles.print_summary()
+            profiles.save()
+            print(f"[review] analyze this session:  "
+                  f"python3 scripts/review_session.py")
+            logger.close()
 
-                opponent_tier = tracker.update(state)
-                action, amount = engine.decide(state, opponent_tier=opponent_tier)
-                await actions.execute(page, action, amount, pot=state.pot, my_stack=state.my_stack)
+            # Auto-deploy: only meaningful if there's new data and flags allow
+            if hands_played == 0:
+                print("[deploy] no hands played this session — skipping")
+            elif no_deploy:
+                print("[deploy] skipped — --no-deploy flag was set")
+            else:
+                _autodeploy()
 
-                last_acted_str = state_str
-                last_heartbeat = time.time()
-                await asyncio.sleep(POLL_INTERVAL)
-
-            except KeyboardInterrupt:
-                print("\nStopping bot.")
-                break
-            except Exception as e:
-                print(f"[loop error] {e}")
-                import traceback
-                if DEBUG:
-                    traceback.print_exc()
-                await asyncio.sleep(POLL_INTERVAL)
-
-        await browser.close()
+            await browser.close()
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print(f"Usage: python main.py <pokernow_game_url>")
-        sys.exit(1)
-    asyncio.run(run(sys.argv[1]))
+    ap = argparse.ArgumentParser(description="PokerNow bot (Jimbot)")
+    ap.add_argument("url", help="PokerNow game URL")
+    ap.add_argument("--no-deploy", action="store_true",
+                    help="skip auto-deploy of dashboard data on session end")
+    args = ap.parse_args()
+    asyncio.run(run(args.url, no_deploy=args.no_deploy))

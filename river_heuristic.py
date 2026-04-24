@@ -136,6 +136,7 @@ def query(
     facing_bet:   bool,
     spr:          float,
     bet_fraction: float = 0.0,
+    context       = None,
 ) -> tuple:
     """
     Return (raise_freq, call_freq, fold_freq) for the river street.
@@ -147,6 +148,7 @@ def query(
     facing_bet   : True if there is a bet to call/raise/fold
     spr          : effective stack / pot
     bet_fraction : villain's bet size as fraction of pot (0 if not facing a bet)
+    context      : optional HandContext — triple-barrel logic uses it
     """
     hand_class = classify(hole_cards, board_cards)
     tex        = river_card_texture(board_cards)
@@ -188,6 +190,17 @@ def query(
             r = _clamp(r + raise_a)
         if hand_class in _STRONG:
             r = _clamp(r + raise_s)
+
+    # 6. Cross-street context: triple-barrel logic. We only barrel the river
+    #    if we've fired both prior streets (flop + turn) and villain kept
+    #    calling — otherwise the line makes no sense.
+    if context is not None and not facing_bet:
+        if context.is_double_barrel_spot("river") and context.villain_check_called_last_street("river"):
+            barrel_bonus = 0.0
+            if hand_class in _STRONG:                 barrel_bonus = +0.10   # thin value
+            elif hand_class == "air":                 barrel_bonus = +0.12   # pure bluff — rare but real
+            elif hand_class in _MARGINAL:             barrel_bonus = +0.04
+            r = _clamp(r + barrel_bonus)
 
     # Rebalance call, then normalise
     if facing_bet:

@@ -49,6 +49,7 @@ class GameState:
     is_my_turn: bool
     can_check: bool
     position: str = "unknown"  # 'BTN','CO','HJ','UTG','BB','SB', or 'unknown'
+    villain_names: list = field(default_factory=list)   # usernames of active opponents
 
     def pot_odds(self) -> float:
         if self.to_call == 0:

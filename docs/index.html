@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jimbot — performance dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <h1>Jimbot</h1>
+      <p class="subtitle">PokerNow bot — performance dashboard</p>
+      <nav class="nav">
+        <a href="#overview">Overview</a>
+        <a href="#decisions">Decisions</a>
+        <a href="#versions">Versions</a>
+        <a href="#opponents">Opponents</a>
+        <a href="#sessions">Sessions</a>
+      </nav>
+      <p class="meta">Current version: <span id="current-version">—</span> · Last updated: <span id="generated-at">—</span></p>
+    </div>
+  </header>
+
+  <main>
+    <section id="empty-state" class="empty hidden">
+      <p>No session data yet. Play a session, run
+        <code>python3 scripts/build_dashboard_data.py</code>, then refresh.</p>
+    </section>
+
+    <!-- ── OVERVIEW ────────────────────────────────────────────────────── -->
+    <section id="overview">
+      <h2>Overview</h2>
+      <div class="cards" id="overview-cards"></div>
+      <div class="grid-2">
+        <figure class="chart-box">
+          <figcaption>Cumulative BB over hands (all sessions)</figcaption>
+          <canvas id="chart-pnl"></canvas>
+        </figure>
+        <figure class="chart-box">
+          <figcaption>BB delta per session</figcaption>
+          <canvas id="chart-sessions-bb"></canvas>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ── DECISIONS ──────────────────────────────────────────────────── -->
+    <section id="decisions">
+      <h2>Decisions</h2>
+      <div class="grid-2">
+        <figure class="chart-box">
+          <figcaption>Decisions by source</figcaption>
+          <canvas id="chart-source"></canvas>
+        </figure>
+        <figure class="chart-box">
+          <figcaption>Action frequencies by street</figcaption>
+          <canvas id="chart-phase-action"></canvas>
+        </figure>
+      </div>
+      <div class="cards" id="hero-stats-cards"></div>
+    </section>
+
+    <!-- ── VERSIONS ───────────────────────────────────────────────────── -->
+    <section id="versions">
+      <h2>Version comparison</h2>
+      <figure class="chart-box">
+        <figcaption>BB / 100 by version</figcaption>
+        <canvas id="chart-version-bb"></canvas>
+      </figure>
+      <div class="table-wrap">
+        <table id="versions-table">
+          <thead>
+            <tr><th>Version</th><th>Sessions</th><th>Hands</th><th>Total BB</th><th>BB/100</th><th>Winrate</th><th>WTSD</th><th>VPIP</th><th>PFR</th><th>C-bet</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── OPPONENTS ──────────────────────────────────────────────────── -->
+    <section id="opponents">
+      <h2>Top opponents</h2>
+      <p class="muted">Anonymized IDs — hashed locally, real names never leave your machine.</p>
+      <div class="table-wrap">
+        <table id="opponents-table">
+          <thead><tr><th>Pseudo-ID</th><th>Hands vs.</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── SESSIONS ───────────────────────────────────────────────────── -->
+    <section id="sessions">
+      <h2>All sessions</h2>
+      <div class="table-wrap">
+        <table id="sessions-table">
+          <thead>
+            <tr><th>Date</th><th>Session ID</th><th>Version</th><th>Hands</th><th>Total BB</th><th>BB/100</th><th>Winrate</th><th>WTSD</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Dashboard auto-generated from <code>Logs/</code> via <code>scripts/build_dashboard_data.py</code>.</p>
+  </footer>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

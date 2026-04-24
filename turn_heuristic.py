@@ -137,6 +137,7 @@ def query(
     facing_bet:   bool,
     spr:          float,
     bet_fraction: float = 0.0,
+    context       = None,
 ) -> tuple:
     """
     Return (raise_freq, call_freq, fold_freq) for the turn street.
@@ -148,6 +149,8 @@ def query(
     facing_bet   : True if there is a bet to call/raise/fold
     spr          : effective stack / pot
     bet_fraction : villain's bet size as fraction of pot (0 if not facing a bet)
+    context      : optional HandContext for cross-street awareness
+                   (PFA identity, whether we cbet the flop, villain check-called)
     """
     hand_class = classify(hole_cards, board_cards)
     tex        = turn_card_texture(board_cards)
@@ -187,6 +190,23 @@ def query(
             r = _clamp(r + raise_a)
         if hand_class in _STRONG:
             r = _clamp(r + raise_s)
+
+    # 6. Cross-street context: double-barrel / give-up logic
+    #    Only meaningful when we already bet the flop — the classic spot where
+    #    the street-by-street heuristic over-gives-up because it forgets we
+    #    represented a hand. Bump barrel frequency when we're the PFA and
+    #    villain check-called.
+    if context is not None and not facing_bet:
+        if context.is_double_barrel_spot("turn") and context.villain_check_called_last_street("turn"):
+            # Good turn cards to barrel: overcards, scare cards (straight/flush complete)
+            barrel_bonus = 0.0
+            if hand_class in _STRONG:                     barrel_bonus = +0.12
+            elif hand_class in ("combo_draw", "draw"):    barrel_bonus = +0.20   # semi-bluff
+            elif hand_class in ("weak_draw", "air"):      barrel_bonus = +0.15   # pure bluff
+            elif hand_class in _MARGINAL:                 barrel_bonus = +0.06
+            if tex in ("overcard", "flush_complete", "straight_complete") and hand_class in ("air", "weak_draw"):
+                barrel_bonus += 0.08    # scare cards favour the preflop aggressor
+            r = _clamp(r + barrel_bonus)
 
     # Rebalance call to absorb adjustments, then normalise
     if facing_bet:

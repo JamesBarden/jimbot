@@ -1,6 +1,35 @@
-# pokernow-bot
+# pokernow-bot (Jimbot)
 
 A Python bot that plays Texas Hold'em on [pokernow.com](https://www.pokernow.com) against human opponents. It uses **Playwright** for browser automation, **DOM scraping** for game state, and a **multi-layer GTO-inspired decision engine** that applies pre-solved solver data on the flop, position-aware GTO range tables preflop, and pseudo-GTO heuristics on the turn and river.
+
+**📊 [Performance dashboard →](https://JamesBarden.github.io/pokernow-bot/)** — cumulative BB, session-by-session breakdown, and version-comparison charts, updated from the aggregated session logs.
+
+---
+
+## Versioning
+
+The bot is versioned in the `VERSION` file (semver-like `MAJOR.MINOR`, starting at `1.0`). Every session log records the version it ran under so the dashboard can compare performance across deployments.
+
+- `1.0 → 1.1` on any non-trivial code change (default)
+- `1.x → 2.0` on a breaking/structural overhaul
+- `1.3 → 1.3.1` (patch) on tiny fixes
+
+Workflow for Claude and humans alike:
+
+```bash
+# After a code change:
+python3 scripts/bump_version.py minor   # or major / patch
+git add -A
+git commit -m "Jimbot v$(cat VERSION): <brief summary>"
+git push
+
+# After a play session:
+#   nothing — main.py auto-deploys the dashboard at shutdown.
+#   Use --no-deploy to skip when iterating locally.
+python3 main.py <url> --no-deploy
+```
+
+See `CLAUDE.md` for the full workflow.
 
 ---
 

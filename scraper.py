@@ -30,6 +30,7 @@ SEL_BLINDS        = ".blind-value .chips-value"                 # [0]=small blin
 SEL_OTHER_PLAYERS = ".table-player:not(.you-player):not(.table-player-seat)"
 SEL_PLAYER_STACK  = ".table-player-stack"
 SEL_DEALER_BTN    = ".dealer-button-ctn"   # has class 'dealer-position-N' matching table-player-N
+SEL_PLAYER_NAME   = ".table-player-name"   # username shown under each seat
 # ---------------------------------------------------------------------------
 
 
@@ -256,6 +257,38 @@ async def get_num_opponents(page: Page) -> int:
     return max(active, 1)
 
 
+async def get_villain_names(page: Page) -> list:
+    """
+    Read the usernames of active (non-folded) opponents. Used to key the
+    per-opponent profile registry across hands.
+
+    If the SEL_PLAYER_NAME selector stops returning text after a pokernow
+    update, run inspector.py — usernames are a fragile DOM surface.
+    """
+    out: list[str] = []
+    players = page.locator(SEL_OTHER_PLAYERS)
+    for i in range(await players.count()):
+        p = players.nth(i)
+        classes = await p.get_attribute("class") or ""
+        if "fold" in classes:
+            continue
+        stack_el = p.locator(SEL_PLAYER_STACK)
+        if await stack_el.count() == 0:
+            continue
+        if not (await stack_el.inner_text(timeout=1000)).strip():
+            continue
+        name_el = p.locator(SEL_PLAYER_NAME)
+        if await name_el.count() == 0:
+            continue
+        try:
+            name = (await name_el.first.inner_text(timeout=1000)).strip()
+            if name:
+                out.append(name)
+        except Exception:
+            continue
+    return out
+
+
 async def get_game_state(page: Page) -> Optional[GameState]:
     """
     Assemble a full GameState from the current DOM.
@@ -288,6 +321,7 @@ async def get_game_state(page: Page) -> Optional[GameState]:
             is_my_turn=turn,
             can_check=await can_check(page),
             position=await get_position(page),
+            villain_names=await get_villain_names(page),
         )
     except Exception as e:
         print(f"[scraper] error reading state: {e}")
