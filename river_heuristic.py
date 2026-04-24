@@ -34,6 +34,7 @@ _FREE = {
     "flush":         {"blank": 0.80, "flush_complete": 0.90, "straight_complete": 0.80, "pair_board": 0.80, "trips_board": 0.80, "overcard": 0.80},
     "straight":      {"blank": 0.78, "flush_complete": 0.60, "straight_complete": 0.85, "pair_board": 0.70, "trips_board": 0.70, "overcard": 0.78},
     "set":           {"blank": 0.75, "flush_complete": 0.55, "straight_complete": 0.55, "pair_board": 0.80, "trips_board": 0.85, "overcard": 0.75},
+    "trips":         {"blank": 0.65, "flush_complete": 0.42, "straight_complete": 0.42, "pair_board": 0.60, "trips_board": 0.70, "overcard": 0.62},
     "two_pair":      {"blank": 0.60, "flush_complete": 0.35, "straight_complete": 0.35, "pair_board": 0.50, "trips_board": 0.60, "overcard": 0.45},
     "overpair":      {"blank": 0.60, "flush_complete": 0.35, "straight_complete": 0.35, "pair_board": 0.50, "trips_board": 0.55, "overcard": 0.40},
     "top_pair_top":  {"blank": 0.55, "flush_complete": 0.30, "straight_complete": 0.30, "pair_board": 0.45, "trips_board": 0.50, "overcard": 0.35},
@@ -58,6 +59,7 @@ _FACED = {
     "flush":         {"blank": (0.50, 0.50, 0.00), "flush_complete": (0.55, 0.45, 0.00), "straight_complete": (0.50, 0.50, 0.00), "pair_board": (0.50, 0.50, 0.00), "trips_board": (0.50, 0.50, 0.00), "overcard": (0.50, 0.50, 0.00)},
     "straight":      {"blank": (0.45, 0.55, 0.00), "flush_complete": (0.30, 0.55, 0.15), "straight_complete": (0.50, 0.50, 0.00), "pair_board": (0.40, 0.55, 0.05), "trips_board": (0.35, 0.55, 0.10), "overcard": (0.45, 0.55, 0.00)},
     "set":           {"blank": (0.40, 0.60, 0.00), "flush_complete": (0.25, 0.55, 0.20), "straight_complete": (0.25, 0.55, 0.20), "pair_board": (0.45, 0.55, 0.00), "trips_board": (0.50, 0.50, 0.00), "overcard": (0.40, 0.60, 0.00)},
+    "trips":         {"blank": (0.28, 0.57, 0.15), "flush_complete": (0.12, 0.40, 0.48), "straight_complete": (0.12, 0.40, 0.48), "pair_board": (0.28, 0.52, 0.20), "trips_board": (0.30, 0.52, 0.18), "overcard": (0.20, 0.50, 0.30)},
     "two_pair":      {"blank": (0.20, 0.55, 0.25), "flush_complete": (0.10, 0.35, 0.55), "straight_complete": (0.10, 0.35, 0.55), "pair_board": (0.15, 0.45, 0.40), "trips_board": (0.20, 0.50, 0.30), "overcard": (0.10, 0.45, 0.45)},
     "overpair":      {"blank": (0.20, 0.55, 0.25), "flush_complete": (0.10, 0.30, 0.60), "straight_complete": (0.10, 0.30, 0.60), "pair_board": (0.15, 0.45, 0.40), "trips_board": (0.15, 0.45, 0.40), "overcard": (0.10, 0.40, 0.50)},
     "top_pair_top":  {"blank": (0.10, 0.55, 0.35), "flush_complete": (0.05, 0.25, 0.70), "straight_complete": (0.05, 0.25, 0.70), "pair_board": (0.10, 0.40, 0.50), "trips_board": (0.10, 0.40, 0.50), "overcard": (0.05, 0.35, 0.60)},
@@ -81,7 +83,7 @@ _VILLAIN_FOLD_ADJ = {
     "random":  -0.04,
 }
 
-_MARGINAL = {"two_pair", "overpair", "top_pair_top", "top_pair_weak",
+_MARGINAL = {"trips", "two_pair", "overpair", "top_pair_top", "top_pair_weak",
              "middle_pair", "bottom_pair"}
 
 # ── Bet-sizing tier (layer 5) ─────────────────────────────────────────────────
@@ -101,7 +103,7 @@ _TIER_ADJ = {
 }
 
 _STRONG         = {"monster", "full_house", "flush", "straight", "set"}
-_FOLD_SENSITIVE = {"two_pair", "overpair", "top_pair_top", "top_pair_weak",
+_FOLD_SENSITIVE = {"trips", "two_pair", "overpair", "top_pair_top", "top_pair_weak",
                    "middle_pair", "bottom_pair", "combo_draw", "draw", "weak_draw"}
 
 
@@ -164,6 +166,8 @@ def query(
 
     # 3. SPR
     spr_r, spr_f = _spr_adj(spr)
+    if not facing_bet and hand_class in _MARGINAL:
+        spr_r = min(spr_r, 0.0)  # low SPR prices you in to call, not a reason to thin-bet weak hands
     r = _clamp(r + spr_r)
     if facing_bet:
         f = _clamp(f + spr_f)

@@ -269,13 +269,16 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
         hclass       = classify(state.hole_cards, state.board_cards)
         ttex         = turn_card_texture(state.board_cards)
         turn_str     = str(state.board_cards[3])
-        facing_b     = state.to_call > 0
-        bet_frac     = round(state.to_call / state.pot, 2) if facing_b and state.pot > 0 else 0.0
+        facing_b     = state.to_call > 0 or (not state.can_check and state.pot > 0)
+        bet_frac     = (round(state.to_call / state.pot, 2) if state.to_call > 0 and state.pot > 0
+                        else (2.0 if facing_b else 0.0))
         bet_tier_s   = (("small" if bet_frac <= 0.35 else "medium" if bet_frac <= 0.75
                          else "large" if bet_frac <= 1.15 else "overbet") if facing_b else "-")
         is_ip        = state.position in ("BTN", "CO", "HJ")
         spr_tag      = "low" if spr < 4 else ("high" if spr > 10 else "medium")
 
+        if facing_b and state.to_call == 0:
+            log.append(f"  [guard] to_call=0 with no check — inferring jam (bet_frac=2.0)")
         log.append(f"  [turn]  card={turn_str}  texture={ttex}")
         log.append(f"          hand_class={hclass}   facing_bet={facing_b}"
                    + (f"  bet={bet_frac:.2f}×pot ({bet_tier_s})" if facing_b else ""))
@@ -302,13 +305,16 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
         hclass       = classify(state.hole_cards, state.board_cards)
         rtex         = river_card_texture(state.board_cards)
         river_str    = str(state.board_cards[4]) if len(state.board_cards) >= 5 else "?"
-        facing_b     = state.to_call > 0
-        bet_frac     = round(state.to_call / state.pot, 2) if facing_b and state.pot > 0 else 0.0
+        facing_b     = state.to_call > 0 or (not state.can_check and state.pot > 0)
+        bet_frac     = (round(state.to_call / state.pot, 2) if state.to_call > 0 and state.pot > 0
+                        else (2.0 if facing_b else 0.0))
         bet_tier_s   = (("small" if bet_frac <= 0.35 else "medium" if bet_frac <= 0.75
                          else "large" if bet_frac <= 1.15 else "overbet") if facing_b else "-")
         is_ip        = state.position in ("BTN", "CO", "HJ")
         spr_tag      = "low" if spr < 4 else ("high" if spr > 10 else "medium")
 
+        if facing_b and state.to_call == 0:
+            log.append(f"  [guard] to_call=0 with no check — inferring jam (bet_frac=2.0)")
         log.append(f"  [river]  card={river_str}  texture={rtex}")
         log.append(f"          hand_class={hclass}   facing_bet={facing_b}"
                    + (f"  bet={bet_frac:.2f}×pot ({bet_tier_s})" if facing_b else ""))
@@ -351,6 +357,31 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
         log.append(f"  equity={equity:.1%}   raise_thresh={strong_threshold:.2f}"
                    f"   call_thresh={call_threshold:.2f}{spr_adj_applied}")
 
+    # ── No-raise guard ────────────────────────────────────────────────────────
+    # Raise is counter-productive when calling already commits most of our stack:
+    #   (a) calling puts us all-in (to_call >= stack)
+    #   (b) calling uses 60 %+ of remaining stack (near-jam — re-raise is marginal)
+    # The heuristic's overbet-tier adjustment already handles large bets vs a deep
+    # stack; applying this guard on top would double-count the same signal.
+    _is_jam       = state.to_call > 0 and state.to_call >= state.my_stack
+    _is_committed = (state.to_call > 0 and state.my_stack > 0
+                     and state.to_call > state.my_stack * 0.6)
+    if _is_jam or _is_committed:
+        raise_freq    = 0.0
+        pot_odds_frac = state.to_call / (state.pot + state.to_call)
+        total         = call_freq + fold_freq
+        if total > 0:
+            call_freq /= total
+            fold_freq /= total
+        else:
+            fold_freq = 1.0
+        odds_adj  = (0.5 - pot_odds_frac) * 0.4   # ±0.20 max; pos = lean call
+        call_freq = max(0.0, min(1.0, call_freq + odds_adj))
+        fold_freq = max(0.0, 1.0 - call_freq)
+        reason = "jam" if _is_jam else "pot-committed"
+        log.append(f"  No-raise ({reason})  pot_odds={pot_odds_frac:.0%}  "
+                   f"adj={odds_adj:+.0%}  → C={call_freq:.0%}  F={fold_freq:.0%}")
+
     # ── Frequencies summary ───────────────────────────────────────────────────
     log.append("─" * (_W - 2))
     log.append(f"  Source  {source}")
@@ -380,7 +411,11 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
             bet_frac, sizing_log = pick_bet_fraction(
                 _hc, state.board_cards, state.to_call > 0
             )
-            raise_to = max(round(state.pot * bet_frac, 2), bb * 2)
+            if state.to_call > 0:
+                pot_after_call = state.pot + state.to_call
+                raise_to = round(state.to_call + bet_frac * pot_after_call, 2)
+            else:
+                raise_to = round(state.pot * bet_frac, 2)
         log.extend(sizing_log)
         min_legal_raise = state.to_call * 2 if state.to_call > 0 else bb * 2
         raise_to = max(raise_to, min_legal_raise)

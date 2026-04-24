@@ -29,6 +29,7 @@ _BET_WEIGHTS: dict = {
     "flush":         ( 5, 30, 45, 20),
     "straight":      (10, 35, 40, 15),
     "set":           (10, 30, 45, 15),
+    "trips":         (12, 38, 38, 12),
     "two_pair":      (15, 45, 30, 10),
     "overpair":      (15, 50, 25, 10),
     "top_pair_top":  (20, 50, 22,  8),
@@ -48,6 +49,7 @@ _RAISE_WEIGHTS: dict = {
     "flush":         ( 5, 22, 48, 25),
     "straight":      ( 8, 28, 44, 20),
     "set":           (10, 30, 42, 18),
+    "trips":         (13, 35, 37, 15),
     "two_pair":      (18, 42, 30, 10),
     "overpair":      (20, 45, 25, 10),
     "top_pair_top":  (25, 45, 25,  5),
@@ -70,18 +72,18 @@ _WETNESS_MOD: dict = {
 
 # ── Preflop sizing tables ─────────────────────────────────────────────────────
 
-# Open-raise BB multiples and weights (w2.0, w2.5, w3.0, w3.5) per position.
-# Steal positions use smaller sizing; early position uses larger.
-_OPEN_SIZES = (2.0, 2.5, 3.0, 3.5)
+# Open-raise BB multiples and weights (w3.0, w3.5, w4.0) per position.
+# Steal positions favour the smaller end; early position skews larger.
+_OPEN_SIZES = (3.0, 3.5, 4.0)
 _OPEN_WEIGHTS: dict = {
-    "BTN": (25, 50, 20,  5),
-    "CO":  (15, 45, 30, 10),
-    "HJ":  (10, 35, 40, 15),
-    "SB":  ( 5, 30, 45, 20),
-    "UTG": ( 5, 20, 50, 25),
-    "MP":  ( 5, 25, 50, 20),
+    "BTN": (50, 35, 15),
+    "CO":  (45, 35, 20),
+    "HJ":  (40, 35, 25),
+    "SB":  (35, 40, 25),
+    "UTG": (25, 40, 35),
+    "MP":  (30, 40, 30),
 }
-_OPEN_DEFAULT = (10, 35, 40, 15)  # unknown position
+_OPEN_DEFAULT = (35, 40, 25)  # unknown position
 
 # 3bet sizing: multiples of the original raise to call
 _3BET_SIZES   = (3.0, 3.5, 4.0)
@@ -179,7 +181,7 @@ def pick_preflop_size(
         raise_to = round(bb * mult, 2)
         log_lines = [
             f"  Sizing  [open]  pos={position}  "
-            f"2×={probs[0]:.0%}  2.5×={probs[1]:.0%}  3×={probs[2]:.0%}  3.5×={probs[3]:.0%}",
+            f"3×={probs[0]:.0%}  3.5×={probs[1]:.0%}  4×={probs[2]:.0%}",
             f"          roll={roll:.4f}  →  {mult}×BB  (to {raise_to:.2f})",
         ]
     return raise_to, log_lines

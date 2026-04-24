@@ -122,8 +122,11 @@ async def get_to_call(page: Page) -> int:
     text = (await btn.inner_text(timeout=1000)).strip()
     if not text.lower().startswith("call"):
         return 0   # 'BET 20' or similar — not a forced call
-    parts = text.split()
-    return _parse_chips(parts[-1]) if len(parts) >= 2 else 0
+    for token in text.split()[1:]:   # scan left-to-right; handles "CALL 6.43 (all in)"
+        val = _parse_chips(token)
+        if val > 0:
+            return val
+    return 0
 
 
 async def get_my_stack(page: Page) -> int:

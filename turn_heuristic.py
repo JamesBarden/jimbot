@@ -30,6 +30,7 @@ _FREE = {
     "flush":         {"blank": 0.80, "flush_complete": 0.95, "straight_complete": 0.80, "pair_board": 0.80, "overcard": 0.80},
     "straight":      {"blank": 0.80, "flush_complete": 0.70, "straight_complete": 0.90, "pair_board": 0.75, "overcard": 0.80},
     "set":           {"blank": 0.75, "flush_complete": 0.60, "straight_complete": 0.60, "pair_board": 0.85, "overcard": 0.75},
+    "trips":         {"blank": 0.68, "flush_complete": 0.50, "straight_complete": 0.50, "pair_board": 0.65, "overcard": 0.65},
     "two_pair":      {"blank": 0.65, "flush_complete": 0.45, "straight_complete": 0.45, "pair_board": 0.50, "overcard": 0.50},
     "overpair":      {"blank": 0.65, "flush_complete": 0.45, "straight_complete": 0.45, "pair_board": 0.55, "overcard": 0.45},
     "top_pair_top":  {"blank": 0.60, "flush_complete": 0.40, "straight_complete": 0.40, "pair_board": 0.50, "overcard": 0.40},
@@ -51,6 +52,7 @@ _FACED = {
     "flush":         {"blank": (0.50, 0.50, 0.00), "flush_complete": (0.55, 0.45, 0.00), "straight_complete": (0.50, 0.50, 0.00), "pair_board": (0.50, 0.50, 0.00), "overcard": (0.50, 0.50, 0.00)},
     "straight":      {"blank": (0.50, 0.50, 0.00), "flush_complete": (0.40, 0.55, 0.05), "straight_complete": (0.55, 0.45, 0.00), "pair_board": (0.45, 0.50, 0.05), "overcard": (0.50, 0.50, 0.00)},
     "set":           {"blank": (0.45, 0.55, 0.00), "flush_complete": (0.35, 0.60, 0.05), "straight_complete": (0.35, 0.60, 0.05), "pair_board": (0.50, 0.50, 0.00), "overcard": (0.45, 0.55, 0.00)},
+    "trips":         {"blank": (0.35, 0.57, 0.08), "flush_complete": (0.22, 0.55, 0.23), "straight_complete": (0.22, 0.55, 0.23), "pair_board": (0.35, 0.55, 0.10), "overcard": (0.28, 0.55, 0.17)},
     "two_pair":      {"blank": (0.30, 0.60, 0.10), "flush_complete": (0.20, 0.55, 0.25), "straight_complete": (0.20, 0.55, 0.25), "pair_board": (0.25, 0.55, 0.20), "overcard": (0.20, 0.60, 0.20)},
     "overpair":      {"blank": (0.30, 0.60, 0.10), "flush_complete": (0.20, 0.50, 0.30), "straight_complete": (0.20, 0.50, 0.30), "pair_board": (0.25, 0.55, 0.20), "overcard": (0.20, 0.55, 0.25)},
     "top_pair_top":  {"blank": (0.20, 0.65, 0.15), "flush_complete": (0.10, 0.50, 0.40), "straight_complete": (0.10, 0.50, 0.40), "pair_board": (0.15, 0.55, 0.30), "overcard": (0.10, 0.55, 0.35)},
@@ -75,7 +77,7 @@ _VILLAIN_FOLD_ADJ = {
 }
 
 # Hands where villain-range adjustments actually apply (not strong, not air)
-_MARGINAL = {"two_pair", "overpair", "top_pair_top", "top_pair_weak",
+_MARGINAL = {"trips", "two_pair", "overpair", "top_pair_top", "top_pair_weak",
              "middle_pair", "draw", "combo_draw"}
 
 # ── Bet-sizing tier (layer 5) ─────────────────────────────────────────────────
@@ -102,7 +104,7 @@ _TIER_ADJ = {
 }
 
 _STRONG         = {"monster", "full_house", "flush", "straight", "set"}
-_FOLD_SENSITIVE = {"two_pair", "overpair", "top_pair_top", "top_pair_weak",
+_FOLD_SENSITIVE = {"trips", "two_pair", "overpair", "top_pair_top", "top_pair_weak",
                    "middle_pair", "bottom_pair", "combo_draw", "draw", "weak_draw"}
 
 # SPR → (raise_adj, fold_adj)

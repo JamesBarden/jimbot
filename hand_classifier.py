@@ -3,11 +3,12 @@ Classifies hole cards relative to the current board into a hand class string.
 
 Hand classes (strongest to weakest):
   monster        Straight flush, four of a kind
-  full_house     Full house
-  flush          Made flush
-  straight       Made straight
-  set            Three of a kind (set or trips)
-  two_pair       Two pair
+  full_house     Full house where our hole cards contributed (board not already a FH)
+  flush          Made flush using both hole cards (2-card flush)
+  straight       Made straight using both hole cards (2-card straight)
+  set            Three of a kind — pocket pair + one board card (well disguised)
+  trips          Three of a kind — one hole card + board pair (less disguised)
+  two_pair       Two pair; also 1-card flush or 1-card straight (board did most work)
   overpair       Pocket pair above all board cards
   top_pair_top   Top pair, top kicker (kicker beats all other board ranks)
   top_pair_weak  Top pair, weak kicker
@@ -16,7 +17,8 @@ Hand classes (strongest to weakest):
   combo_draw     12+ outs (e.g. flush draw + open-ended straight draw)
   draw           8-9 outs (flush draw or open-ended straight draw)
   weak_draw      4 outs (gutshot only)
-  air            Overcards, no meaningful draw
+  air            Overcards, no meaningful draw; also board trips/straight/flush/FH
+                 (board already provides the hand — hole cards add nothing unique)
 """
 
 from treys import Card as TreysCard, Evaluator
@@ -40,10 +42,10 @@ def classify(hole_cards: list[Card], board_cards: list[Card]) -> str:
 
     if cat == 1:  return "monster"     # straight flush
     if cat == 2:  return "monster"     # four of a kind
-    if cat == 3:  return "full_house"
-    if cat == 4:  return "flush"
-    if cat == 5:  return "straight"
-    if cat == 6:  return "set"
+    if cat == 3:  return _classify_full_house(hole_cards, board_cards)
+    if cat == 4:  return _classify_flush(hole_cards, board_cards)
+    if cat == 5:  return _classify_straight(hole_cards, board_cards)
+    if cat == 6:  return _classify_set(hole_cards, board_cards)
     if cat == 7:  return "two_pair"
     if cat == 8:  return _classify_pair(hole_cards, board_cards)
     return _classify_air(hole_cards, board_cards)
@@ -84,6 +86,92 @@ def _classify_pair(hole: list[Card], board: list[Card]) -> str:
             return "bottom_pair"
 
     return "air"
+
+
+# ── set / trips / board-trips ─────────────────────────────────────────────────
+
+def _classify_set(hole: list[Card], board: list[Card]) -> str:
+    """
+    Distinguish three cases when the evaluator finds three-of-a-kind:
+      set   — pocket pair + one matching board card (well disguised)
+      trips — one hole card matches a board pair (less disguised, opponents see the pair)
+      air   — board itself holds all three copies (hole cards add nothing unique)
+    """
+    all_cards = hole + board
+    rank_counts: dict = {}
+    for c in all_cards:
+        rank_counts[c.rank] = rank_counts.get(c.rank, 0) + 1
+    trips_rank = next((r for r, cnt in rank_counts.items() if cnt >= 3), None)
+    if trips_rank is None:
+        return "set"
+    hole_matches = sum(1 for c in hole if c.rank == trips_rank)
+    if hole_matches == 2:  return "set"
+    if hole_matches == 1:  return "trips"
+    return "air"
+
+
+# ── full house ────────────────────────────────────────────────────────────────
+
+def _classify_full_house(hole: list[Card], board: list[Card]) -> str:
+    """
+    When the 5-card board itself is already a full house (trips + pair on board),
+    everyone plays that same holding — classify as air.
+    Otherwise our hole cards genuinely contributed.
+    """
+    if len(board) == 5:
+        bc: dict = {}
+        for c in board:
+            bc[c.rank] = bc.get(c.rank, 0) + 1
+        trips = [r for r, n in bc.items() if n >= 3]
+        if trips:
+            pairs = [r for r, n in bc.items() if n >= 2 and r != trips[0]]
+            if pairs:
+                return "air"
+    return "full_house"
+
+
+# ── straight ──────────────────────────────────────────────────────────────────
+
+def _classify_straight(hole: list[Card], board: list[Card]) -> str:
+    """
+    Count how many hole cards fall in the best (highest) straight window.
+      0 — board straight: everyone plays it → air
+      1 — one-card completion of a 4-board straight → two_pair (made but weak)
+      2 — both hole cards contribute → straight
+    """
+    all_ridx = {_RANKS.index(c.rank) for c in hole + board}
+    if 12 in all_ridx:
+        all_ridx = all_ridx | {-1}
+    hole_ridx = {_RANKS.index(c.rank) for c in hole}
+    hole_alow = hole_ridx | ({-1} if 12 in hole_ridx else set())
+
+    for lo in range(8, -2, -1):          # highest window first
+        window = set(range(lo, lo + 5))
+        if len(window & all_ridx) >= 5:
+            contrib = len(window & hole_alow)
+            if contrib == 0:  return "air"
+            if contrib == 1:  return "two_pair"
+            return "straight"
+    return "straight"
+
+
+# ── flush ─────────────────────────────────────────────────────────────────────
+
+def _classify_flush(hole: list[Card], board: list[Card]) -> str:
+    """
+    Count how many hole cards are of the flush suit.
+      0 — board flush: everyone plays it → air
+      1 — one-card flush (board provides 4 of the suit) → two_pair (vulnerable)
+      2 — two-card flush → flush
+    """
+    sc: dict = {}
+    for c in hole + board:
+        sc[c.suit] = sc.get(c.suit, 0) + 1
+    flush_suit = max(sc, key=sc.get)
+    hole_count = sum(1 for c in hole if c.suit == flush_suit)
+    if hole_count == 0:  return "air"
+    if hole_count == 1:  return "two_pair"
+    return "flush"
 
 
 # ── draw / air classification ────────────────────────────────────────────────
