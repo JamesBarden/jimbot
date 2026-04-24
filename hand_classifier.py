@@ -60,12 +60,12 @@ def _classify_pair(hole: list[Card], board: list[Card]) -> str:
     # Pocket pair
     if h[0] == h[1]:
         pp = ri(h[0])
-        if pp > board_sorted[0]:   # above all board cards
+        if pp > board_sorted[0]:   # above ALL board cards — true overpair
             return "overpair"
-        if pp > board_sorted[1]:   # one overcard on board (e.g. KK on A72)
-            return "overpair"      # still plays like an overpair vs most hands
+        # One or more overcards: no longer an overpair regardless of how close.
+        # (KK on A-x-y, JJ on Q-x-y, etc. all get middle/bottom pair treatment.)
         if pp > board_sorted[2]:
-            return "middle_pair"   # two overcards, sandwiched
+            return "middle_pair"
         return "bottom_pair"
 
     # Paired a board card

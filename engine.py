@@ -240,12 +240,9 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
             log.append(f"  Solver  HIT  key=({ftex}, {spr_b}, {opponent_tier}, {facing_b})")
             log.append(f"          raw  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
             if state.can_check:
+                call_freq = 1.0 - raise_freq   # fold → check; no renorm
                 fold_freq = 0.0
-                total = raise_freq + call_freq
-                if total > 0:
-                    raise_freq /= total
-                    call_freq  /= total
-                log.append(f"          can_check → fold zeroed, renorm")
+                log.append(f"          can_check → fold→check  R={raise_freq:.0%}  C={call_freq:.0%}")
             source = "solver"
         else:
             log.append(f"  Solver  MISS  → falling back to monte_carlo")
@@ -254,20 +251,17 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
     if source == "monte_carlo" and state.phase == "preflop":
         hkey         = preflop_ranges.hand_key(state.hole_cards)
         facing_raise = state.to_call > state.big_blind
+        num_players  = state.num_opponents + 1
         raise_freq, call_freq, fold_freq = preflop_ranges.lookup(
-            state.hole_cards, state.position, facing_raise
+            state.hole_cards, state.position, facing_raise,
+            num_players=num_players,
         )
-        log.append(f"  [preflop]  hand={hkey}   facing_raise={facing_raise}")
+        log.append(f"  [preflop]  hand={hkey}   facing_raise={facing_raise}   players={num_players}")
         log.append(f"  Range table  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
         if state.can_check:
+            call_freq = 1.0 - raise_freq   # fold → check; no renorm
             fold_freq = 0.0
-            total = raise_freq + call_freq
-            if total > 0:
-                raise_freq /= total
-                call_freq  /= total
-            else:
-                call_freq = 1.0
-            log.append(f"  BB option (can check) → fold zeroed, renorm")
+            log.append(f"  BB option (can check) → fold→check  R={raise_freq:.0%}  C={call_freq:.0%}")
         source = "preflop_gto"
 
     # ── Turn: pseudo-GTO heuristic ────────────────────────────────────────────
@@ -298,12 +292,9 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
         )
         log.append(f"  Heuristic  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
         if state.can_check:
+            call_freq = 1.0 - raise_freq   # fold → check; no renorm
             fold_freq = 0.0
-            total = raise_freq + call_freq
-            raise_freq = raise_freq / total if total > 0 else 0.0
-            call_freq  = 1.0 - raise_freq
-            log.append(f"  can_check → fold zeroed, renorm  "
-                       f"R={raise_freq:.0%}  C={call_freq:.0%}")
+            log.append(f"  can_check → fold→check  R={raise_freq:.0%}  C={call_freq:.0%}")
         source = "turn_heuristic"
 
     # ── River: pseudo-GTO heuristic ──────────────────────────────────────────
@@ -334,12 +325,9 @@ def decide(state: GameState, opponent_tier: str = "random") -> tuple[str, int]:
         )
         log.append(f"  Heuristic  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
         if state.can_check:
+            call_freq = 1.0 - raise_freq   # fold → check; no renorm
             fold_freq = 0.0
-            total = raise_freq + call_freq
-            raise_freq = raise_freq / total if total > 0 else 0.0
-            call_freq  = 1.0 - raise_freq
-            log.append(f"  can_check → fold zeroed, renorm  "
-                       f"R={raise_freq:.0%}  C={call_freq:.0%}")
+            log.append(f"  can_check → fold→check  R={raise_freq:.0%}  C={call_freq:.0%}")
         source = "river_heuristic"
 
     # ── Postflop fallback: Monte Carlo ────────────────────────────────────────

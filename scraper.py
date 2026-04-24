@@ -133,22 +133,18 @@ async def get_my_stack(page: Page) -> int:
     return _parse_chips(await el.inner_text(timeout=1000))
 
 
-async def get_pot(page: Page) -> int:
+async def get_pot(page: Page) -> float:
     """
-    Total pot = main pot (chips from closed streets) + add-on (current street).
-    pokernow splits these into two separate elements.
+    Total pot from the main-value element.
+
+    PokerNow previously split the display into main-value (closed streets) +
+    add-on (current street). The current DOM has both pointing to the same total,
+    so only main-value is used to avoid the 2× double-count bug.
     """
-    main = 0
     main_el = page.locator(SEL_POT_MAIN)
     if await main_el.count() > 0:
-        main = _parse_chips(await main_el.inner_text(timeout=1000))
-
-    addon = 0
-    addon_el = page.locator(SEL_POT_ADDON)
-    if await addon_el.count() > 0:
-        addon = _parse_chips(await addon_el.inner_text(timeout=1000))
-
-    return main + addon
+        return _parse_chips(await main_el.first.inner_text(timeout=1000))
+    return 0.0
 
 
 async def get_phase(page: Page) -> str:

@@ -60,10 +60,11 @@ async def raise_amount(page: Page, amount: int, pot: int = 0, my_stack: int = 0)
     # Primary path: type custom amount into the text input
     input_el = page.locator(SEL_RAISE_INPUT)
     if await input_el.count() > 0:
-        # Use click + select-all + press_sequentially so React's onChange fires
-        await input_el.click()
-        await input_el.press("Meta+a")   # select all existing text
-        await input_el.press_sequentially(str(amount), delay=30)
+        # triple_click reliably selects all text in any input (Meta+a can fail in
+        # React inputs and leave the cursor inside existing text, causing the typed
+        # number to be appended rather than replacing — the 10× sizing bug).
+        await input_el.click(click_count=3)   # select-all via triple-click
+        await input_el.press_sequentially(f"{amount:.2f}", delay=30)
     else:
         await _click_preset(page, amount, pot, my_stack)
 

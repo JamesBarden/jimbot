@@ -238,15 +238,47 @@ _VS_RAISE = {
 
 _FOLD = (0.0, 0.0, 1.0)
 
+# ── Short-handed adjustments ──────────────────────────────────────────────────
+# Fewer players = wider ranges. Applied as multipliers on listed frequencies,
+# with a floor open freq for unlisted hands at very short tables.
 
-def lookup(hole_cards: list, position: str, facing_raise: bool) -> tuple:
+_SH_RFI_BOOST  = {6: 1.00, 5: 1.10, 4: 1.20, 3: 1.35, 2: 1.55}
+_SH_RFI_FLOOR  = {6: 0.00, 5: 0.00, 4: 0.05, 3: 0.10, 2: 0.20}
+_SH_CALL_BOOST = {6: 1.00, 5: 1.05, 4: 1.10, 3: 1.20, 2: 1.35}
+
+
+def lookup(hole_cards: list, position: str, facing_raise: bool,
+           num_players: int = 6) -> tuple:
     """
     Return (raise_freq, call_freq, fold_freq) for the given hand and position.
 
     facing_raise: True when to_call > big_blind (someone already raised).
-                  False when opening (to_call == 0 or == big_blind).
+    num_players:  Total players at the table. Fewer players → wider ranges.
     """
     key = hand_key(hole_cards)
+    np  = max(2, min(num_players, 6))
     table = _VS_RAISE.get(position, _VS_RAISE["unknown"]) if facing_raise \
             else _RFI.get(position, _RFI["unknown"])
-    return table.get(key, _FOLD)
+    base = table.get(key, None)
+
+    if facing_raise:
+        if base is None:
+            return _FOLD
+        r, c, f = base
+        boost = _SH_CALL_BOOST.get(np, 1.0)
+        if boost > 1.0 and c > 0:
+            new_c = min(c * boost, 1.0 - r)
+            return (r, round(new_c, 4), round(max(0.0, 1.0 - r - new_c), 4))
+        return base
+    else:
+        boost = _SH_RFI_BOOST.get(np, 1.0)
+        floor = _SH_RFI_FLOOR.get(np, 0.0)
+        if base is None:
+            if floor > 0.0:
+                return (floor, 0.0, round(1.0 - floor, 4))
+            return _FOLD
+        r, _c, _f = base
+        if boost > 1.0:
+            new_r = min(r * boost, 1.0)
+            return (round(new_r, 4), 0.0, round(1.0 - new_r, 4))
+        return base
