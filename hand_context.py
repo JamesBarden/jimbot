@@ -81,6 +81,12 @@ class HandContext:
     # Count how many times we've been observed at a given street (to detect
     # a second visit on the same street, i.e. villain raised our bet)
     _observations_per_street: dict[str, int]   = field(default_factory=dict)
+    # my_stack snapshot at the first observation of each street.  Lets us
+    # reconstruct hero's per-street chip contribution as
+    # (stack_at_street_start - current_stack), used by the engine to estimate
+    # the true on-table pot when the scraper's pot reading is stuck on
+    # closed-streets-only.
+    stack_at_street_start: dict = field(default_factory=dict)
 
     # ── observation: infer villain activity from state changes ────────────────
 
@@ -93,9 +99,13 @@ class HandContext:
                 # Advance high-water mark when we see a later street
                 if STREETS.index(s) > STREETS.index(self.reached_street):
                     self.reached_street = s
-            # First observation of this street → snapshot who's still in the hand
+            # First observation of this street → snapshot who's still in the
+            # hand AND our current stack (used to compute per-street chip
+            # contribution later).
             if s not in self.villains_per_street:
                 self.villains_per_street[s] = frozenset(state.villain_names)
+            if s not in self.stack_at_street_start:
+                self.stack_at_street_start[s] = state.my_stack
 
         rec = self.streets[s] if s in self.streets else None
         if rec is None:
@@ -171,6 +181,24 @@ class HandContext:
             return False
         last = rec.hero_actions[-1].split(":", 1)[0]
         return last in ("raise", "bet")
+
+    def hero_round_contribution(self, street: str, current_stack: float) -> float:
+        """
+        Chips hero has put in the pot on the given street, derived from
+        observation snapshots: stack_at_street_start - current_stack.
+
+        Used by the engine to reconstruct the on-table pot when the scraper's
+        pot reading misses current-street action (a recurring pokernow DOM
+        quirk where the displayed pot stays stuck on closed-streets total
+        during a live betting round).
+
+        Returns 0 if no snapshot was taken (street never observed) or if
+        stack hasn't decreased.
+        """
+        start = self.stack_at_street_start.get(street)
+        if start is None:
+            return 0.0
+        return max(0.0, start - current_stack)
 
     def villain_check_called_last_street(self, current_street: str) -> bool:
         """

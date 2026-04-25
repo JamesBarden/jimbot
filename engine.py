@@ -213,7 +213,22 @@ def decide(state: GameState, opponent_tier: str = "random",
       (action, amount) where action ∈ {'fold','check','call','raise'}.
     """
     bb  = state.big_blind if state.big_blind > 0 else 0.01
-    spr = state.my_stack / state.pot if state.pot > 0 else 99.0
+
+    # Effective pot reconstruction: pokernow's displayed pot often misses
+    # current-street action during live betting rounds (we've seen pot=0
+    # facing a preflop jam, and pot=preflop-only facing a flop bet/raise/
+    # re-raise).  When we have a HandContext, use the per-street stack
+    # snapshot to compute hero's contribution this street and add the
+    # estimated current-street action back in.  Falls back gracefully to
+    # the displayed pot when no context is available.
+    hero_round_contrib = (context.hero_round_contribution(state.phase, state.my_stack)
+                          if context is not None else 0.0)
+    effective_pot = state.pot + 2 * hero_round_contrib + state.to_call
+
+    # SPR and bet_fraction now use effective_pot, so misclassifications of
+    # bet sizing tier (small/medium/large/overbet) and SPR-based threshold
+    # adjustments are corrected too.
+    spr = state.my_stack / effective_pot if effective_pot > 0 else 99.0
     source = "monte_carlo"
     log: list[str] = []
 
@@ -318,7 +333,7 @@ def decide(state: GameState, opponent_tier: str = "random",
         ttex         = turn_card_texture(state.board_cards)
         turn_str     = str(state.board_cards[3])
         facing_b     = state.to_call > 0 or (not state.can_check and state.pot > 0)
-        bet_frac     = (round(state.to_call / state.pot, 2) if state.to_call > 0 and state.pot > 0
+        bet_frac     = (round(state.to_call / effective_pot, 2) if state.to_call > 0 and effective_pot > 0
                         else (2.0 if facing_b else 0.0))
         bet_tier_s   = (("small" if bet_frac <= 0.35 else "medium" if bet_frac <= 0.75
                          else "large" if bet_frac <= 1.15 else "overbet") if facing_b else "-")
@@ -355,7 +370,7 @@ def decide(state: GameState, opponent_tier: str = "random",
         rtex         = river_card_texture(state.board_cards)
         river_str    = str(state.board_cards[4]) if len(state.board_cards) >= 5 else "?"
         facing_b     = state.to_call > 0 or (not state.can_check and state.pot > 0)
-        bet_frac     = (round(state.to_call / state.pot, 2) if state.to_call > 0 and state.pot > 0
+        bet_frac     = (round(state.to_call / effective_pot, 2) if state.to_call > 0 and effective_pot > 0
                         else (2.0 if facing_b else 0.0))
         bet_tier_s   = (("small" if bet_frac <= 0.35 else "medium" if bet_frac <= 0.75
                          else "large" if bet_frac <= 1.15 else "overbet") if facing_b else "-")
@@ -453,18 +468,11 @@ def decide(state: GameState, opponent_tier: str = "random",
         call_freq    += raise_freq
         raise_freq    = 0.0
 
-        # Pot-odds calc with a fallback for scraper pot misreads. PokerNow's
-        # 'main-value' pot doesn't always include current-street action — it
-        # can show just the closed-streets pot during a live betting round
-        # (we've seen pot=0 in jam scenarios and pot=preflop-only when bet/
-        # raise/re-raise sequences happen on a postflop street). When that
-        # happens, raw pot_odds blows up.
-        # Floor pot at to_call so pot_odds never exceeds 50% — a safe bound
-        # for any standard or overbet situation. Worst case this slightly
-        # overestimates pot for true 2x-pot overbets where the displayed pot
-        # IS correct; that's a minor leak vs the catastrophic 'fold AKo to
-        # a jam' it prevents.
-        effective_pot = max(state.pot, state.to_call)
+        # Pot-odds calc using the reconstructed effective_pot (computed at
+        # the top of decide() from HandContext stack snapshots).  This
+        # avoids the misread-pot blowup that previously returned pot_odds
+        # of 67-100% when the scraper's pot reading was stuck on
+        # closed-streets-only.
         pot_odds_frac = state.to_call / (state.to_call + effective_pot)
 
         total = call_freq + fold_freq
@@ -479,6 +487,20 @@ def decide(state: GameState, opponent_tier: str = "random",
         reason = "jam" if _is_jam else "pot-committed"
         log.append(f"  No-raise ({reason})  pot_odds={pot_odds_frac:.0%}  "
                    f"adj={odds_adj:+.0%}  → C={call_freq:.0%}  F={fold_freq:.0%}")
+
+    # ── Tiny-bet override ─────────────────────────────────────────────────────
+    # When pot odds are absurdly favorable (a 0.10 bet into 4.80 = 2%), folding
+    # is a leak with literally any two cards.  Cap fold_freq at 5% — treat as a
+    # check-equivalent.  Triggers regardless of source (solver / heuristic / MC)
+    # so any bet sizing this small is handled cleanly.
+    if state.to_call > 0 and effective_pot > 0:
+        _po = state.to_call / (state.to_call + effective_pot)
+        if _po <= 0.10 and fold_freq > 0.05:
+            transferred = fold_freq - 0.05
+            call_freq  += transferred
+            fold_freq   = 0.05
+            log.append(f"  Tiny bet override  pot_odds={_po:.0%}"
+                       f"  →  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
 
     # ── Frequencies summary ───────────────────────────────────────────────────
     log.append("─" * (_W - 2))
