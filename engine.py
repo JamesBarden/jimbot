@@ -261,6 +261,17 @@ def decide(state: GameState, opponent_tier: str = "random",
             raise_freq, call_freq, fold_freq = lut_freqs
             log.append(f"  Solver  HIT  key=({ftex}, {spr_b}, {opponent_tier}, {facing_b})")
             log.append(f"          raw  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
+            # Exploit: GTO solver freqs assume a balanced defender. Vs loose-passive
+            # opponents (tier wide/random) c-bet ranges should widen — they fold too
+            # much postflop. Take ~40% of the call/check headroom into raise, capped
+            # at +25 % so we never blow up the GTO baseline entirely.
+            if not facing_b and opponent_tier in ("wide", "random"):
+                boost = min(0.25, (1.0 - raise_freq) * 0.4)
+                if boost > 0:
+                    raise_freq += boost
+                    call_freq = max(0.0, call_freq - boost)
+                    log.append(f"          exploit vs {opponent_tier}: +{boost:.0%} raise"
+                               f"  →  R={raise_freq:.0%}  C={call_freq:.0%}")
             if state.can_check:
                 call_freq = 1.0 - raise_freq   # fold → check; no renorm
                 fold_freq = 0.0

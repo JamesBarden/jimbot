@@ -208,6 +208,21 @@ def query(
                 barrel_bonus += 0.08    # scare cards favour the preflop aggressor
             r = _clamp(r + barrel_bonus)
 
+    # 7. Stab bonus: HU in position, villain checked to us. Independent of
+    #    barrel logic — addresses the "no betting initiative" leak where the
+    #    bot checks back even when villain has shown weakness. Stacks with
+    #    the barrel bonus when both apply (we c-bet flop AND villain checks
+    #    again on the turn → triple-barrel territory).
+    if (context is not None and not facing_bet and is_ip
+            and getattr(context, "num_opponents", 0) == 1):
+        stab_bonus = 0.0
+        if   hand_class == "air":                     stab_bonus = +0.18
+        elif hand_class == "weak_draw":               stab_bonus = +0.15
+        elif hand_class in ("draw", "combo_draw"):    stab_bonus = +0.12
+        elif hand_class in _MARGINAL:                 stab_bonus = +0.08
+        elif hand_class in _STRONG:                   stab_bonus = +0.05   # thin value
+        r = _clamp(r + stab_bonus)
+
     # Rebalance call to absorb adjustments, then normalise
     if facing_bet:
         c = max(0.0, 1.0 - r - f)

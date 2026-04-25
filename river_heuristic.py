@@ -202,6 +202,19 @@ def query(
             elif hand_class in _MARGINAL:             barrel_bonus = +0.04
             r = _clamp(r + barrel_bonus)
 
+    # 7. Stab bonus: HU in position, villain checked to us on the river.
+    #    Smaller magnitudes than turn — fold equity is lower on river since
+    #    villain has narrower range, and unimproved draws have no equity.
+    #    Still: villain showing weakness in position is profitable to attack.
+    if (context is not None and not facing_bet and is_ip
+            and getattr(context, "num_opponents", 0) == 1):
+        stab_bonus = 0.0
+        if   hand_class == "air":                            stab_bonus = +0.12
+        elif hand_class in ("weak_draw", "draw", "combo_draw"): stab_bonus = +0.10
+        elif hand_class in _MARGINAL:                        stab_bonus = +0.05
+        elif hand_class in _STRONG:                          stab_bonus = +0.04   # thin value
+        r = _clamp(r + stab_bonus)
+
     # Rebalance call, then normalise
     if facing_bet:
         c = max(0.0, 1.0 - r - f)
