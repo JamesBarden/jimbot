@@ -425,9 +425,11 @@ def decide(state: GameState, opponent_tier: str = "random",
         if _hclass in {"monster", "full_house", "flush", "straight", "set"}:
             pass   # strong — let the original freqs play out
         elif _hclass in {"two_pair", "overpair", "top_pair_top", "trips"}:
+            # Don't 5-bet bluff with strong-ish made hands at low SPR — but
+            # don't invent fold% either. Transfer raise → call and let the
+            # source's F% speak for itself.
+            call_freq += raise_freq
             raise_freq = 0.0
-            call_freq  = max(call_freq, 0.7)
-            fold_freq  = max(0.0, 1.0 - call_freq)
             log.append(f"  Re-raise guard ({_hclass})  → R=0%  C={call_freq:.0%}  F={fold_freq:.0%}")
         else:
             raise_freq = 0.0
@@ -451,11 +453,18 @@ def decide(state: GameState, opponent_tier: str = "random",
         call_freq    += raise_freq
         raise_freq    = 0.0
 
-        # Pot-odds calc with a fallback for the scraper-misreads-pot=0 case.
-        # When pot reads as 0 (transient DOM state), assume pot ≈ to_call
-        # (a typical jam-into-blinds situation), giving pot_odds ≈ 50% —
-        # neutral instead of the catastrophic 100%.
-        effective_pot = state.pot if state.pot > 0 else state.to_call
+        # Pot-odds calc with a fallback for scraper pot misreads. PokerNow's
+        # 'main-value' pot doesn't always include current-street action — it
+        # can show just the closed-streets pot during a live betting round
+        # (we've seen pot=0 in jam scenarios and pot=preflop-only when bet/
+        # raise/re-raise sequences happen on a postflop street). When that
+        # happens, raw pot_odds blows up.
+        # Floor pot at to_call so pot_odds never exceeds 50% — a safe bound
+        # for any standard or overbet situation. Worst case this slightly
+        # overestimates pot for true 2x-pot overbets where the displayed pot
+        # IS correct; that's a minor leak vs the catastrophic 'fold AKo to
+        # a jam' it prevents.
+        effective_pot = max(state.pot, state.to_call)
         pot_odds_frac = state.to_call / (state.to_call + effective_pot)
 
         total = call_freq + fold_freq
