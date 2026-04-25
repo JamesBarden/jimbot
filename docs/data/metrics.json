@@ -1,66 +1,66 @@
 {
-  "generated_at": "2026-04-25T10:44:02",
+  "generated_at": "2026-04-25T10:55:46",
   "overall": {
-    "hands": 265,
-    "session_pnl_bb": -329.5,
-    "bb_per_100": -124.34,
-    "ledgered_sessions": 1,
-    "sessions": 7,
+    "hands": 272,
+    "session_pnl_bb": -379.5,
+    "bb_per_100": -139.52,
+    "ledgered_sessions": 2,
+    "sessions": 8,
     "winning_sessions": 1,
-    "losing_sessions": 5,
+    "losing_sessions": 6,
     "source_counts": {
-      "preflop_gto": 252,
-      "solver": 70,
-      "turn_heuristic": 48,
-      "river_heuristic": 27,
+      "preflop_gto": 256,
+      "solver": 73,
+      "turn_heuristic": 51,
+      "river_heuristic": 28,
       "monte_carlo": 12
     },
     "phase_counts": {
-      "preflop": 252,
-      "flop": 82,
-      "turn": 48,
-      "river": 27
+      "preflop": 256,
+      "flop": 85,
+      "turn": 51,
+      "river": 28
     },
     "phase_action": {
       "preflop": {
-        "fold": 146,
-        "call": 29,
-        "raise": 73,
+        "fold": 148,
+        "call": 30,
+        "raise": 74,
         "check": 4
       },
       "flop": {
-        "check": 40,
-        "call": 7,
-        "raise": 28,
+        "check": 41,
+        "call": 8,
+        "raise": 29,
         "fold": 7
       },
       "turn": {
-        "raise": 9,
+        "raise": 11,
         "check": 19,
-        "fold": 14,
+        "fold": 15,
         "call": 6
       },
       "river": {
         "check": 15,
         "fold": 6,
-        "raise": 5,
+        "raise": 6,
         "call": 1
       }
     },
     "top_opponents": [
       {
         "name": "jim",
-        "hands": 225
+        "hands": 232
       },
       {
         "name": "Hunter",
         "hands": 40
       }
     ],
-    "hero_vpip_avg": 0.212,
-    "hero_pfr_avg": 0.16,
-    "hero_cbet_avg": 0.151,
-    "wtsd_avg": 0.076
+    "hero_vpip_avg": 0.221,
+    "hero_pfr_avg": 0.158,
+    "hero_cbet_avg": 0.258,
+    "wtsd_avg": 0.084
   },
   "versions": [
     {
@@ -134,6 +134,18 @@
       "hero_vpip": 0.275,
       "hero_pfr": 0.196,
       "hero_cbet": 0.167
+    },
+    {
+      "version": "1.8",
+      "sessions": 1,
+      "hands": 7,
+      "session_pnl_bb": -50.0,
+      "bb_per_100": -714.29,
+      "winrate": 0.429,
+      "wtsd": 0.143,
+      "hero_vpip": 0.286,
+      "hero_pfr": 0.143,
+      "hero_cbet": 1.0
     },
     {
       "version": "unknown",
@@ -1859,6 +1871,102 @@
         }
       ],
       "decisions_total": 74
+    },
+    {
+      "session_id": "2026-04-25_105338",
+      "date": "2026-04-25",
+      "version": "1.8",
+      "hands": 7,
+      "session_pnl_bb": -48.4,
+      "ledger_net_bb": -50.0,
+      "bb_per_100": -714.29,
+      "stack_change_bb": -48.4,
+      "untracked_jumps_bb": 0.0,
+      "untracked_jumps_count": 0,
+      "winrate": 0.429,
+      "wtsd": 0.143,
+      "flopped_rate": 0.286,
+      "hero_vpip": 0.286,
+      "hero_pfr": 0.143,
+      "hero_cbet": 1.0,
+      "cbet_opps": 1,
+      "source_counts": {
+        "preflop_gto": 4,
+        "solver": 3,
+        "turn_heuristic": 3,
+        "river_heuristic": 1
+      },
+      "phase_counts": {
+        "preflop": 4,
+        "flop": 3,
+        "turn": 3,
+        "river": 1
+      },
+      "phase_action": {
+        "preflop": {
+          "fold": 2,
+          "raise": 1,
+          "call": 1
+        },
+        "flop": {
+          "raise": 1,
+          "check": 1,
+          "call": 1
+        },
+        "turn": {
+          "raise": 2,
+          "fold": 1
+        },
+        "river": {
+          "raise": 1
+        }
+      },
+      "opponents": {
+        "jim": 7
+      },
+      "pnl_series": [
+        {
+          "hand_id": "105340_Ks4c",
+          "bb_delta": 1.0,
+          "cumulative": 1.0
+        },
+        {
+          "hand_id": "105349_Ah6s",
+          "bb_delta": -1.0,
+          "cumulative": 0.0
+        },
+        {
+          "hand_id": "105354_KcTs",
+          "bb_delta": 1.0,
+          "cumulative": 1.0
+        },
+        {
+          "hand_id": "105411_5dTh",
+          "bb_delta": -1.0,
+          "cumulative": 0.0
+        },
+        {
+          "hand_id": "105416_6d2s",
+          "bb_delta": 1.0,
+          "cumulative": 1.0
+        },
+        {
+          "hand_id": "105427_9dAc",
+          "bb_delta": -33.0,
+          "cumulative": -32.0
+        },
+        {
+          "hand_id": "105459_Ks8s",
+          "bb_delta": -16.4,
+          "cumulative": -48.4
+        },
+        {
+          "hand_id": "untracked",
+          "bb_delta": -1.6,
+          "cumulative": -50.0
+        }
+      ],
+      "decisions_total": 11
     }
   ]
 }
