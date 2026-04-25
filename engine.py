@@ -291,6 +291,21 @@ def decide(state: GameState, opponent_tier: str = "random",
         )
         log.append(f"  [preflop]  hand={hkey}   facing_raise={facing_raise}   players={num_players}")
         log.append(f"  Range table  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
+        # Preflop jam guard: when villain shoves or makes a very large raise,
+        # tighten the calling range dramatically. The static range tables are
+        # calibrated for normal 2.5–3.5x opens — they over-defend vs jams.
+        # Severity ramps from 0.5 (at 20×BB) to 0.9 (at 60+ ×BB).  Raise freq
+        # is preserved so 3-bet jams with QQ+/AK still go in.
+        if facing_raise and state.big_blind > 0 and (
+                state.to_call >= state.big_blind * 20
+                or (state.my_stack > 0 and state.to_call >= state.my_stack * 0.5)):
+            ratio    = state.to_call / state.big_blind
+            severity = min(0.9, 0.5 + max(0.0, ratio - 20) / 80 * 0.4)
+            folded   = call_freq * severity
+            call_freq -= folded
+            fold_freq += folded
+            log.append(f"  Jam guard  toCall={ratio:.0f}×BB  severity={severity:.0%}"
+                       f"  →  R={raise_freq:.0%}  C={call_freq:.0%}  F={fold_freq:.0%}")
         if state.can_check:
             call_freq = 1.0 - raise_freq   # fold → check; no renorm
             fold_freq = 0.0
@@ -391,6 +406,34 @@ def decide(state: GameState, opponent_tier: str = "random",
         )
         log.append(f"  equity={equity:.1%}   raise_thresh={strong_threshold:.2f}"
                    f"   call_thresh={call_threshold:.2f}{spr_adj_applied}")
+
+    # ── Postflop re-raise guard ───────────────────────────────────────────────
+    # If we already raised this street and now face another bet, villain has
+    # check-raised or 3-bet us. The source-specific freqs (solver / heuristic /
+    # MC) don't know about within-street action history — they'll happily
+    # repeat their original "raise this spot" answer and we'll spew chips.
+    # Tighten dramatically based on hand strength.
+    _re_raise_spot = (
+        state.phase != "preflop"
+        and state.to_call > 0
+        and context is not None
+        and context.streets.get(state.phase) is not None
+        and context.streets[state.phase].hero_bet
+    )
+    if _re_raise_spot:
+        _hclass = classify(state.hole_cards, state.board_cards)
+        if _hclass in {"monster", "full_house", "flush", "straight", "set"}:
+            pass   # strong — let the original freqs play out
+        elif _hclass in {"two_pair", "overpair", "top_pair_top", "trips"}:
+            raise_freq = 0.0
+            call_freq  = max(call_freq, 0.7)
+            fold_freq  = max(0.0, 1.0 - call_freq)
+            log.append(f"  Re-raise guard ({_hclass})  → R=0%  C={call_freq:.0%}  F={fold_freq:.0%}")
+        else:
+            raise_freq = 0.0
+            call_freq  = call_freq * 0.3
+            fold_freq  = max(0.0, 1.0 - call_freq)
+            log.append(f"  Re-raise guard ({_hclass})  → R=0%  C={call_freq:.0%}  F={fold_freq:.0%}")
 
     # ── No-raise guard ────────────────────────────────────────────────────────
     # Raise is counter-productive when calling already commits most of our stack:

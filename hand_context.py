@@ -164,21 +164,27 @@ class HandContext:
             return self.hero_was_pfa() and self.hero_cbet("flop") and self.hero_cbet("turn")
         return False
 
+    def hero_was_last_aggressor(self, street: str) -> bool:
+        """True if hero's last recorded action on the given street was bet/raise."""
+        rec = self.streets.get(street)
+        if rec is None or not rec.hero_actions:
+            return False
+        last = rec.hero_actions[-1].split(":", 1)[0]
+        return last in ("raise", "bet")
+
     def villain_check_called_last_street(self, current_street: str) -> bool:
         """
-        Did villain check-call the immediately prior street?
-        Useful on the turn/river to decide whether to barrel or give up.
+        Did villain end the prior street by calling our aggression?
+        True iff hero's last action on that street was a bet or raise.
+
+        This catches both the simple case (hero bet, villain called) AND the
+        re-raise case (villain bet, hero raised, villain called) — anywhere
+        we were the *last* aggressor and the street advanced.
         """
         prev_street_idx = STREETS.index(current_street) - 1
         if prev_street_idx < 1:  # only meaningful for turn onward
             return False
-        prev = STREETS[prev_street_idx]
-        rec = self.streets.get(prev)
-        if rec is None:
-            return False
-        # Simple inference: hero bet that street and the street advanced
-        # (meaning villain didn't fold) and the current street shows no bet yet
-        return rec.hero_bet and not rec.villain_bet
+        return self.hero_was_last_aggressor(STREETS[prev_street_idx])
 
     # ── finalisation ─────────────────────────────────────────────────────────
 
