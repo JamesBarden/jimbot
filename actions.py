@@ -125,17 +125,13 @@ async def _click_preset(page: Page, amount: int, pot: int, my_stack: int):
     await btns.nth(0).click()
 
 
-# Chat composer selectors aren't fully nailed (the input only renders
-# once the composer opens) — try the likely candidates and bail quietly
-# if none match. Keep the list ordered most-specific → broad.
-_CHAT_INPUT_SELECTORS = [
-    "textarea.chat-input",
-    ".chat-container textarea",
-    ".chat textarea",
-    "textarea[placeholder*='message' i]",
-    ".chat-container input[type='text']",
-    "[class*='chat'] textarea",
-]
+# Confirmed via inspector_chat.py: the composer is
+#   <form class="chat-new-message-form">
+#     <input type="text" placeholder="Your Message (press Enter to submit)">
+#   </form>
+# The form renders OUTSIDE .chat-container (sibling, not child), which is
+# why earlier broad guesses like ".chat-container input" missed.
+SEL_CHAT_INPUT = "form.chat-new-message-form input"
 
 
 async def send_chat_message(page: Page, message: str) -> bool:
@@ -143,8 +139,8 @@ async def send_chat_message(page: Page, message: str) -> bool:
     Best-effort send of a chat message. Returns True on success.
 
     Flow: click `.chat-new-message-button` to open the composer (falls
-    back to keypress 'm' if the button isn't found), type the message
-    into whichever input selector matches first, press Enter to send.
+    back to keypress 'm' if the button isn't found), wait for the input
+    to render, type the message, press Enter to send.
 
     Never raises — chat is cosmetic, not load-bearing. Failures are
     logged but the main loop continues.
@@ -155,19 +151,17 @@ async def send_chat_message(page: Page, message: str) -> bool:
             await btn.first.click()
         else:
             await page.keyboard.press("m")
-        await asyncio.sleep(0.25)
 
-        for sel in _CHAT_INPUT_SELECTORS:
-            inp = page.locator(sel)
-            if await inp.count() == 0:
-                continue
-            if not await inp.first.is_visible():
-                continue
-            await inp.first.fill(message)
-            await page.keyboard.press("Enter")
-            return True
-        print(f"[chat] WARN: could not locate chat input — message {message!r} not sent")
-        return False
+        inp = page.locator(SEL_CHAT_INPUT)
+        try:
+            await inp.first.wait_for(state="visible", timeout=2000)
+        except Exception:
+            print(f"[chat] WARN: composer input never appeared — message {message!r} not sent")
+            return False
+
+        await inp.first.fill(message)
+        await page.keyboard.press("Enter")
+        return True
     except Exception as e:
         print(f"[chat] WARN: send failed ({e})")
         return False

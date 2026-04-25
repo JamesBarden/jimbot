@@ -335,12 +335,16 @@ async def run(url: str, no_deploy: bool = False):
             hands_played = logger.hands
             profiles.print_summary()
             profiles.save()
-            logger.close()
 
             # Pull the authoritative ledger CSV before the dashboard build
             # so per-session P&L can be sourced from it instead of the
             # error-prone sum-of-bb_delta approximation. Errors are
             # swallowed — ledger fetch is opportunistic.
+            #
+            # NB: keep this BEFORE logger.close() so the [ledger]/[deploy]/
+            # [review] lines tee into console_<stamp>.log alongside the
+            # rest of the session output — otherwise they print only to
+            # the terminal and can scroll out of view.
             if hands_played > 0:
                 ledger_dest = os.path.join(LOG_DIR, f"ledger_{logger.session_id}.csv")
                 try:
@@ -360,6 +364,8 @@ async def run(url: str, no_deploy: bool = False):
             # Print review brief inline so user can paste it into Claude Code
             if hands_played > 0:
                 _print_review_brief()
+
+            logger.close()
 
             # Bound browser-close so a stuck Playwright process can't hang us
             print("[shutdown] closing browser ...")
