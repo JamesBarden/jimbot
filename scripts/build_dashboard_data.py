@@ -96,6 +96,68 @@ def _action_from_summary(s: str) -> str:
     return s.split("/", 1)[0]
 
 
+def _ledger_net_bb(stamp: str, hands: list[dict]) -> float | None:
+    """
+    Authoritative session P&L (in BB) from Logs/ledger_<stamp>.csv.
+
+    The ledger CSV is the only source that captures hands the bot missed
+    (mid-session reloads, busts on un-recorded hands, etc).  When it is
+    present we use it instead of the sum-of-bb_delta approximation.
+
+    Conversion: ledger values are in chips; hands.csv stack/bb values are
+    in displayed dollars.  We derive chips-per-dollar from the bot's
+    first recorded hand: ratio = ledger.buy_in / first_hand.stack_start
+    (rounded to nearest int — typically 100 in cents-mode, 1 otherwise).
+    Then bb_chips = bb_dollars * ratio, and net_bb = ledger.net / bb_chips.
+
+    Returns None when:
+      - no ledger CSV for this session
+      - no recorded hands (can't derive the chip ratio)
+      - jimbot row missing from the ledger
+      - any field is unparseable
+    """
+    fp = os.path.join(LOG_DIR, f"ledger_{stamp}.csv")
+    if not os.path.isfile(fp) or not hands:
+        return None
+    bb_dollars  = _f(hands[0].get("bb"))
+    first_stack = _f(hands[0].get("stack_start"))
+    if bb_dollars <= 0 or first_stack <= 0:
+        return None
+    try:
+        with open(fp) as f:
+            rows = list(csv.DictReader(f))
+    except Exception:
+        return None
+    bot = next((r for r in rows
+                if (r.get("player_nickname") or "").strip().strip('"') == "jimbot"),
+               None)
+    if not bot:
+        return None
+    try:
+        buy_in_chips = float(bot.get("buy_in") or 0)
+        net_chips    = float(bot.get("net")    or 0)
+    except ValueError:
+        return None
+    if buy_in_chips <= 0:
+        return None
+    # Snap to one of pokernow's two real ratios: 1 (no cents mode) or 100
+    # (cents mode).  Naively rounding the raw ratio yields 101 for the
+    # common case where first_stack_start is already post-SB (e.g. 9.95
+    # instead of the true 10.00 buy-in), which shifts every result by ~1%.
+    raw_ratio        = buy_in_chips / first_stack
+    chips_per_dollar = 100 if raw_ratio > 10 else 1
+    chips_per_bb     = bb_dollars * chips_per_dollar
+    if chips_per_bb <= 0:
+        return None
+    return round(net_chips / chips_per_bb, 2)
+
+
+def _effective_pnl(s: dict) -> float:
+    """Use ledger P&L when present, otherwise the bb_delta-sum approximation."""
+    v = s.get("ledger_net_bb")
+    return v if v is not None else _f(s.get("session_pnl_bb"))
+
+
 def _stack_change_bb(hands: list) -> float:
     """
     Final stack minus initial stack, in BB.
@@ -196,21 +258,33 @@ def _session_rollup(stamp: str, decisions: list[dict], hands: list[dict]) -> dic
 
     stack_change_bb       = _stack_change_bb(hands)
     untracked_jumps_bb, untracked_jumps_count = _stack_jumps(hands)
+    ledger_bb             = _ledger_net_bb(stamp, hands)
+
+    # Reconcile the cumulative chart against ledger truth.  The sum of
+    # per-hand bb_delta misses entire un-recorded hands (mid-session
+    # reloads, busts that didn't tick the loop) and so will not equal the
+    # ledger NET.  Append a synthetic "untracked" point for the
+    # difference so the chart's endpoint matches the headline number.
+    if ledger_bb is not None:
+        missing = ledger_bb - bb_total
+        if abs(missing) > 0.5:
+            running += missing
+            pnl.append({"hand_id": "untracked", "bb_delta": round(missing, 3),
+                        "cumulative": round(running, 3)})
 
     return {
         "session_id":       stamp,
         "date":             date,
         "version":          version,
         "hands":            n,
-        # session_pnl_bb is the SUM of per-hand bb_deltas — same number the
-        # cumulative-BB chart and per-session bars are computed from, so
-        # everything on the dashboard tells one story.  This is "chip flow
-        # from recorded hands" — it under-counts when the bot missed
-        # winning hands and over-counts when it missed losing hands.  The
-        # pokernow ledger is the only source of authoritative session P&L
-        # (v1.7 will scrape it).
+        # session_pnl_bb is the SUM of per-hand bb_deltas — chip flow from
+        # recorded hands only.  Under-counts when the bot missed winning
+        # hands and over-counts when it missed losing hands.  Kept on the
+        # record for diagnostic comparison; ledger_net_bb (when present)
+        # is the authoritative number the dashboard headlines use.
         "session_pnl_bb":   round(bb_total, 2),
-        "bb_per_100":       round(bb_total / n * 100, 2) if n > 0 else 0,
+        "ledger_net_bb":    ledger_bb,
+        "bb_per_100":       round((ledger_bb if ledger_bb is not None else bb_total) / n * 100, 2) if n > 0 else 0,
         # Diagnostic only: stack-change view (last_end - first_start) and
         # the untracked-jump count.  When these differ from session_pnl_bb
         # by a lot, the bot missed hand boundaries this session — verify
@@ -241,9 +315,10 @@ def _aggregate(sessions: list) -> dict:
         return {"sessions": [], "overall": {}, "versions": [], "generated_at": datetime.now().isoformat(timespec="seconds")}
 
     total_hands  = sum(s["hands"] for s in sessions)
-    total_pnl    = sum(s["session_pnl_bb"] for s in sessions)
-    winning_s    = sum(1 for s in sessions if s["session_pnl_bb"] > 0)
-    losing_s     = sum(1 for s in sessions if s["session_pnl_bb"] < 0)
+    total_pnl    = sum(_effective_pnl(s) for s in sessions)
+    winning_s    = sum(1 for s in sessions if _effective_pnl(s) > 0)
+    losing_s     = sum(1 for s in sessions if _effective_pnl(s) < 0)
+    ledgered_s   = sum(1 for s in sessions if s.get("ledger_net_bb") is not None)
 
     # Per-version rollup
     by_ver = defaultdict(list)
@@ -252,7 +327,7 @@ def _aggregate(sessions: list) -> dict:
     versions = []
     for ver, ss in sorted(by_ver.items(), key=lambda kv: kv[0]):
         h_sum    = sum(s["hands"] for s in ss)
-        pnl_sum  = sum(s["session_pnl_bb"] for s in ss)
+        pnl_sum  = sum(_effective_pnl(s) for s in ss)
         versions.append({
             "version":    ver,
             "sessions":   len(ss),
@@ -284,8 +359,13 @@ def _aggregate(sessions: list) -> dict:
 
     overall = {
         "hands":           total_hands,
-        "session_pnl_bb":  round(total_pnl, 2),
-        "bb_per_100":      round(total_pnl / total_hands * 100, 2) if total_hands else 0,
+        # session_pnl_bb at this level is "best available P&L" — ledger
+        # NET when we have it, otherwise the sum-of-bb_delta fallback.
+        # The dashboard JS reads this field directly; ledgered_sessions
+        # tells it how many sessions are ledger-verified.
+        "session_pnl_bb":   round(total_pnl, 2),
+        "bb_per_100":       round(total_pnl / total_hands * 100, 2) if total_hands else 0,
+        "ledgered_sessions": ledgered_s,
         "sessions":        len(sessions),
         "winning_sessions": winning_s,
         "losing_sessions":  losing_s,

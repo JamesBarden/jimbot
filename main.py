@@ -30,6 +30,7 @@ from hand_tracker import HandTracker
 from hand_context import HandContext
 from opponent_profiles import ProfileRegistry
 from session_logger import SessionLogger
+from ledger_fetch import fetch_ledger
 
 POLL_INTERVAL = 1.0   # seconds between state checks
 ACTION_DELAY  = 1.2   # seconds to wait before acting (looks more human)
@@ -131,7 +132,7 @@ async def run(url: str, no_deploy: bool = False):
         print("Bot is running. Press Ctrl+C to stop.\n")
 
         # Session-level objects
-        logger      = SessionLogger(LOG_DIR)
+        logger      = SessionLogger(LOG_DIR, game_url=url)
         profile_path = os.path.join(LOG_DIR, "profiles.json")
         profiles    = ProfileRegistry(persist_path=profile_path)
 
@@ -329,6 +330,18 @@ async def run(url: str, no_deploy: bool = False):
             profiles.print_summary()
             profiles.save()
             logger.close()
+
+            # Pull the authoritative ledger CSV before the dashboard build
+            # so per-session P&L can be sourced from it instead of the
+            # error-prone sum-of-bb_delta approximation. Errors are
+            # swallowed — ledger fetch is opportunistic.
+            if hands_played > 0:
+                ledger_dest = os.path.join(LOG_DIR, f"ledger_{logger.session_id}.csv")
+                try:
+                    if fetch_ledger(url, ledger_dest):
+                        print(f"[ledger] saved → {ledger_dest}")
+                except Exception as e:
+                    print(f"[ledger] WARN: save failed ({e})")
 
             # Auto-deploy: only meaningful if there's new data and flags allow
             if hands_played == 0:

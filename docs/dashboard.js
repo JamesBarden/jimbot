@@ -82,9 +82,14 @@
 
   // ── overview section ───────────────────────────────────────────────
   function renderOverview(overall, sessions) {
+    const ledgered  = overall.ledgered_sessions || 0;
+    const totalSess = overall.sessions || 0;
+    const verifiedHint = ledgered === totalSess && ledgered > 0
+      ? 'all sessions ledger-verified'
+      : `${ledgered} of ${totalSess} ledger-verified`;
     const cards = [
       card('Total hands',      overall.hands, `${overall.sessions} sessions`, 'accent'),
-      card('Session P&L (BB)', fmt_bb(overall.session_pnl_bb), 'approximate — verify vs ledger'),
+      card('Session P&L (BB)', fmt_bb(overall.session_pnl_bb), verifiedHint),
       card('BB / 100',         fmt_bb(overall.bb_per_100)),
       card('Winning sessions', `${overall.winning_sessions}`, `of ${overall.sessions} (${fmt_pct(overall.winning_sessions / Math.max(1, overall.sessions))})`, ''),
       card('WTSD',             fmt_pct(overall.wtsd_avg), 'avg across sessions'),
@@ -125,15 +130,18 @@
       },
     });
 
-    // BB delta per session
+    // BB delta per session — prefer ledger NET when available, fall back
+    // to the bb_delta-sum approximation for sessions without a ledger.
+    const sessPnl = s => (s.ledger_net_bb !== null && s.ledger_net_bb !== undefined)
+                          ? s.ledger_net_bb : s.session_pnl_bb;
     new Chart($('#chart-sessions-bb'), {
       type: 'bar',
       data: {
         labels: sessions.map(s => s.session_id.slice(5, 16)),
         datasets: [{
           label: 'BB',
-          data: sessions.map(s => s.session_pnl_bb),
-          backgroundColor: sessions.map(s => s.session_pnl_bb >= 0 ? PALETTE.good : PALETTE.bad),
+          data: sessions.map(sessPnl),
+          backgroundColor: sessions.map(s => sessPnl(s) >= 0 ? PALETTE.good : PALETTE.bad),
         }],
       },
       options: {
@@ -240,14 +248,20 @@
   // ── sessions section ───────────────────────────────────────────────
   function renderSessions(sessions) {
     $('#sessions-table tbody').innerHTML = sessions.slice().reverse().map(s => {
-      const jumps = s.untracked_jumps_count || 0;
+      const jumps      = s.untracked_jumps_count || 0;
+      const hasLedger  = s.ledger_net_bb !== null && s.ledger_net_bb !== undefined;
+      const pnl        = hasLedger ? s.ledger_net_bb : s.session_pnl_bb;
+      const pnlTitle   = hasLedger
+        ? `ledger-verified (recorded ${fmt_bb(s.session_pnl_bb)})`
+        : 'recorded only — no ledger';
+      const pnlMarker  = hasLedger ? '✓ ' : '';
       return `
       <tr>
         <td>${s.date}</td>
         <td>${s.session_id}</td>
         <td>${s.version}</td>
         <td class="num">${s.hands}</td>
-        <td class="num ${pos_neg(s.session_pnl_bb)}">${fmt_bb(s.session_pnl_bb)}</td>
+        <td class="num ${pos_neg(pnl)}" title="${pnlTitle}">${pnlMarker}${fmt_bb(pnl)}</td>
         <td class="num ${pos_neg(s.bb_per_100)}">${fmt_bb(s.bb_per_100)}</td>
         <td class="num">${fmt_pct(s.winrate)}</td>
         <td class="num">${fmt_pct(s.wtsd)}</td>

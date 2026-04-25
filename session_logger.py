@@ -12,6 +12,7 @@ showdown rate) and prints a running summary after each hand.
 All writes are line-buffered and opened in append mode so a mid-session
 crash still leaves a usable file.
 """
+from __future__ import annotations
 import csv
 import json
 import os
@@ -55,15 +56,17 @@ class _Tee:
 
 
 class SessionLogger:
-    def __init__(self, log_dir: str):
+    def __init__(self, log_dir: str, game_url: str | None = None):
         os.makedirs(log_dir, exist_ok=True)
         stamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
         self.log_dir      = log_dir
         self.version      = _read_version()
         self.session_id   = stamp
+        self.game_url     = game_url
         self.decisions_fp = os.path.join(log_dir, f"decisions_{stamp}.jsonl")
         self.hands_fp     = os.path.join(log_dir, f"hands_{stamp}.csv")
         self.console_fp   = os.path.join(log_dir, f"console_{stamp}.log")
+        self.meta_fp      = os.path.join(log_dir, f"session_{stamp}.json")
 
         self._decisions   = open(self.decisions_fp, "a", buffering=1)
         self._console     = open(self.console_fp,   "a", buffering=1)
@@ -90,10 +93,25 @@ class SessionLogger:
         self.hands_won          = 0   # stack delta > 0
         self.session_start      = datetime.now()
 
+        # Per-session metadata file — game_url is needed at shutdown to
+        # fetch the authoritative ledger CSV. Versioned beside the rest of
+        # the per-session artifacts so the dashboard can pair them up.
+        try:
+            with open(self.meta_fp, "w") as f:
+                json.dump({
+                    "session_id": self.session_id,
+                    "version":    self.version,
+                    "game_url":   game_url,
+                    "started_at": datetime.now().isoformat(timespec="seconds"),
+                }, f, indent=2)
+        except Exception as e:
+            print(f"[logger] WARN: failed to write meta {self.meta_fp}: {e}")
+
         print(f"[logger] version={self.version}  session={self.session_id}")
         print(f"[logger] decisions → {self.decisions_fp}")
         print(f"[logger] hands     → {self.hands_fp}")
         print(f"[logger] console   → {self.console_fp}")
+        print(f"[logger] meta      → {self.meta_fp}")
 
     # ── decision stream ──────────────────────────────────────────────────────
 
