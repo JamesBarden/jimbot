@@ -64,6 +64,11 @@ class HandContext:
 
     streets: dict[str, StreetRecord] = field(default_factory=lambda: {s: StreetRecord() for s in STREETS})
 
+    # Snapshot of the active villain set at the FIRST observation of each street.
+    # Used to do multiway-safe attribution: anyone in flop set but not in turn set
+    # folded the flop, anyone in turn set but not in river set folded the turn, etc.
+    villains_per_street: dict[str, frozenset] = field(default_factory=dict)
+
     # Running view of who is the "preflop aggressor" — updated each time
     # somebody raises preflop. 'hero', 'villain', or None.
     preflop_aggressor: Optional[str] = None
@@ -88,6 +93,9 @@ class HandContext:
                 # Advance high-water mark when we see a later street
                 if STREETS.index(s) > STREETS.index(self.reached_street):
                     self.reached_street = s
+            # First observation of this street → snapshot who's still in the hand
+            if s not in self.villains_per_street:
+                self.villains_per_street[s] = frozenset(state.villain_names)
 
         rec = self.streets[s] if s in self.streets else None
         if rec is None:

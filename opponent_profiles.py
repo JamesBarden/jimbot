@@ -45,26 +45,31 @@ SAMPLE_THRESHOLD = 8   # below this many hands, tier = 'random'
 @dataclass
 class OpponentProfile:
     username: str
-    hands_observed:  int = 0
-    hands_vpip:      int = 0
-    hands_pfr:       int = 0
-    three_bet_ops:   int = 0
-    three_bets:      int = 0
-    flops_seen:      int = 0
-    cbet_faced:      int = 0
-    fold_to_cbet:    int = 0
-    postflop_bets:   int = 0
-    postflop_calls:  int = 0
+    hands_observed:  int = 0    # at table for this hand
+    hands_vpip:      int = 0    # HU-only attribution
+    hands_pfr:       int = 0    # HU-only attribution
+    three_bet_ops:   int = 0    # HU-only
+    three_bets:      int = 0    # HU-only
+    flops_seen:      int = 0    # multiway-safe: present at start of flop
+    turns_seen:      int = 0    # multiway-safe: present at start of turn
+    rivers_seen:     int = 0    # multiway-safe: present at start of river
+    cbet_faced:      int = 0    # multiway-safe: hero was PFA + bet flop, V was at flop start
+    fold_to_cbet:    int = 0    # multiway-safe: faced cbet AND not at turn start
+    postflop_bets:   int = 0    # HU-only
+    postflop_calls:  int = 0    # HU-only
+    hu_hands:        int = 0    # # of hands observed where we were heads-up
+    multiway_hands:  int = 0    # # of hands observed in 3+ way pots
 
     # ── derived ──────────────────────────────────────────────────────────────
 
     @property
     def vpip(self) -> float:
-        return self.hands_vpip / max(1, self.hands_observed)
+        # Use HU-attributed sample only — multiway can't disambiguate which villain VPIP'd
+        return self.hands_vpip / max(1, self.hu_hands)
 
     @property
     def pfr(self) -> float:
-        return self.hands_pfr / max(1, self.hands_observed)
+        return self.hands_pfr / max(1, self.hu_hands)
 
     @property
     def three_bet_rate(self) -> float:
@@ -78,27 +83,47 @@ class OpponentProfile:
     def fold_cbet_rate(self) -> float:
         return self.fold_to_cbet / max(1, self.cbet_faced)
 
+    @property
+    def saw_flop_rate(self) -> float:
+        """Multiway-safe looseness proxy: how often this opponent reached a flop."""
+        return self.flops_seen / max(1, self.hands_observed)
+
     def tier(self) -> str:
-        """Map session stats to one of the engine's 5 tiers."""
+        """
+        Map session stats to one of the engine's 5 tiers.
+
+        Prefers VPIP from HU sample when we have ≥SAMPLE_THRESHOLD HU hands.
+        Falls back to saw_flop_rate from the (multiway-inclusive) total sample
+        when HU sample is too small but we've seen the player a lot multiway.
+        """
         if self.hands_observed < SAMPLE_THRESHOLD:
             return "random"
 
-        vp = self.vpip
-        if   vp < 0.15:   base = "tight"
-        elif vp < 0.30:   base = "medium" if self.pfr >= vp * 0.6 else "tight"
-        elif vp < 0.50:   base = "medium" if self.af  <= 2.0      else "wide"
-        else:             base = "wide"
+        # If we have enough HU data, use the precise stats
+        if self.hu_hands >= SAMPLE_THRESHOLD:
+            vp = self.vpip
+            if   vp < 0.15:   base = "tight"
+            elif vp < 0.30:   base = "medium" if self.pfr >= vp * 0.6 else "tight"
+            elif vp < 0.50:   base = "medium" if self.af  <= 2.0      else "wide"
+            else:             base = "wide"
+            if self.af > 3.5 and base != "wide":
+                base = "wide"
+            return base
 
-        # Very aggressive opponents slide one tier looser in practice
-        if self.af > 3.5 and base != "wide":
-            base = "wide"
-
-        return base
+        # Fall back to the multiway-safe looseness proxy
+        sf = self.saw_flop_rate
+        if sf < 0.20: return "tight"
+        if sf < 0.40: return "medium"
+        return "wide"
 
     def short(self) -> str:
-        return (f"{self.username}: {self.hands_observed}h  "
-                f"VPIP {self.vpip:.0%}  PFR {self.pfr:.0%}  "
-                f"AF {self.af:.1f}  → {self.tier()}")
+        if self.hu_hands >= SAMPLE_THRESHOLD:
+            return (f"{self.username}: {self.hands_observed}h "
+                    f"({self.hu_hands}HU)  VPIP {self.vpip:.0%}  "
+                    f"PFR {self.pfr:.0%}  AF {self.af:.1f}  → {self.tier()}")
+        return (f"{self.username}: {self.hands_observed}h "
+                f"({self.multiway_hands} multiway)  saw_flop {self.saw_flop_rate:.0%}  "
+                f"→ {self.tier()}")
 
 
 class ProfileRegistry:
@@ -155,63 +180,72 @@ class ProfileRegistry:
 
     def ingest_hand(self, ctx) -> None:
         """
-        Increment stats for every opponent seated at this hand.
-        Uses only what the state-delta inference in HandContext observed — so
-        stats for multi-way pots are approximate (we can't tell which specific
-        opponent did what from state deltas alone).
+        Update each opponent's session-level stats from a completed hand.
 
-        For each opponent we can credit only coarse observations:
-          - hands_observed: always +1
-          - flops_seen: +1 if the hand reached the flop with them still in
-          - cbet/postflop stats: only credited to the single opponent in
-            heads-up pots (num_opponents_at_start == 1)
-          - vpip/pfr: only inferred in HU pots where we can attribute the
-            non-hero action to the one remaining villain
+        Two attribution paths:
+
+        (1) Multiway-safe — credited to every opponent based on per-street
+            presence snapshots in ctx.villains_per_street:
+              - hands_observed
+              - flops_seen / turns_seen / rivers_seen
+              - cbet_faced (hero PFA + bet flop, villain at flop start)
+              - fold_to_cbet (faced cbet AND not at turn start)
+
+        (2) HU-only — credited only when len(villain_names) == 1 because we
+            can't disambiguate from state deltas alone:
+              - hands_vpip, hands_pfr
+              - three_bet_ops, three_bets
+              - postflop_bets / postflop_calls (drives AF)
         """
         if not ctx.villain_names:
             return
 
-        hu = len(ctx.villain_names) == 1
-        pfa_villain = ctx.preflop_aggressor == "villain"
+        hu              = len(ctx.villain_names) == 1
+        pfa_villain     = ctx.preflop_aggressor == "villain"
+        pfa_hero        = ctx.preflop_aggressor == "hero"
+        hero_cbet_flop  = pfa_hero and ctx.hero_cbet("flop")
+
+        flop_set        = ctx.villains_per_street.get("flop",  frozenset())
+        turn_set        = ctx.villains_per_street.get("turn",  frozenset())
+        river_set       = ctx.villains_per_street.get("river", frozenset())
 
         for name in ctx.villain_names:
             p = self.get(name)
             p.hands_observed += 1
+            if hu:  p.hu_hands       += 1
+            else:   p.multiway_hands += 1
 
-            if ctx.reached_street in ("flop", "turn", "river"):
-                p.flops_seen += 1
+            # ── Multiway-safe per-street presence ────────────────────────
+            if name in flop_set:   p.flops_seen  += 1
+            if name in turn_set:   p.turns_seen  += 1
+            if name in river_set:  p.rivers_seen += 1
 
+            # ── Multiway-safe c-bet stats ────────────────────────────────
+            # Each villain present at flop start when hero c-bets faced the
+            # same c-bet — attribution is unambiguous.
+            if hero_cbet_flop and name in flop_set:
+                p.cbet_faced += 1
+                if name not in turn_set:
+                    p.fold_to_cbet += 1
+
+            # ── HU-only attribution below ───────────────────────────────
             if not hu:
-                # Multi-way: no attribution beyond hand count / flop_seen
                 continue
 
-            # Heads-up inference below
             pre = ctx.streets["preflop"]
-            # Preflop VPIP — villain put money in voluntarily: either they
-            # raised (hero sees to_call > bb) or they called a hero raise.
-            if pfa_villain or (ctx.preflop_aggressor == "hero" and not pre.villain_bet
+            # VPIP: villain put money in voluntarily
+            if pfa_villain or (pfa_hero and not pre.villain_bet
                                and ctx.reached_street != "preflop"):
                 p.hands_vpip += 1
             if pfa_villain:
                 p.hands_pfr += 1
-                # If hero also raised preflop, villain faced a 3bet opportunity
                 if pre.hero_bet:
                     p.three_bet_ops += 1
-                    # (3bet itself would be a second villain raise — not tracked
-                    #  from state deltas alone; leave 0)
 
-            # C-bet stats (flop only): hero was PFA and bet the flop.
-            if pfa_villain is False and ctx.hero_cbet("flop"):
-                flop = ctx.streets["flop"]
-                p.cbet_faced += 1
-                # Villain folded to cbet if hand ended on the flop and hero bet
-                if ctx.reached_street == "flop":
-                    p.fold_to_cbet += 1
-
-            # Postflop aggression — approximate from villain_bet flags
+            # Postflop aggression (HU-only)
             for s in ("flop", "turn", "river"):
                 rec = ctx.streets[s]
                 if rec.villain_bet:
                     p.postflop_bets += 1
                 if rec.hero_bet and not rec.villain_bet and rec.villain_checks > 0:
-                    p.postflop_calls += 1   # they check-called or checked behind
+                    p.postflop_calls += 1

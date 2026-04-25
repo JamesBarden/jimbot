@@ -30,9 +30,10 @@ LOG_DIR  = os.path.join(ROOT, "Logs")
 OUT_DIR  = os.path.join(ROOT, "docs", "data")
 OUT_FP   = os.path.join(OUT_DIR, "metrics.json")
 
-# Make 'anonymize' importable when running as a script
-sys.path.insert(0, ROOT)
-from anonymize import anon   # noqa: E402
+# Real opponent usernames are committed to the dashboard data; anonymization
+# was removed so the dashboard can show actual handles. If you ever want
+# anonymization back, re-import `from anonymize import anon` and wrap
+# `_session_rollup` opponent counters in anon().
 
 
 # ── file discovery ──────────────────────────────────────────────────────────
@@ -136,11 +137,11 @@ def _session_rollup(stamp: str, decisions: list[dict], hands: list[dict]) -> dic
         phase_action[ph][d.get("action", "?")] += 1
         roll_values.append(_f(d.get("roll")))
 
-    # Opponent list (anonymized)
+    # Opponent list — real usernames straight through
     opponents_seen = Counter()
     for h in hands:
         for name in _parse_villain_names(h.get("villain_names", "")):
-            opponents_seen[anon(name)] += 1
+            opponents_seen[name] += 1
 
     # Cumulative P&L series — one point per hand in order
     pnl = []
