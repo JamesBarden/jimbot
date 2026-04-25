@@ -445,9 +445,20 @@ def decide(state: GameState, opponent_tier: str = "random",
     _is_committed = (state.to_call > 0 and state.my_stack > 0
                      and state.to_call > state.my_stack * 0.6)
     if _is_jam or _is_committed:
+        # When stack <= to_call, "raising" IS calling all-in — preserve the
+        # strategy's commit-chips intent by transferring raise_freq into
+        # call_freq instead of evaporating it.
+        call_freq    += raise_freq
         raise_freq    = 0.0
-        pot_odds_frac = state.to_call / (state.pot + state.to_call)
-        total         = call_freq + fold_freq
+
+        # Pot-odds calc with a fallback for the scraper-misreads-pot=0 case.
+        # When pot reads as 0 (transient DOM state), assume pot ≈ to_call
+        # (a typical jam-into-blinds situation), giving pot_odds ≈ 50% —
+        # neutral instead of the catastrophic 100%.
+        effective_pot = state.pot if state.pot > 0 else state.to_call
+        pot_odds_frac = state.to_call / (state.to_call + effective_pot)
+
+        total = call_freq + fold_freq
         if total > 0:
             call_freq /= total
             fold_freq /= total
