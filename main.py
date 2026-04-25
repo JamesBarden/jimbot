@@ -87,6 +87,34 @@ def _autodeploy():
               f"run manually: python3 scripts/deploy_session.py")
 
 
+def _print_review_brief():
+    """
+    Run scripts/review_session.py inline so the user sees the post-session
+    brief (top winning/losing hands, decision-source breakdown, ASK-CLAUDE
+    footer) without having to run a second command. Errors are swallowed —
+    review brief is a nice-to-have, not load-bearing.
+    """
+    script = os.path.join(HERE, "scripts", "review_session.py")
+    if not os.path.isfile(script):
+        return
+    print()
+    print("=" * 72)
+    print("SESSION REVIEW BRIEF (paste below into Claude Code for tuning advice)")
+    print("=" * 72)
+    try:
+        subprocess.run(
+            [sys.executable, script],
+            cwd=HERE,
+            timeout=15,
+        )
+    except subprocess.TimeoutExpired:
+        print("[review] WARN: review script timed out — run manually: "
+              "python3 scripts/review_session.py")
+    except Exception as e:
+        print(f"[review] WARN: review failed ({e}) — "
+              f"run manually: python3 scripts/review_session.py")
+
+
 async def run(url: str, no_deploy: bool = False):
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=False, slow_mo=50)
@@ -300,8 +328,6 @@ async def run(url: str, no_deploy: bool = False):
             hands_played = logger.hands
             profiles.print_summary()
             profiles.save()
-            print(f"[review] analyze this session:  "
-                  f"python3 scripts/review_session.py")
             logger.close()
 
             # Auto-deploy: only meaningful if there's new data and flags allow
@@ -312,7 +338,19 @@ async def run(url: str, no_deploy: bool = False):
             else:
                 _autodeploy()
 
-            await browser.close()
+            # Print review brief inline so user can paste it into Claude Code
+            if hands_played > 0:
+                _print_review_brief()
+
+            # Bound browser-close so a stuck Playwright process can't hang us
+            print("[shutdown] closing browser ...")
+            try:
+                await asyncio.wait_for(browser.close(), timeout=10.0)
+            except asyncio.TimeoutError:
+                print("[shutdown] browser close timed out (>10s) — force-exiting")
+            except Exception as e:
+                print(f"[shutdown] browser close error: {e}")
+            print(f"[session] ended — {hands_played} hands played")
 
 
 if __name__ == "__main__":
