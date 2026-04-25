@@ -125,6 +125,54 @@ async def _click_preset(page: Page, amount: int, pot: int, my_stack: int):
     await btns.nth(0).click()
 
 
+# Chat composer selectors aren't fully nailed (the input only renders
+# once the composer opens) — try the likely candidates and bail quietly
+# if none match. Keep the list ordered most-specific → broad.
+_CHAT_INPUT_SELECTORS = [
+    "textarea.chat-input",
+    ".chat-container textarea",
+    ".chat textarea",
+    "textarea[placeholder*='message' i]",
+    ".chat-container input[type='text']",
+    "[class*='chat'] textarea",
+]
+
+
+async def send_chat_message(page: Page, message: str) -> bool:
+    """
+    Best-effort send of a chat message. Returns True on success.
+
+    Flow: click `.chat-new-message-button` to open the composer (falls
+    back to keypress 'm' if the button isn't found), type the message
+    into whichever input selector matches first, press Enter to send.
+
+    Never raises — chat is cosmetic, not load-bearing. Failures are
+    logged but the main loop continues.
+    """
+    try:
+        btn = page.locator(".chat-new-message-button")
+        if await btn.count() > 0:
+            await btn.first.click()
+        else:
+            await page.keyboard.press("m")
+        await asyncio.sleep(0.25)
+
+        for sel in _CHAT_INPUT_SELECTORS:
+            inp = page.locator(sel)
+            if await inp.count() == 0:
+                continue
+            if not await inp.first.is_visible():
+                continue
+            await inp.first.fill(message)
+            await page.keyboard.press("Enter")
+            return True
+        print(f"[chat] WARN: could not locate chat input — message {message!r} not sent")
+        return False
+    except Exception as e:
+        print(f"[chat] WARN: send failed ({e})")
+        return False
+
+
 async def execute(page: Page, action: str, amount: int = 0, pot: int = 0, my_stack: int = 0):
     print(f"  → {action.upper()}" + (f" {amount}" if amount else ""))
     if action == "fold":

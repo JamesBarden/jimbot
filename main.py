@@ -150,7 +150,7 @@ async def run(url: str, no_deploy: bool = False):
         STUCK_TIMEOUT   = 30
         HEARTBEAT_EVERY = 10
 
-        def finalize_hand(current_state):
+        async def finalize_hand(current_state):
             """Called when a new hand is detected — closes out the previous one."""
             nonlocal hand_ctx
             if hand_ctx is None or current_state is None:
@@ -163,6 +163,12 @@ async def run(url: str, no_deploy: bool = False):
             )
             logger.log_hand(row)
             profiles.ingest_hand(hand_ctx)
+            # Sportsmanship: type "nhnh" in chat after every winning hand.
+            try:
+                if float(row.get("stack_delta") or 0) > 0:
+                    await actions.send_chat_message(page, "nhnh")
+            except Exception as e:
+                print(f"[chat] WARN: post-win send skipped ({e})")
             hand_ctx = None
 
         try:
@@ -201,7 +207,7 @@ async def run(url: str, no_deploy: bool = False):
                     hole_key = tuple(str(c) for c in state.hole_cards)
                     if hole_key != last_hole_key:
                         dbg(f"new hand detected: {' '.join(hole_key)}")
-                        finalize_hand(state)
+                        await finalize_hand(state)
 
                         hand_ctx = HandContext(
                             hand_id       = datetime.now().strftime("%H%M%S") + "_" + "".join(hole_key),
@@ -325,7 +331,7 @@ async def run(url: str, no_deploy: bool = False):
         finally:
             # Close out the in-progress hand if there is one
             if hand_ctx is not None and last_state is not None:
-                finalize_hand(last_state)
+                await finalize_hand(last_state)
             hands_played = logger.hands
             profiles.print_summary()
             profiles.save()
