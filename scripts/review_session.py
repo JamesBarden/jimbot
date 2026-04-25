@@ -111,9 +111,41 @@ def _session_summary(hands: list[dict]) -> list[str]:
     showdowns  = sum(1 for h in hands if h.get("reached_street") == "river")
     wins       = sum(1 for d in deltas if d > 0)
     total_bb   = sum(bb_deltas)
-    out.append(f"  hands={n}  bb/100={total_bb/n*100:+.1f}  "
-               f"wtsd={showdowns/n:.0%}  won={wins/n:.0%}  "
-               f"total_bb={total_bb:+.1f}")
+
+    # Detect untracked stack jumps (could be missed-win hands or rebuys —
+    # we can't distinguish from state-delta alone)
+    jumps_bb = 0.0
+    jump_count = 0
+    for i in range(1, len(hands)):
+        try:
+            prev_end = float(hands[i-1].get("stack_end") or 0)
+            cur_start = float(hands[i].get("stack_start") or 0)
+            bb_val = float(hands[i].get("bb") or 0)
+        except ValueError:
+            continue
+        if bb_val > 0 and abs(cur_start - prev_end) > bb_val * 3:
+            jumps_bb += (cur_start - prev_end) / bb_val
+            jump_count += 1
+
+    # session P&L approximated from stack change (less wrong than sum-of-deltas)
+    if hands:
+        try:
+            first_start = float(hands[0]["stack_start"])
+            last_end    = float(hands[-1]["stack_end"])
+            bb_val      = float(hands[0]["bb"])
+            stack_change = (last_end - first_start) / bb_val if bb_val else 0
+        except (ValueError, KeyError):
+            stack_change = total_bb
+    else:
+        stack_change = 0
+
+    out.append(f"  hands={n}  bb/100={stack_change/n*100:+.1f}  "
+               f"wtsd={showdowns/n:.0%}  won={wins/n:.0%}")
+    out.append(f"  session P&L (stack change): {stack_change:+.1f}bb"
+               f"   recorded chip flow: {total_bb:+.1f}bb")
+    if jump_count > 0:
+        out.append(f"  ⚠  {jump_count} untracked stack jump(s) totalling {jumps_bb:+.1f}bb"
+                   f" — likely missed hands. Verify P&L against pokernow ledger.")
     if hands:
         best  = max(hands, key=lambda h: float(h["bb_delta"] or 0))
         worst = min(hands, key=lambda h: float(h["bb_delta"] or 0))

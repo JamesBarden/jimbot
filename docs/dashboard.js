@@ -84,7 +84,7 @@
   function renderOverview(overall, sessions) {
     const cards = [
       card('Total hands',      overall.hands, `${overall.sessions} sessions`, 'accent'),
-      card('Total BB',         fmt_bb(overall.total_bb)),
+      card('Session P&L (BB)', fmt_bb(overall.session_pnl_bb), 'approximate — verify vs ledger'),
       card('BB / 100',         fmt_bb(overall.bb_per_100)),
       card('Winning sessions', `${overall.winning_sessions}`, `of ${overall.sessions} (${fmt_pct(overall.winning_sessions / Math.max(1, overall.sessions))})`, ''),
       card('WTSD',             fmt_pct(overall.wtsd_avg), 'avg across sessions'),
@@ -129,16 +129,16 @@
     new Chart($('#chart-sessions-bb'), {
       type: 'bar',
       data: {
-        labels: sessions.map(s => s.session_id.slice(5, 16)),   // shorten timestamp
+        labels: sessions.map(s => s.session_id.slice(5, 16)),
         datasets: [{
           label: 'BB',
-          data: sessions.map(s => s.total_bb),
-          backgroundColor: sessions.map(s => s.total_bb >= 0 ? PALETTE.good : PALETTE.bad),
+          data: sessions.map(s => s.session_pnl_bb),
+          backgroundColor: sessions.map(s => s.session_pnl_bb >= 0 ? PALETTE.good : PALETTE.bad),
         }],
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        scales: { y: { title: { display: true, text: 'BB' } } },
+        scales: { y: { title: { display: true, text: 'Session P&L (BB)' } } },
         plugins: { legend: { display: false } },
       },
     });
@@ -201,7 +201,7 @@
         <td>${v.version}</td>
         <td class="num">${v.sessions}</td>
         <td class="num">${v.hands}</td>
-        <td class="num ${pos_neg(v.total_bb)}">${fmt_bb(v.total_bb)}</td>
+        <td class="num ${pos_neg(v.session_pnl_bb)}">${fmt_bb(v.session_pnl_bb)}</td>
         <td class="num ${pos_neg(v.bb_per_100)}">${fmt_bb(v.bb_per_100)}</td>
         <td class="num">${fmt_pct(v.winrate)}</td>
         <td class="num">${fmt_pct(v.wtsd)}</td>
@@ -239,17 +239,20 @@
 
   // ── sessions section ───────────────────────────────────────────────
   function renderSessions(sessions) {
-    $('#sessions-table tbody').innerHTML = sessions.slice().reverse().map(s => `
+    $('#sessions-table tbody').innerHTML = sessions.slice().reverse().map(s => {
+      const jumps = s.untracked_jumps_count || 0;
+      return `
       <tr>
         <td>${s.date}</td>
         <td>${s.session_id}</td>
         <td>${s.version}</td>
         <td class="num">${s.hands}</td>
-        <td class="num ${pos_neg(s.total_bb)}">${fmt_bb(s.total_bb)}</td>
+        <td class="num ${pos_neg(s.session_pnl_bb)}">${fmt_bb(s.session_pnl_bb)}</td>
         <td class="num ${pos_neg(s.bb_per_100)}">${fmt_bb(s.bb_per_100)}</td>
         <td class="num">${fmt_pct(s.winrate)}</td>
         <td class="num">${fmt_pct(s.wtsd)}</td>
-      </tr>
-    `).join('');
+        <td class="num" title="untracked stack jumps — possible missed hands">${jumps || '-'}</td>
+      </tr>`;
+    }).join('');
   }
 })();

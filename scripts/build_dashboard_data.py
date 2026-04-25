@@ -96,6 +96,49 @@ def _action_from_summary(s: str) -> str:
     return s.split("/", 1)[0]
 
 
+def _stack_change_bb(hands: list) -> float:
+    """
+    Final stack minus initial stack, in BB.
+
+    This is an APPROXIMATION of session P&L.  It's wrong when:
+      - The bot misses hand boundaries (stack jumps go uncounted)
+      - The user rebuys mid-session (jumps look like wins)
+    The pokernow ledger panel is the only authoritative source.  v1.6 will
+    scrape it; until then, treat this number as "rough" and verify against
+    the in-game ledger.
+    """
+    if not hands:
+        return 0.0
+    bb_val = _f(hands[0].get("bb"))
+    if bb_val <= 0:
+        return 0.0
+    first = _f(hands[0].get("stack_start"))
+    last  = _f(hands[-1].get("stack_end"))
+    return (last - first) / bb_val
+
+
+def _stack_jumps(hands: list) -> tuple:
+    """
+    Count untracked stack jumps between recorded hands.  Positive jump =
+    likely a missed-win hand or a manual rebuy (we can't distinguish from
+    state-delta alone).  Returns (total_jumps_bb, jump_count) — informational
+    only, not used for P&L.
+    """
+    total = 0.0
+    count = 0
+    for i in range(1, len(hands)):
+        prev_end  = _f(hands[i-1].get("stack_end"))
+        cur_start = _f(hands[i].get("stack_start"))
+        bb_val    = _f(hands[i].get("bb"))
+        if bb_val <= 0:
+            continue
+        gap = cur_start - prev_end
+        if abs(gap) > bb_val * 3:    # only count meaningful jumps
+            total += gap / bb_val
+            count += 1
+    return total, count
+
+
 def _session_rollup(stamp: str, decisions: list[dict], hands: list[dict]) -> dict:
     version = (hands[0]["version"] if hands else
                (decisions[0].get("version", "unknown") if decisions else "unknown"))
@@ -151,13 +194,26 @@ def _session_rollup(stamp: str, decisions: list[dict], hands: list[dict]) -> dic
         pnl.append({"hand_id": h.get("hand_id"), "bb_delta": round(_f(h.get("bb_delta")), 3),
                     "cumulative": round(running, 3)})
 
+    stack_change_bb       = _stack_change_bb(hands)
+    untracked_jumps_bb, untracked_jumps_count = _stack_jumps(hands)
+
     return {
         "session_id":       stamp,
         "date":             date,
         "version":          version,
         "hands":            n,
-        "total_bb":         round(bb_total, 2),
-        "bb_per_100":       round(bb_total / n * 100, 2) if n > 0 else 0,
+        # Approximate session P&L — final stack minus initial stack in BB.
+        # Wrong when hands are missed or rebuys happened.  Compare against
+        # the pokernow ledger for the truth.
+        "session_pnl_bb":   round(stack_change_bb, 2),
+        "bb_per_100":       round(stack_change_bb / n * 100, 2) if n > 0 else 0,
+        # Sum of bb_delta — total chip flow attributable to recorded hands.
+        # Differs from session_pnl_bb when there were untracked stack jumps.
+        "recorded_chip_flow_bb": round(bb_total, 2),
+        # Diagnostic: count of stack jumps we couldn't attribute to a recorded
+        # hand. High values mean per-hand tracking was unreliable this session.
+        "untracked_jumps_bb":    round(untracked_jumps_bb, 2),
+        "untracked_jumps_count": untracked_jumps_count,
         "winrate":          round(wins / n, 3) if n > 0 else 0,
         "wtsd":             round(wtsd / n, 3) if n > 0 else 0,
         "flopped_rate":     round(flopped / n, 3) if n > 0 else 0,
@@ -176,29 +232,29 @@ def _session_rollup(stamp: str, decisions: list[dict], hands: list[dict]) -> dic
 
 # ── cross-session aggregation ───────────────────────────────────────────────
 
-def _aggregate(sessions: list[dict]) -> dict:
+def _aggregate(sessions: list) -> dict:
     if not sessions:
         return {"sessions": [], "overall": {}, "versions": [], "generated_at": datetime.now().isoformat(timespec="seconds")}
 
-    total_hands = sum(s["hands"] for s in sessions)
-    total_bb    = sum(s["total_bb"] for s in sessions)
-    winning_s   = sum(1 for s in sessions if s["total_bb"] > 0)
-    losing_s    = sum(1 for s in sessions if s["total_bb"] < 0)
+    total_hands  = sum(s["hands"] for s in sessions)
+    total_pnl    = sum(s["session_pnl_bb"] for s in sessions)
+    winning_s    = sum(1 for s in sessions if s["session_pnl_bb"] > 0)
+    losing_s     = sum(1 for s in sessions if s["session_pnl_bb"] < 0)
 
     # Per-version rollup
-    by_ver: dict[str, list[dict]] = defaultdict(list)
+    by_ver = defaultdict(list)
     for s in sessions:
         by_ver[s["version"]].append(s)
     versions = []
     for ver, ss in sorted(by_ver.items(), key=lambda kv: kv[0]):
-        h_sum   = sum(s["hands"] for s in ss)
-        bb_sum  = sum(s["total_bb"] for s in ss)
+        h_sum    = sum(s["hands"] for s in ss)
+        pnl_sum  = sum(s["session_pnl_bb"] for s in ss)
         versions.append({
             "version":    ver,
             "sessions":   len(ss),
             "hands":      h_sum,
-            "total_bb":   round(bb_sum, 2),
-            "bb_per_100": round(bb_sum / h_sum * 100, 2) if h_sum else 0,
+            "session_pnl_bb": round(pnl_sum, 2),
+            "bb_per_100": round(pnl_sum / h_sum * 100, 2) if h_sum else 0,
             "winrate":    round(mean(s["winrate"] for s in ss), 3) if ss else 0,
             "wtsd":       round(mean(s["wtsd"]    for s in ss), 3) if ss else 0,
             "hero_vpip":  round(mean(s["hero_vpip"] for s in ss), 3) if ss else 0,
@@ -224,8 +280,8 @@ def _aggregate(sessions: list[dict]) -> dict:
 
     overall = {
         "hands":           total_hands,
-        "total_bb":        round(total_bb, 2),
-        "bb_per_100":      round(total_bb / total_hands * 100, 2) if total_hands else 0,
+        "session_pnl_bb":  round(total_pnl, 2),
+        "bb_per_100":      round(total_pnl / total_hands * 100, 2) if total_hands else 0,
         "sessions":        len(sessions),
         "winning_sessions": winning_s,
         "losing_sessions":  losing_s,

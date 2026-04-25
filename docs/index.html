@@ -32,6 +32,13 @@
     <!-- ── OVERVIEW ────────────────────────────────────────────────────── -->
     <section id="overview">
       <h2>Overview</h2>
+      <p class="muted">
+        Session P&amp;L is computed from per-hand stack tracking, which is
+        approximate — the bot can miss hand boundaries (large fold-preflop
+        runs, page reloads). The pokernow ledger is authoritative;
+        when numbers disagree, trust the ledger.
+        <strong>v1.6 will scrape the ledger directly.</strong>
+      </p>
       <div class="cards" id="overview-cards"></div>
       <div class="grid-2">
         <figure class="chart-box">
@@ -71,7 +78,7 @@
       <div class="table-wrap">
         <table id="versions-table">
           <thead>
-            <tr><th>Version</th><th>Sessions</th><th>Hands</th><th>Total BB</th><th>BB/100</th><th>Winrate</th><th>WTSD</th><th>VPIP</th><th>PFR</th><th>C-bet</th></tr>
+            <tr><th>Version</th><th>Sessions</th><th>Hands</th><th>Session P&amp;L (BB)</th><th>BB/100</th><th>Winrate</th><th>WTSD</th><th>VPIP</th><th>PFR</th><th>C-bet</th></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -96,7 +103,7 @@
       <div class="table-wrap">
         <table id="sessions-table">
           <thead>
-            <tr><th>Date</th><th>Session ID</th><th>Version</th><th>Hands</th><th>Total BB</th><th>BB/100</th><th>Winrate</th><th>WTSD</th></tr>
+            <tr><th>Date</th><th>Session ID</th><th>Version</th><th>Hands</th><th>Session P&amp;L (BB)</th><th>BB/100</th><th>Winrate</th><th>WTSD</th><th>Untracked jumps</th></tr>
           </thead>
           <tbody></tbody>
         </table>
