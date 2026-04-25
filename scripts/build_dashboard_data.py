@@ -202,16 +202,20 @@ def _session_rollup(stamp: str, decisions: list[dict], hands: list[dict]) -> dic
         "date":             date,
         "version":          version,
         "hands":            n,
-        # Approximate session P&L — final stack minus initial stack in BB.
-        # Wrong when hands are missed or rebuys happened.  Compare against
-        # the pokernow ledger for the truth.
-        "session_pnl_bb":   round(stack_change_bb, 2),
-        "bb_per_100":       round(stack_change_bb / n * 100, 2) if n > 0 else 0,
-        # Sum of bb_delta — total chip flow attributable to recorded hands.
-        # Differs from session_pnl_bb when there were untracked stack jumps.
-        "recorded_chip_flow_bb": round(bb_total, 2),
-        # Diagnostic: count of stack jumps we couldn't attribute to a recorded
-        # hand. High values mean per-hand tracking was unreliable this session.
+        # session_pnl_bb is the SUM of per-hand bb_deltas — same number the
+        # cumulative-BB chart and per-session bars are computed from, so
+        # everything on the dashboard tells one story.  This is "chip flow
+        # from recorded hands" — it under-counts when the bot missed
+        # winning hands and over-counts when it missed losing hands.  The
+        # pokernow ledger is the only source of authoritative session P&L
+        # (v1.7 will scrape it).
+        "session_pnl_bb":   round(bb_total, 2),
+        "bb_per_100":       round(bb_total / n * 100, 2) if n > 0 else 0,
+        # Diagnostic only: stack-change view (last_end - first_start) and
+        # the untracked-jump count.  When these differ from session_pnl_bb
+        # by a lot, the bot missed hand boundaries this session — verify
+        # against the ledger.
+        "stack_change_bb":       round(stack_change_bb, 2),
         "untracked_jumps_bb":    round(untracked_jumps_bb, 2),
         "untracked_jumps_count": untracked_jumps_count,
         "winrate":          round(wins / n, 3) if n > 0 else 0,

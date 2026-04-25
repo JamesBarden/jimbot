@@ -33,11 +33,13 @@
     <section id="overview">
       <h2>Overview</h2>
       <p class="muted">
-        Session P&amp;L is computed from per-hand stack tracking, which is
-        approximate — the bot can miss hand boundaries (large fold-preflop
-        runs, page reloads). The pokernow ledger is authoritative;
-        when numbers disagree, trust the ledger.
-        <strong>v1.6 will scrape the ledger directly.</strong>
+        All numbers below come from the same source: per-hand
+        <code>bb_delta</code> summed across recorded hands. The bot can
+        miss hand boundaries (page reloads, transient DOM states) and
+        those hands' chip changes won't be in this total.
+        <strong>The pokernow ledger is the source of truth — when these
+        numbers disagree with the ledger, trust the ledger. v1.7 will
+        scrape it directly so the dashboard stops being wrong.</strong>
       </p>
       <div class="cards" id="overview-cards"></div>
       <div class="grid-2">
