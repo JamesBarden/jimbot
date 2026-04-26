@@ -39,7 +39,7 @@ _BET_WEIGHTS: dict = {
     "combo_draw":    (10, 35, 40, 15),
     "draw":          (15, 40, 35, 10),
     "weak_draw":     (35, 40, 20,  5),
-    "air":           (15, 25, 30, 30),  # polarised: block-bet or overbet bluff
+    "air":           (35, 35, 22,  8),  # block-bet leaning; large bluffs are too committal in low SPR
 }
 
 # Raising a bet (more polarised — shift toward larger sizes):
@@ -59,7 +59,7 @@ _RAISE_WEIGHTS: dict = {
     "combo_draw":    (10, 28, 42, 20),
     "draw":          (12, 35, 38, 15),
     "weak_draw":     (35, 40, 20,  5),
-    "air":           (10, 22, 28, 40),  # polarised raise-bluff
+    "air":           (30, 35, 25, 10),  # smaller raise-bluffs; cap loss when called/3bet
 }
 
 # Multipliers applied element-wise before normalising.
