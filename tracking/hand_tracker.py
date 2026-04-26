@@ -19,7 +19,7 @@ Range inference rules (heads-up):
 """
 
 from typing import Optional
-from state import GameState
+from browser.state import GameState
 
 # Ordered from tightest to loosest
 _TIERS = ["premium", "tight", "medium", "wide", "random"]

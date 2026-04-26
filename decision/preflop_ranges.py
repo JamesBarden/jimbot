@@ -11,7 +11,7 @@ Fractional frequencies implement mixed strategies — the engine samples
 randomly so the same hand plays differently each session.
 """
 
-from state import Card
+from browser.state import Card
 
 _RANKS = "23456789TJQKA"
 

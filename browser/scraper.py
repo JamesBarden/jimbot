@@ -9,7 +9,7 @@ If pokernow updates their CSS classes, run inspector.py to find the new ones.
 import re
 from typing import Optional
 from playwright.async_api import Page
-from state import Card, GameState
+from .state import Card, GameState
 
 # --- DOM selectors ---------------------------------------------------------
 # Update these if pokernow changes their class names.

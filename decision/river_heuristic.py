@@ -17,9 +17,11 @@ Strategy layers applied in order:
 Returns (raise_freq, call_freq, fold_freq) summing to 1.0.
 """
 
-from hand_classifier import classify, river_card_texture
-
-_IP_POSITIONS = {"BTN", "CO", "HJ"}
+from .hand_classifier import classify, river_card_texture
+from .heuristic_utils import (
+    IP_POSITIONS, STRONG, FOLD_SENSITIVE, TIER_ADJ,
+    bet_tier, clamp, normalize,
+)
 
 _TEXTURES = ("blank", "flush_complete", "straight_complete",
              "pair_board", "trips_board", "overcard")
@@ -86,44 +88,13 @@ _VILLAIN_FOLD_ADJ = {
 _MARGINAL = {"trips", "two_pair", "overpair", "top_pair_top", "top_pair_weak",
              "middle_pair", "bottom_pair"}
 
-# ── Bet-sizing tier (layer 5) ─────────────────────────────────────────────────
-# River bets are more often polarised, so sizing reads matter even more than turn.
-
-def _bet_tier(bet_fraction: float) -> str:
-    if bet_fraction <= 0.35: return "small"
-    if bet_fraction <= 0.75: return "medium"
-    if bet_fraction <= 1.15: return "large"
-    return "overbet"
-
-_TIER_ADJ = {
-    "small":   (0.60, 0.82, -0.05,  0.00),
-    "medium":  (1.00, 1.00,  0.00,  0.00),
-    "large":   (1.40, 1.20, +0.05, -0.05),
-    "overbet": (1.85, 1.45, +0.12, -0.10),
-}
-
-_STRONG         = {"monster", "full_house", "flush", "straight", "set"}
-_FOLD_SENSITIVE = {"trips", "two_pair", "overpair", "top_pair_top", "top_pair_weak",
-                   "middle_pair", "bottom_pair", "combo_draw", "draw", "weak_draw"}
-
-
+# SPR → (raise_adj, fold_adj). Thresholds tuned per-street.
 def _spr_adj(spr: float) -> tuple:
     if spr < 2:
         return (+0.06, -0.06)   # committed — less reason to fold
     if spr > 8:
         return (-0.04, +0.04)   # deep stack reaching river is unusual; tread carefully
     return (0.0, 0.0)
-
-
-def _clamp(v: float) -> float:
-    return max(0.0, min(1.0, v))
-
-
-def _normalize(r: float, c: float, f: float) -> tuple:
-    total = r + c + f
-    if total <= 0:
-        return (0.0, 0.0, 1.0)
-    return (r / total, c / total, f / total)
 
 
 # ── Public interface ──────────────────────────────────────────────────────────
@@ -152,7 +123,7 @@ def query(
     """
     hand_class = classify(hole_cards, board_cards)
     tex        = river_card_texture(board_cards)
-    is_ip      = position in _IP_POSITIONS
+    is_ip      = position in IP_POSITIONS
 
     # 1. Base frequencies
     if facing_bet:
@@ -164,32 +135,32 @@ def query(
 
     # 2. Position
     pos_raise = +0.04 if is_ip else -0.04
-    r = _clamp(r + pos_raise)
+    r = clamp(r + pos_raise)
 
     # 3. SPR
     spr_r, spr_f = _spr_adj(spr)
     if not facing_bet and hand_class in _MARGINAL:
         spr_r = min(spr_r, 0.0)  # low SPR prices you in to call, not a reason to thin-bet weak hands
-    r = _clamp(r + spr_r)
+    r = clamp(r + spr_r)
     if facing_bet:
-        f = _clamp(f + spr_f)
+        f = clamp(f + spr_f)
 
     # 4. Villain tier (marginal hands only)
     if facing_bet and hand_class in _MARGINAL:
         fold_delta = _VILLAIN_FOLD_ADJ.get(villain_tier, 0.0)
-        f = _clamp(f + fold_delta)
+        f = clamp(f + fold_delta)
 
     # 5. Villain bet sizing — tighten vs large bets, loosen vs small bets
     if facing_bet and bet_fraction > 0:
-        tier                                 = _bet_tier(bet_fraction)
-        fold_val, fold_air, raise_s, raise_a = _TIER_ADJ[tier]
-        if hand_class in _FOLD_SENSITIVE:
-            f = _clamp(f * fold_val)
+        tier                                 = bet_tier(bet_fraction)
+        fold_val, fold_air, raise_s, raise_a = TIER_ADJ[tier]
+        if hand_class in FOLD_SENSITIVE:
+            f = clamp(f * fold_val)
         elif hand_class == "air":
-            f = _clamp(f * fold_air)
-            r = _clamp(r + raise_a)
-        if hand_class in _STRONG:
-            r = _clamp(r + raise_s)
+            f = clamp(f * fold_air)
+            r = clamp(r + raise_a)
+        if hand_class in STRONG:
+            r = clamp(r + raise_s)
 
     # 6. Cross-street context: triple-barrel logic. We only barrel the river
     #    if we've fired both prior streets (flop + turn) and villain kept
@@ -197,10 +168,10 @@ def query(
     if context is not None and not facing_bet:
         if context.is_double_barrel_spot("river") and context.villain_check_called_last_street("river"):
             barrel_bonus = 0.0
-            if hand_class in _STRONG:                 barrel_bonus = +0.10   # thin value
+            if hand_class in STRONG:                 barrel_bonus = +0.10   # thin value
             elif hand_class == "air":                 barrel_bonus = +0.12   # pure bluff — rare but real
             elif hand_class in _MARGINAL:             barrel_bonus = +0.04
-            r = _clamp(r + barrel_bonus)
+            r = clamp(r + barrel_bonus)
 
     # 7. Stab bonus: HU in position, villain checked to us on the river.
     #    Smaller magnitudes than turn — fold equity is lower on river since
@@ -212,8 +183,8 @@ def query(
         if   hand_class == "air":                            stab_bonus = +0.12
         elif hand_class in ("weak_draw", "draw", "combo_draw"): stab_bonus = +0.10
         elif hand_class in _MARGINAL:                        stab_bonus = +0.05
-        elif hand_class in _STRONG:                          stab_bonus = +0.04   # thin value
-        r = _clamp(r + stab_bonus)
+        elif hand_class in STRONG:                          stab_bonus = +0.04   # thin value
+        r = clamp(r + stab_bonus)
 
     # Rebalance call, then normalise
     if facing_bet:
@@ -222,4 +193,4 @@ def query(
         c = max(0.0, 1.0 - r)
         f = 0.0
 
-    return _normalize(r, c, f)
+    return normalize(r, c, f)

@@ -27,14 +27,12 @@ Tuning thresholds: see the THRESHOLDS section below.
 import random
 from treys import Card as TreysCard, Evaluator
 
-from state import Card, GameState
-from ranges import get_combos
-from solver_lookup import SolverLookup
-from hand_classifier import classify, board_texture as flop_texture, turn_card_texture, river_card_texture
-import preflop_ranges
-import turn_heuristic
-import river_heuristic
-from bet_sizing import pick_bet_fraction, pick_preflop_size
+from browser.state import Card, GameState
+from decision.ranges import get_combos
+from decision.solver_lookup import SolverLookup
+from decision.hand_classifier import classify, board_texture as flop_texture, turn_card_texture, river_card_texture
+from decision import preflop_ranges, turn_heuristic, river_heuristic
+from decision.bet_sizing import pick_bet_fraction, pick_preflop_size
 
 _lut = SolverLookup()
 

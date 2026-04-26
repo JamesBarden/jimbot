@@ -11,8 +11,8 @@ import os
 import pickle
 from typing import Optional, Tuple
 
-from state import Card, GameState
-from hand_classifier import classify, board_texture as classify_board_texture
+from browser.state import Card, GameState
+from .hand_classifier import classify, board_texture as classify_board_texture
 
 
 # ── SPR bucketing ────────────────────────────────────────────────────────────
@@ -54,7 +54,8 @@ class SolverLookup:
     def __init__(self, path: Optional[str] = None):
         if path is None:
             here = os.path.dirname(os.path.abspath(__file__))
-            path = os.path.join(here, "solutions", "lookup.pkl")
+            project_root = os.path.dirname(here)
+            path = os.path.join(project_root, "solutions", "lookup.pkl")
 
         self._table: dict = {}
         self._loaded = False

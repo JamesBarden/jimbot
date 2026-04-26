@@ -25,8 +25,8 @@ import sys
 from typing import Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from state import Card
-from hand_classifier import classify
+from browser.state import Card
+from decision.hand_classifier import classify
 from scripts.presolve import BOARDS
 
 

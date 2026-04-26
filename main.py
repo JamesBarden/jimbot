@@ -23,12 +23,11 @@ import time
 from datetime import datetime
 from playwright.async_api import async_playwright
 
-import scraper
 import engine
-import actions
-from hand_tracker import HandTracker
-from hand_context import HandContext
-from opponent_profiles import ProfileRegistry
+from browser import scraper, actions
+from tracking.hand_tracker import HandTracker
+from tracking.hand_context import HandContext
+from tracking.opponent_profiles import ProfileRegistry
 from session_logger import SessionLogger
 from ledger_fetch import fetch_ledger
 

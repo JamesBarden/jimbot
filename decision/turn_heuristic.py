@@ -16,9 +16,11 @@ Hand classes come from hand_classifier.classify() evaluated on the 4-card board,
 so if a flush draw completed for us the hand_class is already 'flush', not 'draw'.
 """
 
-from hand_classifier import classify, turn_card_texture
-
-_IP_POSITIONS  = {"BTN", "CO", "HJ"}
+from .hand_classifier import classify, turn_card_texture
+from .heuristic_utils import (
+    IP_POSITIONS, STRONG, FOLD_SENSITIVE, TIER_ADJ,
+    bet_tier, clamp, normalize,
+)
 
 # ── Base bet frequencies (no bet facing) ─────────────────────────────────────
 # raise_freq = probability to bet; check_freq = 1 - raise_freq; fold_freq = 0
@@ -80,51 +82,13 @@ _VILLAIN_FOLD_ADJ = {
 _MARGINAL = {"trips", "two_pair", "overpair", "top_pair_top", "top_pair_weak",
              "middle_pair", "draw", "combo_draw"}
 
-# ── Bet-sizing tier (layer 5) ─────────────────────────────────────────────────
-# Classifies villain's bet size relative to the pot.
-# Small bets → defend wider (good odds, villain may be blocking/weak).
-# Large/overbets → fold more with marginal hands; commit only with strong hands.
-
-def _bet_tier(bet_fraction: float) -> str:
-    if bet_fraction <= 0.35: return "small"
-    if bet_fraction <= 0.75: return "medium"
-    if bet_fraction <= 1.15: return "large"
-    return "overbet"
-
-# (fold_mult_value, fold_mult_air, raise_adj_strong, raise_adj_air)
-#   fold_mult_value : applied to value/draw hands (everything except _STRONG and air)
-#   fold_mult_air   : applied to air hands (bad equity regardless, more modest shift)
-#   raise_adj_strong: added to raise_freq for nutted hands (press value vs large bets)
-#   raise_adj_air   : added to raise_freq for air (reduce bluff-raising vs big bets)
-_TIER_ADJ = {
-    "small":   (0.60, 0.82, -0.05,  0.00),
-    "medium":  (1.00, 1.00,  0.00,  0.00),
-    "large":   (1.40, 1.20, +0.05, -0.05),
-    "overbet": (1.85, 1.45, +0.12, -0.10),
-}
-
-_STRONG         = {"monster", "full_house", "flush", "straight", "set"}
-_FOLD_SENSITIVE = {"trips", "two_pair", "overpair", "top_pair_top", "top_pair_weak",
-                   "middle_pair", "bottom_pair", "combo_draw", "draw", "weak_draw"}
-
-# SPR → (raise_adj, fold_adj)
+# SPR → (raise_adj, fold_adj). Thresholds tuned per-street.
 def _spr_adj(spr: float) -> tuple:
     if spr < 4:
         return (+0.08, -0.08)   # short stack — commit more aggressively
     if spr > 10:
         return (-0.05, +0.05)   # deep stack — tread carefully
     return (0.0, 0.0)
-
-
-def _clamp(v: float) -> float:
-    return max(0.0, min(1.0, v))
-
-
-def _normalize(r: float, c: float, f: float) -> tuple:
-    total = r + c + f
-    if total <= 0:
-        return (0.0, 0.0, 1.0)
-    return (r / total, c / total, f / total)
 
 
 # ── Public interface ──────────────────────────────────────────────────────────
@@ -154,7 +118,7 @@ def query(
     """
     hand_class = classify(hole_cards, board_cards)
     tex        = turn_card_texture(board_cards)
-    is_ip      = position in _IP_POSITIONS
+    is_ip      = position in IP_POSITIONS
 
     # 1. Base frequencies
     if facing_bet:
@@ -166,30 +130,30 @@ def query(
 
     # 2. Position
     pos_raise = +0.05 if is_ip else -0.05
-    r = _clamp(r + pos_raise)
+    r = clamp(r + pos_raise)
 
     # 3. SPR
     spr_r, spr_f = _spr_adj(spr)
-    r = _clamp(r + spr_r)
+    r = clamp(r + spr_r)
     if facing_bet:
-        f = _clamp(f + spr_f)
+        f = clamp(f + spr_f)
 
     # 4. Villain tier (marginal hands only)
     if facing_bet and hand_class in _MARGINAL:
         fold_delta = _VILLAIN_FOLD_ADJ.get(villain_tier, 0.0)
-        f = _clamp(f + fold_delta)
+        f = clamp(f + fold_delta)
 
     # 5. Villain bet sizing — tighten vs large bets, loosen vs small bets
     if facing_bet and bet_fraction > 0:
-        tier                               = _bet_tier(bet_fraction)
-        fold_val, fold_air, raise_s, raise_a = _TIER_ADJ[tier]
-        if hand_class in _FOLD_SENSITIVE:
-            f = _clamp(f * fold_val)
+        tier                               = bet_tier(bet_fraction)
+        fold_val, fold_air, raise_s, raise_a = TIER_ADJ[tier]
+        if hand_class in FOLD_SENSITIVE:
+            f = clamp(f * fold_val)
         elif hand_class == "air":
-            f = _clamp(f * fold_air)
-            r = _clamp(r + raise_a)
-        if hand_class in _STRONG:
-            r = _clamp(r + raise_s)
+            f = clamp(f * fold_air)
+            r = clamp(r + raise_a)
+        if hand_class in STRONG:
+            r = clamp(r + raise_s)
 
     # 6. Cross-street context: double-barrel / give-up logic
     #    Only meaningful when we already bet the flop — the classic spot where
@@ -200,13 +164,13 @@ def query(
         if context.is_double_barrel_spot("turn") and context.villain_check_called_last_street("turn"):
             # Good turn cards to barrel: overcards, scare cards (straight/flush complete)
             barrel_bonus = 0.0
-            if hand_class in _STRONG:                     barrel_bonus = +0.12
+            if hand_class in STRONG:                     barrel_bonus = +0.12
             elif hand_class in ("combo_draw", "draw"):    barrel_bonus = +0.20   # semi-bluff
             elif hand_class in ("weak_draw", "air"):      barrel_bonus = +0.15   # pure bluff
             elif hand_class in _MARGINAL:                 barrel_bonus = +0.06
             if tex in ("overcard", "flush_complete", "straight_complete") and hand_class in ("air", "weak_draw"):
                 barrel_bonus += 0.08    # scare cards favour the preflop aggressor
-            r = _clamp(r + barrel_bonus)
+            r = clamp(r + barrel_bonus)
 
     # 7. Stab bonus: HU in position, villain checked to us. Independent of
     #    barrel logic — addresses the "no betting initiative" leak where the
@@ -220,8 +184,8 @@ def query(
         elif hand_class == "weak_draw":               stab_bonus = +0.15
         elif hand_class in ("draw", "combo_draw"):    stab_bonus = +0.12
         elif hand_class in _MARGINAL:                 stab_bonus = +0.08
-        elif hand_class in _STRONG:                   stab_bonus = +0.05   # thin value
-        r = _clamp(r + stab_bonus)
+        elif hand_class in STRONG:                   stab_bonus = +0.05   # thin value
+        r = clamp(r + stab_bonus)
 
     # Rebalance call to absorb adjustments, then normalise
     if facing_bet:
@@ -230,4 +194,4 @@ def query(
         c = max(0.0, 1.0 - r)
         f = 0.0
 
-    return _normalize(r, c, f)
+    return normalize(r, c, f)

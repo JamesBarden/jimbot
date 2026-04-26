@@ -22,7 +22,7 @@ Hand classes (strongest to weakest):
 """
 
 from treys import Card as TreysCard, Evaluator
-from state import Card
+from browser.state import Card
 
 _ev = Evaluator()
 _RANKS = "23456789TJQKA"

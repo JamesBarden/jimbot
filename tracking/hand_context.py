@@ -25,7 +25,7 @@ Lifecycle:
 from dataclasses import dataclass, field
 from typing import Optional
 
-from state import GameState
+from browser.state import GameState
 
 
 STREETS = ("preflop", "flop", "turn", "river")

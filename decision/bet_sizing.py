@@ -14,7 +14,7 @@ Preflop sizing handled separately via pick_preflop_size().
 """
 
 import random
-from hand_classifier import board_texture, turn_card_texture, river_card_texture
+from .hand_classifier import board_texture, turn_card_texture, river_card_texture
 
 _SIZES = (0.33, 0.66, 1.00, 1.50)
 
