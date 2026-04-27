@@ -29,8 +29,16 @@ import random
 from itertools import combinations
 from typing import Callable, Iterable, Optional
 
-from browser.state import Card
+from browser.state import Card, GameState
 from decision.preflop_ranges import lookup as _preflop_lookup
+from decision.hand_classifier import (
+    classify as _classify,
+    board_texture as _flop_texture_fn,
+    turn_card_texture as _turn_texture_fn,
+    river_card_texture as _river_texture_fn,
+)
+from decision import turn_heuristic, river_heuristic
+from decision.solver_lookup import SolverLookup, _TIER_MAP, _spr_bucket
 
 _RANKS = "23456789TJQKA"
 _SUITS = "shdc"
@@ -169,6 +177,159 @@ def narrow_on_preflop_action(
     return range_.apply(
         lambda combo: _preflop_freq(combo, position, facing_raise, num_players, action)
     )
+
+
+# ── Postflop narrowing primitives ────────────────────────────────────────────
+#
+# Each `narrow_on_*_action()` mirrors the strategy table the engine consulted
+# when actually making the decision. For a given board + spot context we look
+# up each combo's hand class and read off the frequency it would take the
+# observed action. Combos take the action proportionally to that frequency.
+#
+# Keeping these primitives aligned with the engine's tables matters: if the
+# engine c-bets `air` at 32% on this flop, the inferred range after a c-bet
+# should weight `air` combos at 32% — anything else creates a self-inconsistent
+# model where our bot believes things about villain (or itself) that contradict
+# how it would actually play that combo.
+
+# Lazily-loaded shared SolverLookup instance for per-combo flop frequencies.
+_solver_lookup: Optional[SolverLookup] = None
+
+
+def _get_solver_lookup() -> SolverLookup:
+    global _solver_lookup
+    if _solver_lookup is None:
+        _solver_lookup = SolverLookup()
+    return _solver_lookup
+
+
+def _action_to_index(action: str) -> int:
+    """Map a 5-way action label to the 3-tuple index returned by tables."""
+    return {"raise": 0, "bet": 0,
+            "call":  1, "check": 1,
+            "fold":  2}.get(action, 1)
+
+
+def narrow_on_flop_action(
+    range_: Range,
+    state: GameState,
+    villain_tier: str,
+    action: str,
+) -> Range:
+    """
+    Narrow on a flop action by per-combo solver-lookup classification.
+
+    Mirrors `decision.solver_lookup.SolverLookup.query()`: same texture / SPR
+    bucket / villain-tier mapping, just applied to every combo via its
+    hand class on the flop instead of only the hero's specific hand.
+
+    Falls back to a no-op (returns the range unchanged) when the solver
+    lookup table isn't available — the caller should then narrow with the
+    turn/river heuristic primitives if they were used as fallback.
+    """
+    if len(state.board_cards) < 3:
+        return range_
+
+    lut = _get_solver_lookup()
+    if not lut.loaded:
+        return range_
+
+    tex = _flop_texture_fn(state.board_cards[:3])
+    spr_b = _spr_bucket(state.my_stack, state.pot)
+    vtier = _TIER_MAP.get(villain_tier, "medium")
+    facing_bet = state.to_call > 0
+
+    spot = lut._table.get((tex, spr_b, vtier, facing_bet))
+    if spot is None:
+        for fallback in ("medium", "wide", "tight"):
+            spot = lut._table.get((tex, spr_b, fallback, facing_bet))
+            if spot is not None:
+                break
+    if spot is None:
+        return range_
+
+    idx = _action_to_index(action)
+    board = list(state.board_cards)
+
+    def freq(combo: frozenset[Card]) -> float:
+        cards = list(combo)
+        hclass = _classify(cards, board)
+        freqs = spot.get(hclass)
+        if freqs is None:
+            return 0.0
+        return freqs[idx]
+
+    return range_.apply(freq)
+
+
+def narrow_on_turn_action(
+    range_: Range,
+    state: GameState,
+    position: str,
+    villain_tier: str,
+    spr: float,
+    bet_fraction: float,
+    facing_bet: bool,
+    action: str,
+    context=None,
+) -> Range:
+    """Per-combo turn-heuristic narrowing on the action that was taken."""
+    if len(state.board_cards) < 4:
+        return range_
+
+    idx = _action_to_index(action)
+    board = list(state.board_cards)
+
+    def freq(combo: frozenset[Card]) -> float:
+        cards = list(combo)
+        freqs = turn_heuristic.query(
+            hole_cards=cards,
+            board_cards=board,
+            position=position,
+            villain_tier=villain_tier,
+            facing_bet=facing_bet,
+            spr=spr,
+            bet_fraction=bet_fraction,
+            context=context,
+        )
+        return freqs[idx]
+
+    return range_.apply(freq)
+
+
+def narrow_on_river_action(
+    range_: Range,
+    state: GameState,
+    position: str,
+    villain_tier: str,
+    spr: float,
+    bet_fraction: float,
+    facing_bet: bool,
+    action: str,
+    context=None,
+) -> Range:
+    """Per-combo river-heuristic narrowing on the action that was taken."""
+    if len(state.board_cards) < 5:
+        return range_
+
+    idx = _action_to_index(action)
+    board = list(state.board_cards)
+
+    def freq(combo: frozenset[Card]) -> float:
+        cards = list(combo)
+        freqs = river_heuristic.query(
+            hole_cards=cards,
+            board_cards=board,
+            position=position,
+            villain_tier=villain_tier,
+            facing_bet=facing_bet,
+            spr=spr,
+            bet_fraction=bet_fraction,
+            context=context,
+        )
+        return freqs[idx]
+
+    return range_.apply(freq)
 
 
 # ── Equity (range-aware MC) ──────────────────────────────────────────────────

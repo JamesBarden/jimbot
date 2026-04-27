@@ -25,7 +25,14 @@ Lifecycle:
 from dataclasses import dataclass, field
 from typing import Optional
 
-from browser.state import GameState
+from browser.state import Card, GameState
+from tracking.range_tracker import (
+    Range,
+    narrow_on_preflop_action,
+    narrow_on_flop_action,
+    narrow_on_turn_action,
+    narrow_on_river_action,
+)
 
 
 STREETS = ("preflop", "flop", "turn", "river")
@@ -33,13 +40,22 @@ STREETS = ("preflop", "flop", "turn", "river")
 
 @dataclass
 class StreetRecord:
-    hero_actions:   list[str] = field(default_factory=list)   # e.g. ['raise:0.60']
-    villain_bet:    bool      = False    # did anyone bet/raise into us this street
-    villain_checks: int       = 0        # number of check-observations we saw
-    hero_bet:       bool      = False    # did we bet or raise
-    hero_checked:   bool      = False
-    hero_called:    bool      = False
-    hero_folded:    bool      = False
+    hero_actions:    list[str] = field(default_factory=list)   # e.g. ['raise:0.60']
+    villain_actions: list[str] = field(default_factory=list)   # inferred, e.g. ['raise', 'call']
+    villain_bet:     bool      = False    # did anyone bet/raise into us this street
+    villain_checks:  int       = 0        # number of check-observations we saw
+    hero_bet:        bool      = False    # did we bet or raise
+    hero_checked:    bool      = False
+    hero_called:     bool      = False
+    hero_folded:     bool      = False
+    # Snapshot of the board on this street's first observation. Used at
+    # street-transition time to reconstruct the spot for per-combo narrowing.
+    board_at_first_obs: tuple = ()
+    # to_call / pot at first observation — lets us recover the bet_fraction
+    # villain faced (or the size of villain's bet into us) without retro-
+    # observing partial-street state.
+    to_call_at_first_obs: float = 0.0
+    pot_at_first_obs:     float = 0.0
 
     def summary(self) -> str:
         if self.hero_folded:  return "fold"
@@ -88,16 +104,47 @@ class HandContext:
     # closed-streets-only.
     stack_at_street_start: dict = field(default_factory=dict)
 
+    # ── Range tracking ────────────────────────────────────────────────────────
+    # Combo-level distributions for both players, narrowed action-by-action
+    # across all four streets. Initialised lazily by init_ranges() once we
+    # have hero's hole cards. None means range tracking is disabled for this
+    # hand (engine falls back to tier-based equity).
+    hero_range:    Optional[Range] = None
+    villain_range: Optional[Range] = None
+    # We narrow villain's range on street transitions, not per-poll, so the
+    # narrowing fires at most once per (street, player) pair.
+    _villain_narrowed_streets: set = field(default_factory=set)
+    # Track our position relative to villain so we can use the right table
+    # when narrowing villain's preflop action.
+    villain_position: str = "unknown"
+
+    # ── range initialisation ──────────────────────────────────────────────────
+
+    def init_ranges(self, hero_cards: list):
+        """
+        Initialise hero_range as uniform-over-1326 and villain_range as
+        uniform-minus-our-known-cards. Call this exactly once at hand start,
+        right after constructing HandContext, while hero_cards are visible.
+        """
+        self.hero_range = Range.uniform()
+        self.villain_range = Range.uniform().filter_known(hero_cards)
+
     # ── observation: infer villain activity from state changes ────────────────
 
     def observe(self, state: GameState):
         """Update context from a new GameState snapshot (before hero acts)."""
         s = state.phase
+        prev_street = self.reached_street if self.reached_street in STREETS else None
         if s in STREETS:
             self._observations_per_street[s] = self._observations_per_street.get(s, 0) + 1
             if s != self.reached_street:
-                # Advance high-water mark when we see a later street
+                # Advance high-water mark when we see a later street.
+                # Before advancing, narrow villain's range based on what they
+                # did to close the prior street (call our raise / check back /
+                # bet into us / etc).
                 if STREETS.index(s) > STREETS.index(self.reached_street):
+                    if self.villain_range is not None and prev_street is not None:
+                        self._narrow_villain_on_street_close(prev_street)
                     self.reached_street = s
             # First observation of this street → snapshot who's still in the
             # hand AND our current stack (used to compute per-street chip
@@ -111,6 +158,18 @@ class HandContext:
         if rec is None:
             return
 
+        # On first observation of this street, snapshot board + bet sizing for
+        # later range narrowing. We also filter both ranges against the new
+        # board cards so impossible combos (containing a board card) drop out.
+        if not rec.board_at_first_obs and state.board_cards:
+            rec.board_at_first_obs    = tuple(state.board_cards)
+            rec.to_call_at_first_obs  = state.to_call
+            rec.pot_at_first_obs      = state.pot
+            if self.hero_range is not None:
+                self.hero_range = self.hero_range.filter_known(state.board_cards)
+            if self.villain_range is not None:
+                self.villain_range = self.villain_range.filter_known(state.board_cards)
+
         # Villain activity inference:
         #   - First observation on a postflop street with to_call > 0 → villain bet into us
         #   - Same street, to_call re-appears after we bet → villain raised
@@ -120,17 +179,29 @@ class HandContext:
             elif state.can_check:
                 rec.villain_checks += 1
 
-        # Preflop aggression tracking: if to_call > bb on our first look, someone raised
+        # Preflop aggression tracking: if to_call > bb on our first look, someone raised.
+        # Also narrow villain's preflop range here since we've just observed an open/raise.
         if s == "preflop" and self.preflop_aggressor is None:
             if state.to_call > self.bb * 1.2:    # allow float slop on tiny-blind games
                 self.preflop_aggressor = "villain"
+                if self.villain_range is not None:
+                    self._narrow_villain_preflop_open(state)
 
         self._last_to_call_per_street[s] = state.to_call
 
     # ── hero action recording ────────────────────────────────────────────────
 
-    def record_hero(self, street: str, action: str, amount: float = 0.0):
-        """Append an action we took on the given street. Called after engine.decide."""
+    def record_hero(self, street: str, action: str, amount: float = 0.0,
+                    state: Optional[GameState] = None,
+                    villain_tier: str = "medium",
+                    spr: float = 5.0):
+        """
+        Append an action we took on the given street. Called after engine.decide.
+
+        If `state` is provided AND hero_range is initialised, also narrows
+        hero_range on this action by per-combo lookup against the strategy
+        table the engine consulted for this spot.
+        """
         if street not in self.streets:
             return
         rec = self.streets[street]
@@ -150,6 +221,154 @@ class HandContext:
             rec.hero_checked = True
         elif action == "fold":
             rec.hero_folded = True
+
+        # Narrow hero_range on the action we just took, if range tracking is on.
+        if self.hero_range is not None and state is not None:
+            self.hero_range = self._narrow_range(
+                self.hero_range,
+                street     = street,
+                action     = action,
+                state      = state,
+                position   = state.position,
+                villain_tier = villain_tier,
+                spr        = spr,
+                facing_bet = (state.to_call > 0),
+                bet_fraction = (state.to_call / max(state.pot, 1e-9)) if state.to_call > 0 else 0.0,
+                num_players = state.num_opponents + 1,
+                facing_raise = (state.to_call > self.bb * 1.2),
+            )
+
+    # ── range narrowing helpers ──────────────────────────────────────────────
+
+    def _narrow_range(self, range_: Range, *, street: str, action: str,
+                      state: GameState, position: str, villain_tier: str,
+                      spr: float, facing_bet: bool, bet_fraction: float,
+                      num_players: int, facing_raise: bool) -> Range:
+        """
+        Apply the appropriate per-street narrowing primitive. Returns the
+        narrowed range; falls back to the input range on any error so a
+        narrowing bug can't crash the live decision loop.
+        """
+        try:
+            if street == "preflop":
+                return narrow_on_preflop_action(
+                    range_, position, facing_raise, num_players, action,
+                )
+            if street == "flop":
+                return narrow_on_flop_action(range_, state, villain_tier, action)
+            if street == "turn":
+                return narrow_on_turn_action(
+                    range_, state, position, villain_tier, spr,
+                    bet_fraction, facing_bet, action, context=self,
+                )
+            if street == "river":
+                return narrow_on_river_action(
+                    range_, state, position, villain_tier, spr,
+                    bet_fraction, facing_bet, action, context=self,
+                )
+        except Exception:
+            return range_
+        return range_
+
+    def _narrow_villain_preflop_open(self, state: GameState):
+        """Narrow villain on a preflop open/raise inferred from to_call > BB."""
+        if self.villain_range is None:
+            return
+        # Best-effort villain position. HU: villain is whichever blind we aren't.
+        if state.num_opponents == 1:
+            v_pos = "BB" if state.position == "SB" else "SB"
+        else:
+            v_pos = "unknown"
+        self.villain_position = v_pos
+        try:
+            self.villain_range = narrow_on_preflop_action(
+                self.villain_range,
+                position     = v_pos,
+                facing_raise = False,   # villain is the one opening
+                num_players  = state.num_opponents + 1,
+                action       = "raise",
+            )
+        except Exception:
+            pass
+
+    def _narrow_villain_on_street_close(self, prev_street: str):
+        """
+        Best-effort inference of villain's closing action on prev_street, used
+        to narrow villain_range as we transition into the next street.
+
+        Rules (HU-centric, multiway approximated as same):
+          - If hero was the last aggressor and the street advanced → villain CALLED.
+          - If neither bet on a postflop street → both checked → villain CHECKED.
+          - If villain bet and hero called → villain BET (already narrowed
+            implicitly by to_call detection, but we narrow on bet here).
+          - Anything else → no-op (we don't know enough to narrow safely).
+        """
+        if self.villain_range is None:
+            return
+        if prev_street in self._villain_narrowed_streets:
+            return
+
+        rec = self.streets.get(prev_street)
+        if rec is None:
+            return
+
+        # Reconstruct enough state to call the per-street primitive. We use
+        # the snapshot taken on first observation of prev_street.
+        board = list(rec.board_at_first_obs)
+        snap_state = GameState(
+            hole_cards=[],
+            board_cards=board,
+            pot=rec.pot_at_first_obs,
+            to_call=rec.to_call_at_first_obs,
+            my_stack=self.stack_at_street_start.get(prev_street, 0.0),
+            big_blind=self.bb,
+            num_opponents=self.num_opponents,
+            phase=prev_street,
+            is_my_turn=False,
+            can_check=(rec.to_call_at_first_obs == 0),
+            position=self.position,
+        )
+
+        if self.hero_was_last_aggressor(prev_street):
+            inferred_action = "call"
+            facing_bet = True
+        elif rec.villain_bet and rec.hero_called:
+            inferred_action = "bet"
+            facing_bet = False   # narrowing villain's "lead bet" — they weren't facing one
+        elif (not rec.hero_bet) and (not rec.villain_bet):
+            inferred_action = "check"
+            facing_bet = False
+        else:
+            return   # ambiguous — bail out silently
+
+        rec.villain_actions.append(inferred_action)
+
+        # Best-effort villain position for postflop heuristic narrowing.
+        v_pos = self.villain_position
+        if v_pos == "unknown" and self.num_opponents == 1:
+            v_pos = "BB" if self.position == "SB" else "SB"
+
+        try:
+            spr = (snap_state.my_stack / snap_state.pot) if snap_state.pot > 0 else 5.0
+            bet_frac = (snap_state.to_call / snap_state.pot) if snap_state.pot > 0 and snap_state.to_call > 0 else 0.0
+            tier = self.villain_range.to_tier()
+            if prev_street == "flop":
+                self.villain_range = narrow_on_flop_action(
+                    self.villain_range, snap_state, tier, inferred_action,
+                )
+            elif prev_street == "turn":
+                self.villain_range = narrow_on_turn_action(
+                    self.villain_range, snap_state, v_pos, tier, spr,
+                    bet_frac, facing_bet, inferred_action, context=self,
+                )
+            elif prev_street == "river":
+                self.villain_range = narrow_on_river_action(
+                    self.villain_range, snap_state, v_pos, tier, spr,
+                    bet_frac, facing_bet, inferred_action, context=self,
+                )
+        except Exception:
+            pass
+        self._villain_narrowed_streets.add(prev_street)
 
     # ── queries the engine uses to condition its strategy ────────────────────
 

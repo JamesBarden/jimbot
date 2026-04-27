@@ -33,6 +33,7 @@ from decision.solver_lookup import SolverLookup
 from decision.hand_classifier import classify, board_texture as flop_texture, turn_card_texture, river_card_texture
 from decision import preflop_ranges, turn_heuristic, river_heuristic
 from decision.bet_sizing import pick_bet_fraction, pick_preflop_size
+from tracking.range_tracker import hand_vs_range_equity, range_vs_range_equity
 
 _lut = SolverLookup()
 
@@ -258,6 +259,24 @@ def decide(state: GameState, opponent_tier: str = "random",
     log.append(f"  Odds   pot_odds={state.pot_odds():.1%}   "
                f"can_check={state.can_check}")
     log.append(f"  Villain  tier={opponent_tier}   opponents={state.num_opponents}")
+
+    # Range tracking telemetry (informational only — not yet driving decisions).
+    # Logged here so we can validate the range-tracker output before tuning the
+    # bluff/value-bet logic against it in a later phase.
+    if context is not None:
+        hr = getattr(context, "hero_range", None)
+        vr = getattr(context, "villain_range", None)
+        if hr is not None and vr is not None and hr.total() > 0 and vr.total() > 0:
+            log.append(f"  Ranges   hero={hr.num_combos()} combos  "
+                       f"villain={vr.num_combos()} combos  ({hr.to_tier()}/{vr.to_tier()})")
+            if state.phase != "preflop" and len(state.board_cards) >= 3:
+                try:
+                    rvr = range_vs_range_equity(
+                        hr, vr, state.board_cards, num_sims=600,
+                    )
+                    log.append(f"  RangeEq  hero_range vs villain_range = {rvr:.1%}")
+                except Exception:
+                    pass
     log.append("─" * (_W - 2))
 
     # ── Postflop: try GTO flop lookup ────────────────────────────────────────
@@ -401,12 +420,27 @@ def decide(state: GameState, opponent_tier: str = "random",
 
     # ── Postflop fallback: Monte Carlo ────────────────────────────────────────
     if source == "monte_carlo":
-        log.append(f"  [monte_carlo]  running {MONTE_CARLO_SIMS} sims  "
-                   f"vs tier={opponent_tier}")
-        equity           = monte_carlo_equity(
-            state.hole_cards, state.board_cards,
-            state.num_opponents, opponent_tier=opponent_tier,
-        )
+        # Prefer range-aware equity when the context has a populated villain
+        # range (Phase 2: combo-level range tracking). Falls back to the
+        # tier-based MC sampler when ranges aren't available, so tests / no-
+        # context callers still work the same way they did before.
+        used_range = False
+        if context is not None and getattr(context, "villain_range", None) is not None \
+                and context.villain_range.total() > 0:
+            log.append(f"  [monte_carlo]  running {MONTE_CARLO_SIMS} sims  "
+                       f"vs villain_range ({context.villain_range.num_combos()} combos)")
+            equity = hand_vs_range_equity(
+                state.hole_cards, context.villain_range, state.board_cards,
+                num_sims=MONTE_CARLO_SIMS,
+            )
+            used_range = True
+        else:
+            log.append(f"  [monte_carlo]  running {MONTE_CARLO_SIMS} sims  "
+                       f"vs tier={opponent_tier}")
+            equity = monte_carlo_equity(
+                state.hole_cards, state.board_cards,
+                state.num_opponents, opponent_tier=opponent_tier,
+            )
         strong_threshold = POSTFLOP_RAISE_THRESHOLD
         call_threshold   = state.pot_odds() + POSTFLOP_CALL_EDGE
         spr_adj_applied  = ""
@@ -417,7 +451,8 @@ def decide(state: GameState, opponent_tier: str = "random",
         raise_freq, call_freq, fold_freq = _action_freqs(
             equity, strong_threshold, call_threshold, state.can_check
         )
-        log.append(f"  equity={equity:.1%}   raise_thresh={strong_threshold:.2f}"
+        eq_label = "range_eq" if used_range else "tier_eq"
+        log.append(f"  {eq_label}={equity:.1%}   raise_thresh={strong_threshold:.2f}"
                    f"   call_thresh={call_threshold:.2f}{spr_adj_applied}")
 
     # ── Postflop re-raise guard ───────────────────────────────────────────────

@@ -217,6 +217,16 @@ async def run(url: str, no_deploy: bool = False):
                             num_opponents = state.num_opponents,
                             villain_names = tuple(state.villain_names),
                         )
+                        # Phase 2 range tracking: init both players' ranges
+                        # right at hand start, with our hole cards filtered
+                        # out of villain's range. All subsequent narrowing
+                        # is wired through hand_ctx.observe / record_hero.
+                        try:
+                            hand_ctx.init_ranges(list(state.hole_cards))
+                        except Exception as e:
+                            print(f"[range] WARN: init failed ({e}) — disabling range tracking this hand")
+                            hand_ctx.hero_range = None
+                            hand_ctx.villain_range = None
 
                         last_hole_key  = hole_key
                         last_acted_str = None
@@ -305,7 +315,13 @@ async def run(url: str, no_deploy: bool = False):
                         decision_sink = logger.log_decision,
                     )
                     if hand_ctx is not None:
-                        hand_ctx.record_hero(state.phase, action, amount)
+                        # Pass state + tier + spr so record_hero can also
+                        # narrow hero_range on the action just taken.
+                        spr = (state.my_stack / state.pot) if state.pot > 0 else 99.0
+                        hand_ctx.record_hero(
+                            state.phase, action, amount,
+                            state=state, villain_tier=opponent_tier, spr=spr,
+                        )
 
                     await actions.execute(page, action, amount,
                                           pot=state.pot, my_stack=state.my_stack)
