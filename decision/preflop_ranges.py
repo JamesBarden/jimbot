@@ -243,7 +243,7 @@ _FOLD = (0.0, 0.0, 1.0)
 # with a floor open freq for unlisted hands at very short tables.
 
 _SH_RFI_BOOST  = {6: 1.00, 5: 1.10, 4: 1.20, 3: 1.35, 2: 1.55}
-_SH_RFI_FLOOR  = {6: 0.00, 5: 0.00, 4: 0.05, 3: 0.10, 2: 0.20}
+_SH_RFI_FLOOR  = {6: 0.00, 5: 0.00, 4: 0.05, 3: 0.10, 2: 0.10}
 _SH_CALL_BOOST = {6: 1.00, 5: 1.05, 4: 1.10, 3: 1.20, 2: 1.35}
 
 

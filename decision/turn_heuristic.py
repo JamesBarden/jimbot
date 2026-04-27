@@ -51,7 +51,7 @@ _FREE = {
 _FACED = {
     "monster":       {"blank": (0.60, 0.40, 0.00), "flush_complete": (0.60, 0.40, 0.00), "straight_complete": (0.60, 0.40, 0.00), "pair_board": (0.60, 0.40, 0.00), "overcard": (0.60, 0.40, 0.00)},
     "full_house":    {"blank": (0.55, 0.45, 0.00), "flush_complete": (0.55, 0.45, 0.00), "straight_complete": (0.55, 0.45, 0.00), "pair_board": (0.60, 0.40, 0.00), "overcard": (0.55, 0.45, 0.00)},
-    "flush":         {"blank": (0.50, 0.50, 0.00), "flush_complete": (0.55, 0.45, 0.00), "straight_complete": (0.50, 0.50, 0.00), "pair_board": (0.50, 0.50, 0.00), "overcard": (0.50, 0.50, 0.00)},
+    "flush":         {"blank": (0.50, 0.50, 0.00), "flush_complete": (0.40, 0.45, 0.15), "straight_complete": (0.50, 0.50, 0.00), "pair_board": (0.50, 0.50, 0.00), "overcard": (0.50, 0.50, 0.00)},
     "straight":      {"blank": (0.50, 0.50, 0.00), "flush_complete": (0.40, 0.55, 0.05), "straight_complete": (0.55, 0.45, 0.00), "pair_board": (0.45, 0.50, 0.05), "overcard": (0.50, 0.50, 0.00)},
     "set":           {"blank": (0.45, 0.55, 0.00), "flush_complete": (0.35, 0.60, 0.05), "straight_complete": (0.35, 0.60, 0.05), "pair_board": (0.50, 0.50, 0.00), "overcard": (0.45, 0.55, 0.00)},
     "trips":         {"blank": (0.35, 0.57, 0.08), "flush_complete": (0.22, 0.55, 0.23), "straight_complete": (0.22, 0.55, 0.23), "pair_board": (0.35, 0.55, 0.10), "overcard": (0.28, 0.55, 0.17)},
