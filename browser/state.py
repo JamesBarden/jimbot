@@ -15,7 +15,7 @@ RANK_MAP = {
 }
 
 
-@dataclass
+@dataclass(frozen=True)
 class Card:
     rank: str   # '2'-'9', 'T', 'J', 'Q', 'K', 'A'
     suit: str   # 's', 'h', 'd', 'c'
