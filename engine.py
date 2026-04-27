@@ -193,6 +193,21 @@ def _fmt_board(board) -> str:
     return _fmt_cards(board[:3]) + "  |  " + _fmt_cards(board[3:])
 
 
+# Compact combo formatting for range telemetry. Sort by rank desc, then suit,
+# so the same two cards always render the same way in logs.
+_RANK_ORDER = {r: i for i, r in enumerate("23456789TJQKA")}
+
+
+def _combo_to_str(combo) -> str:
+    cards = sorted(combo, key=lambda c: (-_RANK_ORDER.get(c.rank, 0), c.suit))
+    return "".join(str(c) for c in cards)
+
+
+def _format_top_combos(range_, n: int = 5) -> str:
+    parts = [f"{_combo_to_str(c)}:{w:.2f}" for c, w in range_.top_n(n)]
+    return " ".join(parts) if parts else "(empty)"
+
+
 # ---------- decision ----------
 
 def decide(state: GameState, opponent_tier: str = "random",
@@ -260,23 +275,41 @@ def decide(state: GameState, opponent_tier: str = "random",
                f"can_check={state.can_check}")
     log.append(f"  Villain  tier={opponent_tier}   opponents={state.num_opponents}")
 
-    # Range tracking telemetry (informational only — not yet driving decisions).
-    # Logged here so we can validate the range-tracker output before tuning the
-    # bluff/value-bet logic against it in a later phase.
+    # Range tracking telemetry — printed here for live debugging and also
+    # captured into the JSONL decision record (see _emit) so post-session
+    # review can replay the exact ranges the bot believed at decision time.
+    range_telemetry: dict | None = None
     if context is not None:
         hr = getattr(context, "hero_range", None)
         vr = getattr(context, "villain_range", None)
         if hr is not None and vr is not None and hr.total() > 0 and vr.total() > 0:
-            log.append(f"  Ranges   hero={hr.num_combos()} combos  "
-                       f"villain={vr.num_combos()} combos  ({hr.to_tier()}/{vr.to_tier()})")
+            rvr_eq: float | None = None
             if state.phase != "preflop" and len(state.board_cards) >= 3:
                 try:
-                    rvr = range_vs_range_equity(
+                    rvr_eq = range_vs_range_equity(
                         hr, vr, state.board_cards, num_sims=600,
                     )
-                    log.append(f"  RangeEq  hero_range vs villain_range = {rvr:.1%}")
                 except Exception:
-                    pass
+                    rvr_eq = None
+
+            log.append(f"  Ranges   hero={hr.num_combos()} combos  "
+                       f"villain={vr.num_combos()} combos  ({hr.to_tier()}/{vr.to_tier()})")
+            log.append(f"  HeroTop  {_format_top_combos(hr, 5)}")
+            log.append(f"  VilTop   {_format_top_combos(vr, 5)}")
+            if rvr_eq is not None:
+                log.append(f"  RangeEq  hero_range vs villain_range = {rvr_eq:.1%}")
+
+            range_telemetry = {
+                "hero_combos":           hr.num_combos(),
+                "hero_tier":             hr.to_tier(),
+                "hero_total_weight":     round(hr.total(), 4),
+                "villain_combos":        vr.num_combos(),
+                "villain_tier":          vr.to_tier(),
+                "villain_total_weight":  round(vr.total(), 4),
+                "range_vs_range_equity": (round(rvr_eq, 4) if rvr_eq is not None else None),
+                "hero_top":    [[_combo_to_str(c), round(w, 4)] for c, w in hr.top_n(20)],
+                "villain_top": [[_combo_to_str(c), round(w, 4)] for c, w in vr.top_n(20)],
+            }
     log.append("─" * (_W - 2))
 
     # ── Postflop: try GTO flop lookup ────────────────────────────────────────
@@ -584,6 +617,7 @@ def decide(state: GameState, opponent_tier: str = "random",
             "action":        action,
             "amount":        round(amount, 2),
             "context":       ctx_summary,
+            "ranges":        range_telemetry,
         })
 
     if roll < raise_freq:
