@@ -1,56 +1,64 @@
 {
-  "generated_at": "2026-04-27T16:25:14",
+  "generated_at": "2026-04-27T19:08:29",
   "overall": {
-    "hands": 536,
-    "session_pnl_bb": -137.8,
-    "bb_per_100": -25.71,
-    "ledgered_sessions": 7,
-    "sessions": 14,
-    "winning_sessions": 5,
+    "hands": 1819,
+    "session_pnl_bb": 9588.2,
+    "bb_per_100": 527.11,
+    "ledgered_sessions": 9,
+    "sessions": 17,
+    "winning_sessions": 8,
     "losing_sessions": 7,
     "source_counts": {
-      "preflop_gto": 506,
-      "solver": 145,
-      "turn_heuristic": 110,
-      "river_heuristic": 63,
-      "monte_carlo": 29
+      "preflop_gto": 1455,
+      "solver": 243,
+      "turn_heuristic": 216,
+      "river_heuristic": 129,
+      "monte_carlo": 42
     },
     "phase_counts": {
-      "preflop": 506,
-      "flop": 174,
-      "turn": 110,
-      "river": 63
+      "preflop": 1455,
+      "flop": 285,
+      "turn": 216,
+      "river": 129
     },
     "phase_action": {
       "preflop": {
-        "fold": 280,
-        "call": 53,
-        "raise": 157,
+        "fold": 884,
+        "call": 97,
+        "raise": 458,
         "check": 16
       },
       "flop": {
-        "check": 81,
-        "call": 19,
-        "raise": 62,
-        "fold": 12
+        "check": 164,
+        "call": 24,
+        "raise": 81,
+        "fold": 16
       },
       "turn": {
-        "raise": 30,
-        "check": 41,
-        "fold": 20,
-        "call": 19
+        "raise": 62,
+        "check": 86,
+        "fold": 38,
+        "call": 30
       },
       "river": {
-        "check": 35,
-        "fold": 12,
-        "raise": 11,
-        "call": 5
+        "check": 57,
+        "fold": 30,
+        "raise": 32,
+        "call": 10
       }
     },
     "top_opponents": [
       {
+        "name": "jimbot",
+        "hands": 575
+      },
+      {
+        "name": "jimbot2",
+        "hands": 574
+      },
+      {
         "name": "jim",
-        "hands": 414
+        "hands": 548
       },
       {
         "name": "I\u2019doooo",
@@ -61,10 +69,10 @@
         "hands": 40
       }
     ],
-    "hero_vpip_avg": 0.237,
-    "hero_pfr_avg": 0.172,
-    "hero_cbet_avg": 0.271,
-    "wtsd_avg": 0.089
+    "hero_vpip_avg": 0.234,
+    "hero_pfr_avg": 0.177,
+    "hero_cbet_avg": 0.294,
+    "wtsd_avg": 0.078
   },
   "versions": [
     {
@@ -210,6 +218,18 @@
       "hero_vpip": 0.346,
       "hero_pfr": 0.231,
       "hero_cbet": 0.0
+    },
+    {
+      "version": "2.3",
+      "sessions": 3,
+      "hands": 1283,
+      "session_pnl_bb": 9726.0,
+      "bb_per_100": 758.07,
+      "winrate": 0.492,
+      "wtsd": 0.027,
+      "hero_vpip": 0.223,
+      "hero_pfr": 0.202,
+      "hero_cbet": 0.401
     },
     {
       "version": "unknown",
@@ -3732,6 +3752,6600 @@
         }
       ],
       "decisions_total": 35
+    },
+    {
+      "session_id": "2026-04-27_170422",
+      "date": "2026-04-27",
+      "version": "2.3",
+      "hands": 6,
+      "session_pnl_bb": 9605.0,
+      "ledger_net_bb": null,
+      "bb_per_100": 160083.33,
+      "stack_change_bb": 9605.0,
+      "untracked_jumps_bb": 0.0,
+      "untracked_jumps_count": 0,
+      "winrate": 0.5,
+      "wtsd": 0.0,
+      "flopped_rate": 0.167,
+      "hero_vpip": 0.167,
+      "hero_pfr": 0.167,
+      "hero_cbet": 1.0,
+      "cbet_opps": 1,
+      "source_counts": {
+        "preflop_gto": 4,
+        "solver": 1
+      },
+      "phase_counts": {
+        "preflop": 4,
+        "flop": 1
+      },
+      "phase_action": {
+        "preflop": {
+          "fold": 3,
+          "raise": 1
+        },
+        "flop": {
+          "raise": 1
+        }
+      },
+      "opponents": {
+        "jim": 6
+      },
+      "pnl_series": [
+        {
+          "hand_id": "170422_3dKh",
+          "bb_delta": 1.0,
+          "cumulative": 1.0
+        },
+        {
+          "hand_id": "170429_3hQd",
+          "bb_delta": -1.0,
+          "cumulative": 0.0
+        },
+        {
+          "hand_id": "170434_3s2h",
+          "bb_delta": -0.5,
+          "cumulative": -0.5
+        },
+        {
+          "hand_id": "170452_2hJd",
+          "bb_delta": -1.0,
+          "cumulative": -1.5
+        },
+        {
+          "hand_id": "170458_5c3s",
+          "bb_delta": 1.0,
+          "cumulative": -0.5
+        },
+        {
+          "hand_id": "170503_6c6s",
+          "bb_delta": 9605.5,
+          "cumulative": 9605.0
+        }
+      ],
+      "decisions_total": 5
+    },
+    {
+      "session_id": "2026-04-27_170857",
+      "date": "2026-04-27",
+      "version": "2.3",
+      "hands": 702,
+      "session_pnl_bb": 261.0,
+      "ledger_net_bb": 60.5,
+      "bb_per_100": 8.62,
+      "stack_change_bb": 261.0,
+      "untracked_jumps_bb": 0.0,
+      "untracked_jumps_count": 0,
+      "winrate": 0.486,
+      "wtsd": 0.044,
+      "flopped_rate": 0.088,
+      "hero_vpip": 0.238,
+      "hero_pfr": 0.234,
+      "hero_cbet": 0.203,
+      "cbet_opps": 59,
+      "source_counts": {
+        "preflop_gto": 514,
+        "solver": 60,
+        "turn_heuristic": 60,
+        "river_heuristic": 33,
+        "monte_carlo": 7
+      },
+      "phase_counts": {
+        "preflop": 514,
+        "flop": 67,
+        "turn": 60,
+        "river": 33
+      },
+      "phase_action": {
+        "preflop": {
+          "raise": 176,
+          "fold": 330,
+          "call": 8
+        },
+        "flop": {
+          "check": 46,
+          "raise": 15,
+          "call": 4,
+          "fold": 2
+        },
+        "turn": {
+          "raise": 20,
+          "call": 8,
+          "check": 21,
+          "fold": 11
+        },
+        "river": {
+          "fold": 10,
+          "check": 7,
+          "raise": 13,
+          "call": 3
+        }
+      },
+      "opponents": {
+        "jim": 128,
+        "jimbot2": 574
+      },
+      "pnl_series": [
+        {
+          "hand_id": "170857_QsKc",
+          "bb_delta": 0.0,
+          "cumulative": 0.0
+        },
+        {
+          "hand_id": "171119_7dKs",
+          "bb_delta": -0.5,
+          "cumulative": -0.5
+        },
+        {
+          "hand_id": "171134_6c2h",
+          "bb_delta": -1.0,
+          "cumulative": -1.5
+        },
+        {
+          "hand_id": "171140_6dAh",
+          "bb_delta": -0.5,
+          "cumulative": -2.0
+        },
+        {
+          "hand_id": "171239_8s7h",
+          "bb_delta": -1.0,
+          "cumulative": -3.0
+        },
+        {
+          "hand_id": "171245_6cAh",
+          "bb_delta": -0.5,
+          "cumulative": -3.5
+        },
+        {
+          "hand_id": "171254_Qc2h",
+          "bb_delta": -1.0,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "171300_6cAc",
+          "bb_delta": -6.45,
+          "cumulative": -10.95
+        },
+        {
+          "hand_id": "171343_2c4d",
+          "bb_delta": -1.0,
+          "cumulative": -11.95
+        },
+        {
+          "hand_id": "171349_4d7s",
+          "bb_delta": -0.5,
+          "cumulative": -12.45
+        },
+        {
+          "hand_id": "171359_Tc7s",
+          "bb_delta": -1.0,
+          "cumulative": -13.45
+        },
+        {
+          "hand_id": "171405_3sQc",
+          "bb_delta": 1.0,
+          "cumulative": -12.45
+        },
+        {
+          "hand_id": "171411_8c3d",
+          "bb_delta": -1.0,
+          "cumulative": -13.45
+        },
+        {
+          "hand_id": "171417_As3s",
+          "bb_delta": -0.5,
+          "cumulative": -13.95
+        },
+        {
+          "hand_id": "171425_2s4c",
+          "bb_delta": -1.0,
+          "cumulative": -14.95
+        },
+        {
+          "hand_id": "171432_6c5s",
+          "bb_delta": -0.5,
+          "cumulative": -15.45
+        },
+        {
+          "hand_id": "171444_8d4c",
+          "bb_delta": -1.0,
+          "cumulative": -16.45
+        },
+        {
+          "hand_id": "171450_5d4s",
+          "bb_delta": -0.5,
+          "cumulative": -16.95
+        },
+        {
+          "hand_id": "171459_6cJs",
+          "bb_delta": -1.0,
+          "cumulative": -17.95
+        },
+        {
+          "hand_id": "171505_3c9c",
+          "bb_delta": 1.0,
+          "cumulative": -16.95
+        },
+        {
+          "hand_id": "171510_8c7h",
+          "bb_delta": -3.5,
+          "cumulative": -20.45
+        },
+        {
+          "hand_id": "171525_9sKc",
+          "bb_delta": 1.0,
+          "cumulative": -19.45
+        },
+        {
+          "hand_id": "171530_Qs7h",
+          "bb_delta": -1.0,
+          "cumulative": -20.45
+        },
+        {
+          "hand_id": "171535_Ah9h",
+          "bb_delta": 1.0,
+          "cumulative": -19.45
+        },
+        {
+          "hand_id": "171542_QhAd",
+          "bb_delta": -3.5,
+          "cumulative": -22.95
+        },
+        {
+          "hand_id": "171610_4h3c",
+          "bb_delta": -0.5,
+          "cumulative": -23.45
+        },
+        {
+          "hand_id": "171620_3s8d",
+          "bb_delta": -1.0,
+          "cumulative": -24.45
+        },
+        {
+          "hand_id": "171626_Kh9c",
+          "bb_delta": -0.5,
+          "cumulative": -24.95
+        },
+        {
+          "hand_id": "171636_8h7h",
+          "bb_delta": 3.0,
+          "cumulative": -21.95
+        },
+        {
+          "hand_id": "171700_Ts3s",
+          "bb_delta": -0.5,
+          "cumulative": -22.45
+        },
+        {
+          "hand_id": "171710_3h5h",
+          "bb_delta": -26.7,
+          "cumulative": -49.15
+        },
+        {
+          "hand_id": "171750_2dQs",
+          "bb_delta": -0.5,
+          "cumulative": -49.65
+        },
+        {
+          "hand_id": "171759_3sAs",
+          "bb_delta": -28.3,
+          "cumulative": -77.95
+        },
+        {
+          "hand_id": "171837_8sQd",
+          "bb_delta": 1.0,
+          "cumulative": -76.95
+        },
+        {
+          "hand_id": "171843_9s4d",
+          "bb_delta": -1.0,
+          "cumulative": -77.95
+        },
+        {
+          "hand_id": "171849_3cTs",
+          "bb_delta": -0.5,
+          "cumulative": -78.45
+        },
+        {
+          "hand_id": "171857_6s7d",
+          "bb_delta": -1.0,
+          "cumulative": -79.45
+        },
+        {
+          "hand_id": "171904_As3h",
+          "bb_delta": -0.5,
+          "cumulative": -79.95
+        },
+        {
+          "hand_id": "171914_8hTh",
+          "bb_delta": 279.95,
+          "cumulative": 200.0
+        },
+        {
+          "hand_id": "172006_2dQh",
+          "bb_delta": -0.5,
+          "cumulative": 199.5
+        },
+        {
+          "hand_id": "172017_Qd9h",
+          "bb_delta": -4.0,
+          "cumulative": 195.5
+        },
+        {
+          "hand_id": "172030_6hKh",
+          "bb_delta": 1.0,
+          "cumulative": 196.5
+        },
+        {
+          "hand_id": "172036_5c6s",
+          "bb_delta": -1.0,
+          "cumulative": 195.5
+        },
+        {
+          "hand_id": "172041_Kc8d",
+          "bb_delta": 1.0,
+          "cumulative": 196.5
+        },
+        {
+          "hand_id": "172048_2c3h",
+          "bb_delta": -1.0,
+          "cumulative": 195.5
+        },
+        {
+          "hand_id": "172053_3c6c",
+          "bb_delta": 1.0,
+          "cumulative": 196.5
+        },
+        {
+          "hand_id": "172059_9d6c",
+          "bb_delta": -1.0,
+          "cumulative": 195.5
+        },
+        {
+          "hand_id": "172104_KhAd",
+          "bb_delta": 1.0,
+          "cumulative": 196.5
+        },
+        {
+          "hand_id": "172110_AcQd",
+          "bb_delta": 0.5,
+          "cumulative": 197.0
+        },
+        {
+          "hand_id": "172118_4h9h",
+          "bb_delta": 1.0,
+          "cumulative": 198.0
+        },
+        {
+          "hand_id": "172123_JsAh",
+          "bb_delta": -11.0,
+          "cumulative": 187.0
+        },
+        {
+          "hand_id": "172153_Qd7d",
+          "bb_delta": -0.5,
+          "cumulative": 186.5
+        },
+        {
+          "hand_id": "172203_Th9s",
+          "bb_delta": 80.5,
+          "cumulative": 267.0
+        },
+        {
+          "hand_id": "172247_Ad5d",
+          "bb_delta": 1.0,
+          "cumulative": 268.0
+        },
+        {
+          "hand_id": "172254_Qs2s",
+          "bb_delta": -1.0,
+          "cumulative": 267.0
+        },
+        {
+          "hand_id": "172259_4h6h",
+          "bb_delta": 1.0,
+          "cumulative": 268.0
+        },
+        {
+          "hand_id": "172305_8c8s",
+          "bb_delta": 34.45,
+          "cumulative": 302.45
+        },
+        {
+          "hand_id": "172337_6d9h",
+          "bb_delta": -0.5,
+          "cumulative": 301.95
+        },
+        {
+          "hand_id": "172347_8s3h",
+          "bb_delta": 0.5,
+          "cumulative": 302.45
+        },
+        {
+          "hand_id": "172356_Jc2d",
+          "bb_delta": 1.0,
+          "cumulative": 303.45
+        },
+        {
+          "hand_id": "172400_9hTh",
+          "bb_delta": 0.5,
+          "cumulative": 303.95
+        },
+        {
+          "hand_id": "172408_8h2h",
+          "bb_delta": -0.5,
+          "cumulative": 303.45
+        },
+        {
+          "hand_id": "172417_Ah9h",
+          "bb_delta": 0.5,
+          "cumulative": 303.95
+        },
+        {
+          "hand_id": "172426_QsJs",
+          "bb_delta": 1.0,
+          "cumulative": 304.95
+        },
+        {
+          "hand_id": "172436_QhJd",
+          "bb_delta": 6.5,
+          "cumulative": 311.45
+        },
+        {
+          "hand_id": "172509_9hTd",
+          "bb_delta": 1.0,
+          "cumulative": 312.45
+        },
+        {
+          "hand_id": "172514_Jd4c",
+          "bb_delta": -3.5,
+          "cumulative": 308.95
+        },
+        {
+          "hand_id": "172537_3c5h",
+          "bb_delta": 1.0,
+          "cumulative": 309.95
+        },
+        {
+          "hand_id": "172543_8c9h",
+          "bb_delta": -4.5,
+          "cumulative": 305.45
+        },
+        {
+          "hand_id": "172558_3c3d",
+          "bb_delta": 1.0,
+          "cumulative": 306.45
+        },
+        {
+          "hand_id": "172604_5h8s",
+          "bb_delta": -1.0,
+          "cumulative": 305.45
+        },
+        {
+          "hand_id": "172609_4d7d",
+          "bb_delta": -0.5,
+          "cumulative": 304.95
+        },
+        {
+          "hand_id": "172618_TdTh",
+          "bb_delta": 0.5,
+          "cumulative": 305.45
+        },
+        {
+          "hand_id": "172628_5d7s",
+          "bb_delta": 1.0,
+          "cumulative": 306.45
+        },
+        {
+          "hand_id": "172633_9h8c",
+          "bb_delta": 3.0,
+          "cumulative": 309.45
+        },
+        {
+          "hand_id": "172650_Ad4s",
+          "bb_delta": -0.5,
+          "cumulative": 308.95
+        },
+        {
+          "hand_id": "172658_Ac2d",
+          "bb_delta": -21.35,
+          "cumulative": 287.6
+        },
+        {
+          "hand_id": "172750_6h8c",
+          "bb_delta": -0.5,
+          "cumulative": 287.1
+        },
+        {
+          "hand_id": "172800_2s5h",
+          "bb_delta": -1.0,
+          "cumulative": 286.1
+        },
+        {
+          "hand_id": "172808_AsTh",
+          "bb_delta": 3.5,
+          "cumulative": 289.6
+        },
+        {
+          "hand_id": "172828_7d7h",
+          "bb_delta": 3.5,
+          "cumulative": 293.1
+        },
+        {
+          "hand_id": "172846_Tc7c",
+          "bb_delta": 1.0,
+          "cumulative": 294.1
+        },
+        {
+          "hand_id": "172852_6h4h",
+          "bb_delta": -1.0,
+          "cumulative": 293.1
+        },
+        {
+          "hand_id": "172857_6s2c",
+          "bb_delta": 1.0,
+          "cumulative": 294.1
+        },
+        {
+          "hand_id": "172904_Kh2c",
+          "bb_delta": -1.0,
+          "cumulative": 293.1
+        },
+        {
+          "hand_id": "172910_Ks2d",
+          "bb_delta": -0.5,
+          "cumulative": 292.6
+        },
+        {
+          "hand_id": "172919_QsAs",
+          "bb_delta": -14.5,
+          "cumulative": 278.1
+        },
+        {
+          "hand_id": "172945_AhKd",
+          "bb_delta": 1.0,
+          "cumulative": 279.1
+        },
+        {
+          "hand_id": "172953_2hKh",
+          "bb_delta": -1.0,
+          "cumulative": 278.1
+        },
+        {
+          "hand_id": "172958_Ks5s",
+          "bb_delta": -0.5,
+          "cumulative": 277.6
+        },
+        {
+          "hand_id": "173008_Ad6s",
+          "bb_delta": 2.5,
+          "cumulative": 280.1
+        },
+        {
+          "hand_id": "173036_Ts6s",
+          "bb_delta": -0.5,
+          "cumulative": 279.6
+        },
+        {
+          "hand_id": "173045_9d2c",
+          "bb_delta": -1.0,
+          "cumulative": 278.6
+        },
+        {
+          "hand_id": "173051_8s9s",
+          "bb_delta": 1.0,
+          "cumulative": 279.6
+        },
+        {
+          "hand_id": "173057_2dTh",
+          "bb_delta": -1.0,
+          "cumulative": 278.6
+        },
+        {
+          "hand_id": "173102_8d3s",
+          "bb_delta": 1.0,
+          "cumulative": 279.6
+        },
+        {
+          "hand_id": "173107_QhAd",
+          "bb_delta": 0.5,
+          "cumulative": 280.1
+        },
+        {
+          "hand_id": "173115_5dTh",
+          "bb_delta": 1.0,
+          "cumulative": 281.1
+        },
+        {
+          "hand_id": "173122_7h4c",
+          "bb_delta": -1.0,
+          "cumulative": 280.1
+        },
+        {
+          "hand_id": "173127_Ac3h",
+          "bb_delta": 1.0,
+          "cumulative": 281.1
+        },
+        {
+          "hand_id": "173132_7sJc",
+          "bb_delta": -1.0,
+          "cumulative": 280.1
+        },
+        {
+          "hand_id": "173137_6h7c",
+          "bb_delta": 1.0,
+          "cumulative": 281.1
+        },
+        {
+          "hand_id": "173143_Qs9c",
+          "bb_delta": -3.5,
+          "cumulative": 277.6
+        },
+        {
+          "hand_id": "173157_7s2s",
+          "bb_delta": -0.5,
+          "cumulative": 277.1
+        },
+        {
+          "hand_id": "173206_7hQs",
+          "bb_delta": -1.0,
+          "cumulative": 276.1
+        },
+        {
+          "hand_id": "173211_Kh6h",
+          "bb_delta": -0.5,
+          "cumulative": 275.6
+        },
+        {
+          "hand_id": "173220_6d9s",
+          "bb_delta": 15.6,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "173251_6cAd",
+          "bb_delta": -0.5,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "173300_TcKh",
+          "bb_delta": -8.0,
+          "cumulative": 282.7
+        },
+        {
+          "hand_id": "173329_5sQs",
+          "bb_delta": -0.5,
+          "cumulative": 282.2
+        },
+        {
+          "hand_id": "173337_5h5s",
+          "bb_delta": -5.5,
+          "cumulative": 276.7
+        },
+        {
+          "hand_id": "173406_6s4h",
+          "bb_delta": -0.5,
+          "cumulative": 276.2
+        },
+        {
+          "hand_id": "173415_3cQs",
+          "bb_delta": -1.0,
+          "cumulative": 275.2
+        },
+        {
+          "hand_id": "173420_Tc2s",
+          "bb_delta": 1.0,
+          "cumulative": 276.2
+        },
+        {
+          "hand_id": "173426_6cQc",
+          "bb_delta": -1.0,
+          "cumulative": 275.2
+        },
+        {
+          "hand_id": "173431_5h3h",
+          "bb_delta": -2.5,
+          "cumulative": 272.7
+        },
+        {
+          "hand_id": "173458_3dKc",
+          "bb_delta": -1.0,
+          "cumulative": 271.7
+        },
+        {
+          "hand_id": "173504_2c5h",
+          "bb_delta": -0.5,
+          "cumulative": 271.2
+        },
+        {
+          "hand_id": "173514_Td8d",
+          "bb_delta": 3.5,
+          "cumulative": 274.7
+        },
+        {
+          "hand_id": "173529_KdAh",
+          "bb_delta": 1.0,
+          "cumulative": 275.7
+        },
+        {
+          "hand_id": "173534_6dKh",
+          "bb_delta": -1.0,
+          "cumulative": 274.7
+        },
+        {
+          "hand_id": "173539_Qd3s",
+          "bb_delta": 1.0,
+          "cumulative": 275.7
+        },
+        {
+          "hand_id": "173545_3cJh",
+          "bb_delta": -1.0,
+          "cumulative": 274.7
+        },
+        {
+          "hand_id": "173550_3dKc",
+          "bb_delta": -0.5,
+          "cumulative": 274.2
+        },
+        {
+          "hand_id": "173600_5s8s",
+          "bb_delta": -1.0,
+          "cumulative": 273.2
+        },
+        {
+          "hand_id": "173606_2hTd",
+          "bb_delta": 1.0,
+          "cumulative": 274.2
+        },
+        {
+          "hand_id": "173611_TsAs",
+          "bb_delta": 10.5,
+          "cumulative": 284.7
+        },
+        {
+          "hand_id": "173642_Ah7s",
+          "bb_delta": 0.5,
+          "cumulative": 285.2
+        },
+        {
+          "hand_id": "173749_AdJd",
+          "bb_delta": 1.0,
+          "cumulative": 286.2
+        },
+        {
+          "hand_id": "173756_Qh4c",
+          "bb_delta": -1.0,
+          "cumulative": 285.2
+        },
+        {
+          "hand_id": "173801_JdTs",
+          "bb_delta": 1.0,
+          "cumulative": 286.2
+        },
+        {
+          "hand_id": "173807_TdJc",
+          "bb_delta": 0.5,
+          "cumulative": 286.7
+        },
+        {
+          "hand_id": "173817_7h2d",
+          "bb_delta": -0.5,
+          "cumulative": 286.2
+        },
+        {
+          "hand_id": "173824_Ac5s",
+          "bb_delta": 0.5,
+          "cumulative": 286.7
+        },
+        {
+          "hand_id": "173834_3c9d",
+          "bb_delta": 1.0,
+          "cumulative": 287.7
+        },
+        {
+          "hand_id": "173840_QhQc",
+          "bb_delta": 0.5,
+          "cumulative": 288.2
+        },
+        {
+          "hand_id": "173850_QdKd",
+          "bb_delta": 1.0,
+          "cumulative": 289.2
+        },
+        {
+          "hand_id": "173856_Ad5s",
+          "bb_delta": 0.5,
+          "cumulative": 289.7
+        },
+        {
+          "hand_id": "173906_Js2h",
+          "bb_delta": 1.0,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "173912_Qc9c",
+          "bb_delta": 0.5,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "173923_KhJs",
+          "bb_delta": -0.5,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "173933_JhKd",
+          "bb_delta": 0.5,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "173944_Ad7d",
+          "bb_delta": 1.0,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "173950_Qh2d",
+          "bb_delta": -1.0,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "173956_3s9d",
+          "bb_delta": 1.0,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "174003_JhTh",
+          "bb_delta": 0.5,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174014_TdAd",
+          "bb_delta": 1.0,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174019_5cTc",
+          "bb_delta": -1.0,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174025_8s9d",
+          "bb_delta": 1.0,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174033_Kc6d",
+          "bb_delta": -1.0,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174043_2h2c",
+          "bb_delta": -0.5,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "174053_Kc9h",
+          "bb_delta": 0.5,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174103_4cAs",
+          "bb_delta": 1.0,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174110_2d5h",
+          "bb_delta": -1.0,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174116_3h9h",
+          "bb_delta": -0.5,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "174126_Ad3s",
+          "bb_delta": 0.5,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174136_3s7c",
+          "bb_delta": -0.5,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "174146_8hTs",
+          "bb_delta": -1.0,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "174152_4sJh",
+          "bb_delta": -0.5,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "174202_Th7h",
+          "bb_delta": 0.5,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "174211_9d5c",
+          "bb_delta": -0.5,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "174221_5d9h",
+          "bb_delta": -1.0,
+          "cumulative": 289.7
+        },
+        {
+          "hand_id": "174227_8c2d",
+          "bb_delta": 1.0,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "174235_7c9h",
+          "bb_delta": 0.5,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "174245_Jd3h",
+          "bb_delta": 1.0,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "174252_9s6s",
+          "bb_delta": 0.5,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174302_2s3h",
+          "bb_delta": 1.0,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174307_Ad4d",
+          "bb_delta": 0.5,
+          "cumulative": 294.2
+        },
+        {
+          "hand_id": "174317_9hAh",
+          "bb_delta": 1.0,
+          "cumulative": 295.2
+        },
+        {
+          "hand_id": "174323_5d4h",
+          "bb_delta": -1.0,
+          "cumulative": 294.2
+        },
+        {
+          "hand_id": "174328_9c3c",
+          "bb_delta": 1.0,
+          "cumulative": 295.2
+        },
+        {
+          "hand_id": "174335_2c9c",
+          "bb_delta": -1.0,
+          "cumulative": 294.2
+        },
+        {
+          "hand_id": "174341_4h7h",
+          "bb_delta": 1.0,
+          "cumulative": 295.2
+        },
+        {
+          "hand_id": "174347_6sTs",
+          "bb_delta": -1.0,
+          "cumulative": 294.2
+        },
+        {
+          "hand_id": "174354_5s4c",
+          "bb_delta": -0.5,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174405_7hQd",
+          "bb_delta": -1.0,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174411_9d5d",
+          "bb_delta": -0.5,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "174421_8dKd",
+          "bb_delta": 0.5,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174431_TcAh",
+          "bb_delta": -0.5,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "174439_Qc3h",
+          "bb_delta": -1.0,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "174450_TdAs",
+          "bb_delta": -0.5,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "174459_Jc4d",
+          "bb_delta": -1.0,
+          "cumulative": 289.7
+        },
+        {
+          "hand_id": "174505_3s8h",
+          "bb_delta": -0.5,
+          "cumulative": 289.2
+        },
+        {
+          "hand_id": "174515_7d7c",
+          "bb_delta": 0.5,
+          "cumulative": 289.7
+        },
+        {
+          "hand_id": "174525_3s7d",
+          "bb_delta": -0.5,
+          "cumulative": 289.2
+        },
+        {
+          "hand_id": "174535_Th8d",
+          "bb_delta": -1.0,
+          "cumulative": 288.2
+        },
+        {
+          "hand_id": "174542_Kh4c",
+          "bb_delta": 1.0,
+          "cumulative": 289.2
+        },
+        {
+          "hand_id": "174549_3h9s",
+          "bb_delta": -1.0,
+          "cumulative": 288.2
+        },
+        {
+          "hand_id": "174554_6d6h",
+          "bb_delta": 1.0,
+          "cumulative": 289.2
+        },
+        {
+          "hand_id": "174601_8s8c",
+          "bb_delta": 0.5,
+          "cumulative": 289.7
+        },
+        {
+          "hand_id": "174611_Qd3s",
+          "bb_delta": -0.5,
+          "cumulative": 289.2
+        },
+        {
+          "hand_id": "174621_7hJd",
+          "bb_delta": 0.5,
+          "cumulative": 289.7
+        },
+        {
+          "hand_id": "174633_6cAs",
+          "bb_delta": 1.0,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "174638_Ks4c",
+          "bb_delta": -1.0,
+          "cumulative": 289.7
+        },
+        {
+          "hand_id": "174644_TcJc",
+          "bb_delta": 1.0,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "174651_7hKc",
+          "bb_delta": -1.0,
+          "cumulative": 289.7
+        },
+        {
+          "hand_id": "174657_Qd8s",
+          "bb_delta": -0.5,
+          "cumulative": 289.2
+        },
+        {
+          "hand_id": "174708_Kd5c",
+          "bb_delta": 0.5,
+          "cumulative": 289.7
+        },
+        {
+          "hand_id": "174719_5c8c",
+          "bb_delta": 1.0,
+          "cumulative": 290.7
+        },
+        {
+          "hand_id": "174726_6d3h",
+          "bb_delta": 0.5,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "174735_Qs3c",
+          "bb_delta": 1.0,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "174740_2dJc",
+          "bb_delta": -1.0,
+          "cumulative": 291.2
+        },
+        {
+          "hand_id": "174747_7s5s",
+          "bb_delta": 1.0,
+          "cumulative": 292.2
+        },
+        {
+          "hand_id": "174753_8h7h",
+          "bb_delta": 0.5,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174803_7dQc",
+          "bb_delta": 1.0,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174808_8cTs",
+          "bb_delta": -1.0,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174814_JdAs",
+          "bb_delta": 1.0,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174822_7cJd",
+          "bb_delta": -1.0,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174827_Jh5s",
+          "bb_delta": 1.0,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174833_Ks9d",
+          "bb_delta": 0.5,
+          "cumulative": 294.2
+        },
+        {
+          "hand_id": "174846_JdJs",
+          "bb_delta": 1.0,
+          "cumulative": 295.2
+        },
+        {
+          "hand_id": "174851_9h7d",
+          "bb_delta": -1.0,
+          "cumulative": 294.2
+        },
+        {
+          "hand_id": "174857_4c4d",
+          "bb_delta": 1.0,
+          "cumulative": 295.2
+        },
+        {
+          "hand_id": "174904_6dJd",
+          "bb_delta": -1.0,
+          "cumulative": 294.2
+        },
+        {
+          "hand_id": "174909_7h2h",
+          "bb_delta": 1.0,
+          "cumulative": 295.2
+        },
+        {
+          "hand_id": "174916_4s6s",
+          "bb_delta": -1.0,
+          "cumulative": 294.2
+        },
+        {
+          "hand_id": "174922_6cJs",
+          "bb_delta": -0.5,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174932_4h8h",
+          "bb_delta": -1.0,
+          "cumulative": 292.7
+        },
+        {
+          "hand_id": "174938_2h9h",
+          "bb_delta": 1.0,
+          "cumulative": 293.7
+        },
+        {
+          "hand_id": "174945_7cAh",
+          "bb_delta": 0.5,
+          "cumulative": 294.2
+        },
+        {
+          "hand_id": "174955_9c3s",
+          "bb_delta": 1.0,
+          "cumulative": 295.2
+        },
+        {
+          "hand_id": "175001_2c3d",
+          "bb_delta": 0.5,
+          "cumulative": 295.7
+        },
+        {
+          "hand_id": "175011_3h9h",
+          "bb_delta": 1.0,
+          "cumulative": 296.7
+        },
+        {
+          "hand_id": "175016_9sQc",
+          "bb_delta": 0.5,
+          "cumulative": 297.2
+        },
+        {
+          "hand_id": "175025_Td2d",
+          "bb_delta": 1.0,
+          "cumulative": 298.2
+        },
+        {
+          "hand_id": "175031_6sKd",
+          "bb_delta": 0.5,
+          "cumulative": 298.7
+        },
+        {
+          "hand_id": "175040_KdAh",
+          "bb_delta": 1.0,
+          "cumulative": 299.7
+        },
+        {
+          "hand_id": "175046_8c3d",
+          "bb_delta": -1.0,
+          "cumulative": 298.7
+        },
+        {
+          "hand_id": "175052_8dTh",
+          "bb_delta": -0.5,
+          "cumulative": 298.2
+        },
+        {
+          "hand_id": "175103_Ac2s",
+          "bb_delta": 0.5,
+          "cumulative": 298.7
+        },
+        {
+          "hand_id": "175113_9c4d",
+          "bb_delta": -0.5,
+          "cumulative": 298.2
+        },
+        {
+          "hand_id": "175122_7h4d",
+          "bb_delta": -1.0,
+          "cumulative": 297.2
+        },
+        {
+          "hand_id": "175127_Qc8d",
+          "bb_delta": 1.0,
+          "cumulative": 298.2
+        },
+        {
+          "hand_id": "175133_AhAs",
+          "bb_delta": 0.5,
+          "cumulative": 298.7
+        },
+        {
+          "hand_id": "175142_QhJs",
+          "bb_delta": 1.0,
+          "cumulative": 299.7
+        },
+        {
+          "hand_id": "175148_9c3c",
+          "bb_delta": -1.0,
+          "cumulative": 298.7
+        },
+        {
+          "hand_id": "175154_Js4d",
+          "bb_delta": 1.0,
+          "cumulative": 299.7
+        },
+        {
+          "hand_id": "175201_2c6s",
+          "bb_delta": -1.0,
+          "cumulative": 298.7
+        },
+        {
+          "hand_id": "175207_4s3s",
+          "bb_delta": -0.5,
+          "cumulative": 298.2
+        },
+        {
+          "hand_id": "175217_7dTc",
+          "bb_delta": -1.0,
+          "cumulative": 297.2
+        },
+        {
+          "hand_id": "175227_4c8s",
+          "bb_delta": -0.5,
+          "cumulative": 296.7
+        },
+        {
+          "hand_id": "175237_TsTd",
+          "bb_delta": 0.5,
+          "cumulative": 297.2
+        },
+        {
+          "hand_id": "175249_Kh6c",
+          "bb_delta": 1.0,
+          "cumulative": 298.2
+        },
+        {
+          "hand_id": "175254_Ac5d",
+          "bb_delta": 0.5,
+          "cumulative": 298.7
+        },
+        {
+          "hand_id": "175304_3s3d",
+          "bb_delta": 1.0,
+          "cumulative": 299.7
+        },
+        {
+          "hand_id": "175309_6dQd",
+          "bb_delta": -1.0,
+          "cumulative": 298.7
+        },
+        {
+          "hand_id": "175315_7dTs",
+          "bb_delta": 1.0,
+          "cumulative": 299.7
+        },
+        {
+          "hand_id": "175321_As7c",
+          "bb_delta": 0.5,
+          "cumulative": 300.2
+        },
+        {
+          "hand_id": "175332_9cQc",
+          "bb_delta": 1.0,
+          "cumulative": 301.2
+        },
+        {
+          "hand_id": "175338_9d5d",
+          "bb_delta": -1.0,
+          "cumulative": 300.2
+        },
+        {
+          "hand_id": "175343_Td2h",
+          "bb_delta": 1.0,
+          "cumulative": 301.2
+        },
+        {
+          "hand_id": "175351_2s6d",
+          "bb_delta": 2.5,
+          "cumulative": 303.7
+        },
+        {
+          "hand_id": "175413_Th4h",
+          "bb_delta": -0.5,
+          "cumulative": 303.2
+        },
+        {
+          "hand_id": "175422_5d8d",
+          "bb_delta": 0.5,
+          "cumulative": 303.7
+        },
+        {
+          "hand_id": "175431_3dQd",
+          "bb_delta": 1.0,
+          "cumulative": 304.7
+        },
+        {
+          "hand_id": "175437_4d9c",
+          "bb_delta": -1.0,
+          "cumulative": 303.7
+        },
+        {
+          "hand_id": "175444_3cJs",
+          "bb_delta": 1.0,
+          "cumulative": 304.7
+        },
+        {
+          "hand_id": "175451_Jd2h",
+          "bb_delta": -1.0,
+          "cumulative": 303.7
+        },
+        {
+          "hand_id": "175457_QdAd",
+          "bb_delta": 4.0,
+          "cumulative": 307.7
+        },
+        {
+          "hand_id": "175511_3s4c",
+          "bb_delta": -1.0,
+          "cumulative": 306.7
+        },
+        {
+          "hand_id": "175517_Jd6c",
+          "bb_delta": -0.5,
+          "cumulative": 306.2
+        },
+        {
+          "hand_id": "175527_JdTs",
+          "bb_delta": 0.5,
+          "cumulative": 306.7
+        },
+        {
+          "hand_id": "175538_8d3c",
+          "bb_delta": -0.5,
+          "cumulative": 306.2
+        },
+        {
+          "hand_id": "175548_Ac5c",
+          "bb_delta": 0.5,
+          "cumulative": 306.7
+        },
+        {
+          "hand_id": "175559_2d3s",
+          "bb_delta": -0.5,
+          "cumulative": 306.2
+        },
+        {
+          "hand_id": "175608_7sAc",
+          "bb_delta": 0.5,
+          "cumulative": 306.7
+        },
+        {
+          "hand_id": "175618_Qs8d",
+          "bb_delta": 1.0,
+          "cumulative": 307.7
+        },
+        {
+          "hand_id": "175623_8c5c",
+          "bb_delta": 0.5,
+          "cumulative": 308.2
+        },
+        {
+          "hand_id": "175633_Qd2h",
+          "bb_delta": 1.0,
+          "cumulative": 309.2
+        },
+        {
+          "hand_id": "175639_KdTs",
+          "bb_delta": 0.5,
+          "cumulative": 309.7
+        },
+        {
+          "hand_id": "175651_QsKh",
+          "bb_delta": 1.0,
+          "cumulative": 310.7
+        },
+        {
+          "hand_id": "175658_9cTc",
+          "bb_delta": 22.7,
+          "cumulative": 333.4
+        },
+        {
+          "hand_id": "175736_4c8d",
+          "bb_delta": 1.0,
+          "cumulative": 334.4
+        },
+        {
+          "hand_id": "175741_5c7d",
+          "bb_delta": -4.5,
+          "cumulative": 329.9
+        },
+        {
+          "hand_id": "175754_QcJc",
+          "bb_delta": 1.0,
+          "cumulative": 330.9
+        },
+        {
+          "hand_id": "175801_4dKs",
+          "bb_delta": -4.0,
+          "cumulative": 326.9
+        },
+        {
+          "hand_id": "175825_4c8c",
+          "bb_delta": 1.0,
+          "cumulative": 327.9
+        },
+        {
+          "hand_id": "175832_9d3h",
+          "bb_delta": -1.0,
+          "cumulative": 326.9
+        },
+        {
+          "hand_id": "175838_4c6d",
+          "bb_delta": -0.5,
+          "cumulative": 326.4
+        },
+        {
+          "hand_id": "175847_Qd3s",
+          "bb_delta": -1.0,
+          "cumulative": 325.4
+        },
+        {
+          "hand_id": "175852_QsQd",
+          "bb_delta": -8.25,
+          "cumulative": 317.15
+        },
+        {
+          "hand_id": "175928_Td2h",
+          "bb_delta": -1.0,
+          "cumulative": 316.15
+        },
+        {
+          "hand_id": "175933_Ah5h",
+          "bb_delta": 1.0,
+          "cumulative": 317.15
+        },
+        {
+          "hand_id": "175941_Th9s",
+          "bb_delta": 0.5,
+          "cumulative": 317.65
+        },
+        {
+          "hand_id": "175950_AcQd",
+          "bb_delta": 1.0,
+          "cumulative": 318.65
+        },
+        {
+          "hand_id": "175955_Qd7s",
+          "bb_delta": -1.0,
+          "cumulative": 317.65
+        },
+        {
+          "hand_id": "180003_8cJh",
+          "bb_delta": 1.0,
+          "cumulative": 318.65
+        },
+        {
+          "hand_id": "180010_7c7h",
+          "bb_delta": 2.5,
+          "cumulative": 321.15
+        },
+        {
+          "hand_id": "180046_3hQd",
+          "bb_delta": -0.5,
+          "cumulative": 320.65
+        },
+        {
+          "hand_id": "180054_Jh4s",
+          "bb_delta": -4.0,
+          "cumulative": 316.65
+        },
+        {
+          "hand_id": "180116_4cAc",
+          "bb_delta": -0.5,
+          "cumulative": 316.15
+        },
+        {
+          "hand_id": "180125_Qc9h",
+          "bb_delta": 0.5,
+          "cumulative": 316.65
+        },
+        {
+          "hand_id": "180135_ThAh",
+          "bb_delta": 3.5,
+          "cumulative": 320.15
+        },
+        {
+          "hand_id": "180149_4hQs",
+          "bb_delta": 6.45,
+          "cumulative": 326.6
+        },
+        {
+          "hand_id": "180226_4dTs",
+          "bb_delta": -0.5,
+          "cumulative": 326.1
+        },
+        {
+          "hand_id": "180237_8c6s",
+          "bb_delta": -1.0,
+          "cumulative": 325.1
+        },
+        {
+          "hand_id": "180243_Td8c",
+          "bb_delta": 1.0,
+          "cumulative": 326.1
+        },
+        {
+          "hand_id": "180250_5s3h",
+          "bb_delta": -1.0,
+          "cumulative": 325.1
+        },
+        {
+          "hand_id": "180255_9s7h",
+          "bb_delta": 1.0,
+          "cumulative": 326.1
+        },
+        {
+          "hand_id": "180303_Ts5s",
+          "bb_delta": -1.0,
+          "cumulative": 325.1
+        },
+        {
+          "hand_id": "180312_5d2d",
+          "bb_delta": -0.5,
+          "cumulative": 324.6
+        },
+        {
+          "hand_id": "180323_8sJh",
+          "bb_delta": -4.0,
+          "cumulative": 320.6
+        },
+        {
+          "hand_id": "180337_3c5c",
+          "bb_delta": -0.5,
+          "cumulative": 320.1
+        },
+        {
+          "hand_id": "180347_3s3d",
+          "bb_delta": 0.5,
+          "cumulative": 320.6
+        },
+        {
+          "hand_id": "180356_5cKc",
+          "bb_delta": 1.0,
+          "cumulative": 321.6
+        },
+        {
+          "hand_id": "180403_Qh4d",
+          "bb_delta": -1.0,
+          "cumulative": 320.6
+        },
+        {
+          "hand_id": "180409_7c9h",
+          "bb_delta": -0.5,
+          "cumulative": 320.1
+        },
+        {
+          "hand_id": "180419_6d9h",
+          "bb_delta": -1.0,
+          "cumulative": 319.1
+        },
+        {
+          "hand_id": "180424_QcKs",
+          "bb_delta": 9.5,
+          "cumulative": 328.6
+        },
+        {
+          "hand_id": "180452_7s3s",
+          "bb_delta": -1.0,
+          "cumulative": 327.6
+        },
+        {
+          "hand_id": "180458_5c2c",
+          "bb_delta": -0.5,
+          "cumulative": 327.1
+        },
+        {
+          "hand_id": "180507_5h9h",
+          "bb_delta": 2.5,
+          "cumulative": 329.6
+        },
+        {
+          "hand_id": "180540_6d6h",
+          "bb_delta": -0.5,
+          "cumulative": 329.1
+        },
+        {
+          "hand_id": "180548_8dKs",
+          "bb_delta": 0.5,
+          "cumulative": 329.6
+        },
+        {
+          "hand_id": "180559_7dJc",
+          "bb_delta": -0.5,
+          "cumulative": 329.1
+        },
+        {
+          "hand_id": "180608_7c3d",
+          "bb_delta": 0.5,
+          "cumulative": 329.6
+        },
+        {
+          "hand_id": "180618_Ts8s",
+          "bb_delta": 1.0,
+          "cumulative": 330.6
+        },
+        {
+          "hand_id": "180623_2h6h",
+          "bb_delta": -1.0,
+          "cumulative": 329.6
+        },
+        {
+          "hand_id": "180630_3d8h",
+          "bb_delta": 1.0,
+          "cumulative": 330.6
+        },
+        {
+          "hand_id": "180636_5dKs",
+          "bb_delta": -1.0,
+          "cumulative": 329.6
+        },
+        {
+          "hand_id": "180642_8sKs",
+          "bb_delta": 1.0,
+          "cumulative": 330.6
+        },
+        {
+          "hand_id": "180648_8hTs",
+          "bb_delta": -1.0,
+          "cumulative": 329.6
+        },
+        {
+          "hand_id": "180654_5s8s",
+          "bb_delta": 1.0,
+          "cumulative": 330.6
+        },
+        {
+          "hand_id": "180701_ThKh",
+          "bb_delta": 3.5,
+          "cumulative": 334.1
+        },
+        {
+          "hand_id": "180732_9sTd",
+          "bb_delta": -0.5,
+          "cumulative": 333.6
+        },
+        {
+          "hand_id": "180742_9d7c",
+          "bb_delta": -1.0,
+          "cumulative": 332.6
+        },
+        {
+          "hand_id": "180748_7c4s",
+          "bb_delta": 1.0,
+          "cumulative": 333.6
+        },
+        {
+          "hand_id": "180754_Ts7s",
+          "bb_delta": 0.5,
+          "cumulative": 334.1
+        },
+        {
+          "hand_id": "180803_Ah4s",
+          "bb_delta": -0.5,
+          "cumulative": 333.6
+        },
+        {
+          "hand_id": "180812_Ks5d",
+          "bb_delta": -1.0,
+          "cumulative": 332.6
+        },
+        {
+          "hand_id": "180822_2d9s",
+          "bb_delta": 1.0,
+          "cumulative": 333.6
+        },
+        {
+          "hand_id": "180829_QsQd",
+          "bb_delta": 0.5,
+          "cumulative": 334.1
+        },
+        {
+          "hand_id": "180840_4d8h",
+          "bb_delta": 1.0,
+          "cumulative": 335.1
+        },
+        {
+          "hand_id": "180846_4c2c",
+          "bb_delta": -1.0,
+          "cumulative": 334.1
+        },
+        {
+          "hand_id": "180852_7s3s",
+          "bb_delta": 1.0,
+          "cumulative": 335.1
+        },
+        {
+          "hand_id": "180858_4s5s",
+          "bb_delta": 0.5,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "180909_6c7c",
+          "bb_delta": 1.0,
+          "cumulative": 336.6
+        },
+        {
+          "hand_id": "180915_KhQc",
+          "bb_delta": 0.5,
+          "cumulative": 337.1
+        },
+        {
+          "hand_id": "180925_9s8c",
+          "bb_delta": -0.5,
+          "cumulative": 336.6
+        },
+        {
+          "hand_id": "180935_5c3d",
+          "bb_delta": -1.0,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "180940_3sTc",
+          "bb_delta": 1.0,
+          "cumulative": 336.6
+        },
+        {
+          "hand_id": "180948_3h8h",
+          "bb_delta": -1.0,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "180954_7dKd",
+          "bb_delta": -0.5,
+          "cumulative": 335.1
+        },
+        {
+          "hand_id": "181004_9hJh",
+          "bb_delta": 0.5,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "181013_6c7s",
+          "bb_delta": 1.0,
+          "cumulative": 336.6
+        },
+        {
+          "hand_id": "181018_Td7h",
+          "bb_delta": -1.0,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "181025_3hKs",
+          "bb_delta": -0.5,
+          "cumulative": 335.1
+        },
+        {
+          "hand_id": "181035_JcTs",
+          "bb_delta": 0.5,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "181044_Ks3s",
+          "bb_delta": 1.0,
+          "cumulative": 336.6
+        },
+        {
+          "hand_id": "181050_8d7c",
+          "bb_delta": -1.0,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "181057_9c9d",
+          "bb_delta": 1.0,
+          "cumulative": 336.6
+        },
+        {
+          "hand_id": "181104_6s7s",
+          "bb_delta": 0.5,
+          "cumulative": 337.1
+        },
+        {
+          "hand_id": "181115_Th3d",
+          "bb_delta": 1.0,
+          "cumulative": 338.1
+        },
+        {
+          "hand_id": "181122_9sKd",
+          "bb_delta": 0.5,
+          "cumulative": 338.6
+        },
+        {
+          "hand_id": "181132_3cQs",
+          "bb_delta": 1.0,
+          "cumulative": 339.6
+        },
+        {
+          "hand_id": "181137_2s4d",
+          "bb_delta": -1.0,
+          "cumulative": 338.6
+        },
+        {
+          "hand_id": "181143_9cAh",
+          "bb_delta": 1.0,
+          "cumulative": 339.6
+        },
+        {
+          "hand_id": "181150_As9s",
+          "bb_delta": 0.5,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181159_AsKs",
+          "bb_delta": 1.0,
+          "cumulative": 341.1
+        },
+        {
+          "hand_id": "181206_6s8d",
+          "bb_delta": -1.0,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181215_3h7h",
+          "bb_delta": -0.5,
+          "cumulative": 339.6
+        },
+        {
+          "hand_id": "181226_8h5h",
+          "bb_delta": -1.0,
+          "cumulative": 338.6
+        },
+        {
+          "hand_id": "181232_AdTc",
+          "bb_delta": 1.0,
+          "cumulative": 339.6
+        },
+        {
+          "hand_id": "181238_3d3h",
+          "bb_delta": 0.5,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181248_8d9h",
+          "bb_delta": -0.5,
+          "cumulative": 339.6
+        },
+        {
+          "hand_id": "181257_Ac9d",
+          "bb_delta": 0.5,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181308_9h6d",
+          "bb_delta": 1.0,
+          "cumulative": 341.1
+        },
+        {
+          "hand_id": "181318_5s4c",
+          "bb_delta": -1.0,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181323_Kc6h",
+          "bb_delta": 1.0,
+          "cumulative": 341.1
+        },
+        {
+          "hand_id": "181330_Td3h",
+          "bb_delta": -1.0,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181335_2hQd",
+          "bb_delta": -0.5,
+          "cumulative": 339.6
+        },
+        {
+          "hand_id": "181345_Th6h",
+          "bb_delta": -1.0,
+          "cumulative": 338.6
+        },
+        {
+          "hand_id": "181351_Qc8h",
+          "bb_delta": -0.5,
+          "cumulative": 338.1
+        },
+        {
+          "hand_id": "181401_KsQs",
+          "bb_delta": 5.5,
+          "cumulative": 343.6
+        },
+        {
+          "hand_id": "181431_QsQh",
+          "bb_delta": -7.5,
+          "cumulative": 336.1
+        },
+        {
+          "hand_id": "181501_5cTc",
+          "bb_delta": 0.5,
+          "cumulative": 336.6
+        },
+        {
+          "hand_id": "181510_Qh7s",
+          "bb_delta": 1.0,
+          "cumulative": 337.6
+        },
+        {
+          "hand_id": "181515_9d6h",
+          "bb_delta": -1.0,
+          "cumulative": 336.6
+        },
+        {
+          "hand_id": "181521_Qd6d",
+          "bb_delta": 1.0,
+          "cumulative": 337.6
+        },
+        {
+          "hand_id": "181528_9h9s",
+          "bb_delta": 3.0,
+          "cumulative": 340.6
+        },
+        {
+          "hand_id": "181554_8hKc",
+          "bb_delta": -0.5,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181604_8h3d",
+          "bb_delta": -1.0,
+          "cumulative": 339.1
+        },
+        {
+          "hand_id": "181609_7dKs",
+          "bb_delta": 1.0,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181616_8h3c",
+          "bb_delta": -1.0,
+          "cumulative": 339.1
+        },
+        {
+          "hand_id": "181622_6d8c",
+          "bb_delta": 1.0,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181629_Kd3h",
+          "bb_delta": -1.0,
+          "cumulative": 339.1
+        },
+        {
+          "hand_id": "181634_7s6c",
+          "bb_delta": -0.5,
+          "cumulative": 338.6
+        },
+        {
+          "hand_id": "181644_3dQd",
+          "bb_delta": -1.0,
+          "cumulative": 337.6
+        },
+        {
+          "hand_id": "181650_2s3s",
+          "bb_delta": -0.5,
+          "cumulative": 337.1
+        },
+        {
+          "hand_id": "181701_4dJc",
+          "bb_delta": -1.0,
+          "cumulative": 336.1
+        },
+        {
+          "hand_id": "181711_8h4h",
+          "bb_delta": -0.5,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "181721_3h9d",
+          "bb_delta": 3.0,
+          "cumulative": 338.6
+        },
+        {
+          "hand_id": "181754_6s7s",
+          "bb_delta": 1.0,
+          "cumulative": 339.6
+        },
+        {
+          "hand_id": "181800_6d6s",
+          "bb_delta": 0.5,
+          "cumulative": 340.1
+        },
+        {
+          "hand_id": "181810_8c9c",
+          "bb_delta": -0.5,
+          "cumulative": 339.6
+        },
+        {
+          "hand_id": "181819_5sQc",
+          "bb_delta": -1.0,
+          "cumulative": 338.6
+        },
+        {
+          "hand_id": "181824_6s2h",
+          "bb_delta": -0.5,
+          "cumulative": 338.1
+        },
+        {
+          "hand_id": "181838_3s5s",
+          "bb_delta": -3.5,
+          "cumulative": 334.6
+        },
+        {
+          "hand_id": "181910_QdAd",
+          "bb_delta": 1.0,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "181917_5cJc",
+          "bb_delta": -1.0,
+          "cumulative": 334.6
+        },
+        {
+          "hand_id": "181923_9c5c",
+          "bb_delta": 1.0,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "181929_QcKh",
+          "bb_delta": 0.5,
+          "cumulative": 336.1
+        },
+        {
+          "hand_id": "181938_ThQs",
+          "bb_delta": -0.5,
+          "cumulative": 335.6
+        },
+        {
+          "hand_id": "181948_Qh3s",
+          "bb_delta": -1.0,
+          "cumulative": 334.6
+        },
+        {
+          "hand_id": "181954_Kd3c",
+          "bb_delta": -0.5,
+          "cumulative": 334.1
+        },
+        {
+          "hand_id": "182005_Kd3s",
+          "bb_delta": -1.0,
+          "cumulative": 333.1
+        },
+        {
+          "hand_id": "182010_8h8c",
+          "bb_delta": -0.5,
+          "cumulative": 332.6
+        },
+        {
+          "hand_id": "182019_TdAc",
+          "bb_delta": 0.5,
+          "cumulative": 333.1
+        },
+        {
+          "hand_id": "182030_2c5d",
+          "bb_delta": -0.5,
+          "cumulative": 332.6
+        },
+        {
+          "hand_id": "182039_3dAc",
+          "bb_delta": 0.5,
+          "cumulative": 333.1
+        },
+        {
+          "hand_id": "182049_TcJs",
+          "bb_delta": 1.0,
+          "cumulative": 334.1
+        },
+        {
+          "hand_id": "182055_5c7h",
+          "bb_delta": -1.0,
+          "cumulative": 333.1
+        },
+        {
+          "hand_id": "182102_6d9h",
+          "bb_delta": 1.0,
+          "cumulative": 334.1
+        },
+        {
+          "hand_id": "182107_QhKd",
+          "bb_delta": 8.25,
+          "cumulative": 342.35
+        },
+        {
+          "hand_id": "182127_9hJs",
+          "bb_delta": 1.0,
+          "cumulative": 343.35
+        },
+        {
+          "hand_id": "182134_8hAs",
+          "bb_delta": 0.5,
+          "cumulative": 343.85
+        },
+        {
+          "hand_id": "182143_5h2s",
+          "bb_delta": 1.0,
+          "cumulative": 344.85
+        },
+        {
+          "hand_id": "182150_Th3d",
+          "bb_delta": -1.0,
+          "cumulative": 343.85
+        },
+        {
+          "hand_id": "182156_Jc2c",
+          "bb_delta": 1.0,
+          "cumulative": 344.85
+        },
+        {
+          "hand_id": "182203_Th8s",
+          "bb_delta": -1.0,
+          "cumulative": 343.85
+        },
+        {
+          "hand_id": "182213_Js8s",
+          "bb_delta": 1.0,
+          "cumulative": 344.85
+        },
+        {
+          "hand_id": "182220_7dKs",
+          "bb_delta": -1.0,
+          "cumulative": 343.85
+        },
+        {
+          "hand_id": "182226_9dKc",
+          "bb_delta": -0.5,
+          "cumulative": 343.35
+        },
+        {
+          "hand_id": "182236_Qc3d",
+          "bb_delta": -1.0,
+          "cumulative": 342.35
+        },
+        {
+          "hand_id": "182243_5sTd",
+          "bb_delta": 1.0,
+          "cumulative": 343.35
+        },
+        {
+          "hand_id": "182249_9d4c",
+          "bb_delta": -1.0,
+          "cumulative": 342.35
+        },
+        {
+          "hand_id": "182255_Jd7d",
+          "bb_delta": 1.0,
+          "cumulative": 343.35
+        },
+        {
+          "hand_id": "182306_QhTc",
+          "bb_delta": 0.5,
+          "cumulative": 343.85
+        },
+        {
+          "hand_id": "182316_Ah9d",
+          "bb_delta": -0.5,
+          "cumulative": 343.35
+        },
+        {
+          "hand_id": "182326_8hTh",
+          "bb_delta": 8.5,
+          "cumulative": 351.85
+        },
+        {
+          "hand_id": "182403_Jh7h",
+          "bb_delta": -0.5,
+          "cumulative": 351.35
+        },
+        {
+          "hand_id": "182412_5cJd",
+          "bb_delta": -1.0,
+          "cumulative": 350.35
+        },
+        {
+          "hand_id": "182418_Ks4d",
+          "bb_delta": 1.0,
+          "cumulative": 351.35
+        },
+        {
+          "hand_id": "182424_8d5h",
+          "bb_delta": -1.0,
+          "cumulative": 350.35
+        },
+        {
+          "hand_id": "182430_6d7s",
+          "bb_delta": 1.0,
+          "cumulative": 351.35
+        },
+        {
+          "hand_id": "182437_3s8c",
+          "bb_delta": -1.0,
+          "cumulative": 350.35
+        },
+        {
+          "hand_id": "182442_3h2h",
+          "bb_delta": 1.0,
+          "cumulative": 351.35
+        },
+        {
+          "hand_id": "182449_Th8c",
+          "bb_delta": -1.0,
+          "cumulative": 350.35
+        },
+        {
+          "hand_id": "182455_2s9s",
+          "bb_delta": 1.0,
+          "cumulative": 351.35
+        },
+        {
+          "hand_id": "182501_3s8s",
+          "bb_delta": -1.0,
+          "cumulative": 350.35
+        },
+        {
+          "hand_id": "182507_Kc4h",
+          "bb_delta": 1.0,
+          "cumulative": 351.35
+        },
+        {
+          "hand_id": "182515_8d7c",
+          "bb_delta": 0.5,
+          "cumulative": 351.85
+        },
+        {
+          "hand_id": "182525_7h7c",
+          "bb_delta": 1.0,
+          "cumulative": 352.85
+        },
+        {
+          "hand_id": "182531_5hAs",
+          "bb_delta": 3.0,
+          "cumulative": 355.85
+        },
+        {
+          "hand_id": "182603_8dAc",
+          "bb_delta": -0.5,
+          "cumulative": 355.35
+        },
+        {
+          "hand_id": "182613_Qh5d",
+          "bb_delta": -1.0,
+          "cumulative": 354.35
+        },
+        {
+          "hand_id": "182619_Ac8s",
+          "bb_delta": 1.0,
+          "cumulative": 355.35
+        },
+        {
+          "hand_id": "182626_5h9c",
+          "bb_delta": 2.5,
+          "cumulative": 357.85
+        },
+        {
+          "hand_id": "182657_Qd4h",
+          "bb_delta": -0.5,
+          "cumulative": 357.35
+        },
+        {
+          "hand_id": "182707_5h6c",
+          "bb_delta": -8.6,
+          "cumulative": 348.75
+        },
+        {
+          "hand_id": "182735_Js4h",
+          "bb_delta": 1.0,
+          "cumulative": 349.75
+        },
+        {
+          "hand_id": "182743_Ac9c",
+          "bb_delta": 0.5,
+          "cumulative": 350.25
+        },
+        {
+          "hand_id": "182754_JdKd",
+          "bb_delta": 4.5,
+          "cumulative": 354.75
+        },
+        {
+          "hand_id": "182809_6d6c",
+          "bb_delta": 0.5,
+          "cumulative": 355.25
+        },
+        {
+          "hand_id": "182818_Td6s",
+          "bb_delta": 1.0,
+          "cumulative": 356.25
+        },
+        {
+          "hand_id": "182824_2d7s",
+          "bb_delta": -1.0,
+          "cumulative": 355.25
+        },
+        {
+          "hand_id": "182829_Ah7d",
+          "bb_delta": -0.5,
+          "cumulative": 354.75
+        },
+        {
+          "hand_id": "182843_9sTs",
+          "bb_delta": 0.5,
+          "cumulative": 355.25
+        },
+        {
+          "hand_id": "182853_KcTd",
+          "bb_delta": 1.0,
+          "cumulative": 356.25
+        },
+        {
+          "hand_id": "182859_5cTh",
+          "bb_delta": -1.0,
+          "cumulative": 355.25
+        },
+        {
+          "hand_id": "182905_2c3h",
+          "bb_delta": -0.5,
+          "cumulative": 354.75
+        },
+        {
+          "hand_id": "182917_Qs5d",
+          "bb_delta": -1.0,
+          "cumulative": 353.75
+        },
+        {
+          "hand_id": "182923_2s4d",
+          "bb_delta": 1.0,
+          "cumulative": 354.75
+        },
+        {
+          "hand_id": "182930_8c8s",
+          "bb_delta": 0.5,
+          "cumulative": 355.25
+        },
+        {
+          "hand_id": "182939_Jc2d",
+          "bb_delta": 1.0,
+          "cumulative": 356.25
+        },
+        {
+          "hand_id": "182944_7cKs",
+          "bb_delta": -4.0,
+          "cumulative": 352.25
+        },
+        {
+          "hand_id": "183012_Ah4h",
+          "bb_delta": 1.0,
+          "cumulative": 353.25
+        },
+        {
+          "hand_id": "183020_3c9c",
+          "bb_delta": -1.0,
+          "cumulative": 352.25
+        },
+        {
+          "hand_id": "183025_Tc8s",
+          "bb_delta": -0.5,
+          "cumulative": 351.75
+        },
+        {
+          "hand_id": "183036_9cQh",
+          "bb_delta": 12.2,
+          "cumulative": 363.95
+        },
+        {
+          "hand_id": "183111_2c7s",
+          "bb_delta": 1.0,
+          "cumulative": 364.95
+        },
+        {
+          "hand_id": "183118_5sAc",
+          "bb_delta": -4.5,
+          "cumulative": 360.45
+        },
+        {
+          "hand_id": "183141_2h6s",
+          "bb_delta": 1.0,
+          "cumulative": 361.45
+        },
+        {
+          "hand_id": "183148_Kd8d",
+          "bb_delta": 0.5,
+          "cumulative": 361.95
+        },
+        {
+          "hand_id": "183159_3hKh",
+          "bb_delta": 1.0,
+          "cumulative": 362.95
+        },
+        {
+          "hand_id": "183204_9dJs",
+          "bb_delta": -3.5,
+          "cumulative": 359.45
+        },
+        {
+          "hand_id": "183218_9c2s",
+          "bb_delta": -0.5,
+          "cumulative": 358.95
+        },
+        {
+          "hand_id": "183228_9c9h",
+          "bb_delta": 0.5,
+          "cumulative": 359.45
+        },
+        {
+          "hand_id": "183238_3h2c",
+          "bb_delta": -0.5,
+          "cumulative": 358.95
+        },
+        {
+          "hand_id": "183247_8sAc",
+          "bb_delta": 0.5,
+          "cumulative": 359.45
+        },
+        {
+          "hand_id": "183302_3dJs",
+          "bb_delta": 1.0,
+          "cumulative": 360.45
+        },
+        {
+          "hand_id": "183310_9d9c",
+          "bb_delta": 0.5,
+          "cumulative": 360.95
+        },
+        {
+          "hand_id": "183319_KsAs",
+          "bb_delta": 4.5,
+          "cumulative": 365.45
+        },
+        {
+          "hand_id": "183331_7d6d",
+          "bb_delta": 0.5,
+          "cumulative": 365.95
+        },
+        {
+          "hand_id": "183341_7c9d",
+          "bb_delta": 1.0,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183346_Qc3c",
+          "bb_delta": -1.0,
+          "cumulative": 365.95
+        },
+        {
+          "hand_id": "183352_2h9h",
+          "bb_delta": 1.0,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183402_Kd4s",
+          "bb_delta": -1.0,
+          "cumulative": 365.95
+        },
+        {
+          "hand_id": "183408_4h8d",
+          "bb_delta": 1.0,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183414_7h8s",
+          "bb_delta": -1.0,
+          "cumulative": 365.95
+        },
+        {
+          "hand_id": "183421_5c2h",
+          "bb_delta": 1.0,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183428_Tc2c",
+          "bb_delta": -1.0,
+          "cumulative": 365.95
+        },
+        {
+          "hand_id": "183434_Jh2c",
+          "bb_delta": 1.0,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183441_3s3c",
+          "bb_delta": 0.5,
+          "cumulative": 367.45
+        },
+        {
+          "hand_id": "183451_8cKd",
+          "bb_delta": -0.5,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183501_AdTd",
+          "bb_delta": 0.5,
+          "cumulative": 367.45
+        },
+        {
+          "hand_id": "183510_9s7c",
+          "bb_delta": -0.5,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183519_8h6c",
+          "bb_delta": -1.0,
+          "cumulative": 365.95
+        },
+        {
+          "hand_id": "183524_Jh5s",
+          "bb_delta": 1.0,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183530_5hTh",
+          "bb_delta": 0.5,
+          "cumulative": 367.45
+        },
+        {
+          "hand_id": "183540_AsJc",
+          "bb_delta": 1.0,
+          "cumulative": 368.45
+        },
+        {
+          "hand_id": "183545_JcJh",
+          "bb_delta": 0.5,
+          "cumulative": 368.95
+        },
+        {
+          "hand_id": "183557_TsAh",
+          "bb_delta": 1.0,
+          "cumulative": 369.95
+        },
+        {
+          "hand_id": "183603_2dJc",
+          "bb_delta": -1.0,
+          "cumulative": 368.95
+        },
+        {
+          "hand_id": "183608_9cQs",
+          "bb_delta": -0.5,
+          "cumulative": 368.45
+        },
+        {
+          "hand_id": "183618_3h2c",
+          "bb_delta": -1.0,
+          "cumulative": 367.45
+        },
+        {
+          "hand_id": "183623_3s5s",
+          "bb_delta": -0.5,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183634_Ah9d",
+          "bb_delta": 0.5,
+          "cumulative": 367.45
+        },
+        {
+          "hand_id": "183645_2s6d",
+          "bb_delta": -0.5,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183653_9h7s",
+          "bb_delta": -1.0,
+          "cumulative": 365.95
+        },
+        {
+          "hand_id": "183703_7c8h",
+          "bb_delta": 1.0,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183709_3s4h",
+          "bb_delta": -1.0,
+          "cumulative": 365.95
+        },
+        {
+          "hand_id": "183715_QhTs",
+          "bb_delta": 1.0,
+          "cumulative": 366.95
+        },
+        {
+          "hand_id": "183722_8cKh",
+          "bb_delta": 0.5,
+          "cumulative": 367.45
+        },
+        {
+          "hand_id": "183732_3c9c",
+          "bb_delta": 1.0,
+          "cumulative": 368.45
+        },
+        {
+          "hand_id": "183738_8h7s",
+          "bb_delta": -1.0,
+          "cumulative": 367.45
+        },
+        {
+          "hand_id": "183745_8s3d",
+          "bb_delta": 1.0,
+          "cumulative": 368.45
+        },
+        {
+          "hand_id": "183755_AhQd",
+          "bb_delta": 5.5,
+          "cumulative": 373.95
+        },
+        {
+          "hand_id": "183825_QsTh",
+          "bb_delta": -0.5,
+          "cumulative": 373.45
+        },
+        {
+          "hand_id": "183835_7h9s",
+          "bb_delta": -1.0,
+          "cumulative": 372.45
+        },
+        {
+          "hand_id": "183841_5hQd",
+          "bb_delta": 1.0,
+          "cumulative": 373.45
+        },
+        {
+          "hand_id": "183847_9s2d",
+          "bb_delta": -1.0,
+          "cumulative": 372.45
+        },
+        {
+          "hand_id": "183853_JhTd",
+          "bb_delta": -0.5,
+          "cumulative": 371.95
+        },
+        {
+          "hand_id": "183903_Jd4h",
+          "bb_delta": -1.0,
+          "cumulative": 370.95
+        },
+        {
+          "hand_id": "183909_2s9h",
+          "bb_delta": -0.5,
+          "cumulative": 370.45
+        },
+        {
+          "hand_id": "183919_Ts5d",
+          "bb_delta": -1.0,
+          "cumulative": 369.45
+        },
+        {
+          "hand_id": "183925_6s6d",
+          "bb_delta": 1.0,
+          "cumulative": 370.45
+        },
+        {
+          "hand_id": "183932_8dJd",
+          "bb_delta": -4.0,
+          "cumulative": 366.45
+        },
+        {
+          "hand_id": "183953_4dTs",
+          "bb_delta": 1.0,
+          "cumulative": 367.45
+        },
+        {
+          "hand_id": "184000_3h5s",
+          "bb_delta": -3.5,
+          "cumulative": 363.95
+        },
+        {
+          "hand_id": "184015_7c9s",
+          "bb_delta": 1.0,
+          "cumulative": 364.95
+        },
+        {
+          "hand_id": "184022_7c5d",
+          "bb_delta": -1.0,
+          "cumulative": 363.95
+        },
+        {
+          "hand_id": "184029_7hTd",
+          "bb_delta": 1.0,
+          "cumulative": 364.95
+        },
+        {
+          "hand_id": "184035_9c6h",
+          "bb_delta": -1.0,
+          "cumulative": 363.95
+        },
+        {
+          "hand_id": "184042_3dQc",
+          "bb_delta": -0.5,
+          "cumulative": 363.45
+        },
+        {
+          "hand_id": "184051_Th6h",
+          "bb_delta": -1.0,
+          "cumulative": 362.45
+        },
+        {
+          "hand_id": "184057_9h3h",
+          "bb_delta": -0.5,
+          "cumulative": 361.95
+        },
+        {
+          "hand_id": "184106_4dQs",
+          "bb_delta": -1.0,
+          "cumulative": 360.95
+        },
+        {
+          "hand_id": "184111_QsKc",
+          "bb_delta": 1.0,
+          "cumulative": 361.95
+        },
+        {
+          "hand_id": "184118_9d6c",
+          "bb_delta": -1.0,
+          "cumulative": 360.95
+        },
+        {
+          "hand_id": "184128_6s9d",
+          "bb_delta": -0.5,
+          "cumulative": 360.45
+        },
+        {
+          "hand_id": "184137_AhQh",
+          "bb_delta": -6.3,
+          "cumulative": 354.15
+        },
+        {
+          "hand_id": "184210_4c3c",
+          "bb_delta": 1.0,
+          "cumulative": 355.15
+        },
+        {
+          "hand_id": "184217_2hAh",
+          "bb_delta": -15.5,
+          "cumulative": 339.65
+        },
+        {
+          "hand_id": "184238_Tc6h",
+          "bb_delta": -0.5,
+          "cumulative": 339.15
+        },
+        {
+          "hand_id": "184248_5h6c",
+          "bb_delta": -1.0,
+          "cumulative": 338.15
+        },
+        {
+          "hand_id": "184253_JdTd",
+          "bb_delta": 1.0,
+          "cumulative": 339.15
+        },
+        {
+          "hand_id": "184305_Jh9d",
+          "bb_delta": 0.5,
+          "cumulative": 339.65
+        },
+        {
+          "hand_id": "184314_7c5d",
+          "bb_delta": 1.0,
+          "cumulative": 340.65
+        },
+        {
+          "hand_id": "184319_3s8h",
+          "bb_delta": -37.0,
+          "cumulative": 303.65
+        },
+        {
+          "hand_id": "184358_7hQs",
+          "bb_delta": 1.0,
+          "cumulative": 304.65
+        },
+        {
+          "hand_id": "184405_6h6d",
+          "bb_delta": 0.5,
+          "cumulative": 305.15
+        },
+        {
+          "hand_id": "184416_As9c",
+          "bb_delta": -0.5,
+          "cumulative": 304.65
+        },
+        {
+          "hand_id": "184425_2c4c",
+          "bb_delta": -1.0,
+          "cumulative": 303.65
+        },
+        {
+          "hand_id": "184431_As6c",
+          "bb_delta": 1.0,
+          "cumulative": 304.65
+        },
+        {
+          "hand_id": "184438_7c5c",
+          "bb_delta": -3.5,
+          "cumulative": 301.15
+        },
+        {
+          "hand_id": "184503_Kc8s",
+          "bb_delta": -0.5,
+          "cumulative": 300.65
+        },
+        {
+          "hand_id": "184513_2cTd",
+          "bb_delta": -1.0,
+          "cumulative": 299.65
+        },
+        {
+          "hand_id": "184519_AhTc",
+          "bb_delta": 1.0,
+          "cumulative": 300.65
+        },
+        {
+          "hand_id": "184525_4dQc",
+          "bb_delta": -1.0,
+          "cumulative": 299.65
+        },
+        {
+          "hand_id": "184531_QdKc",
+          "bb_delta": 1.0,
+          "cumulative": 300.65
+        },
+        {
+          "hand_id": "184537_8hAs",
+          "bb_delta": 3.0,
+          "cumulative": 303.65
+        },
+        {
+          "hand_id": "184559_Qh3s",
+          "bb_delta": 1.0,
+          "cumulative": 304.65
+        },
+        {
+          "hand_id": "184604_ThJc",
+          "bb_delta": 0.5,
+          "cumulative": 305.15
+        },
+        {
+          "hand_id": "184614_5c6s",
+          "bb_delta": 1.0,
+          "cumulative": 306.15
+        },
+        {
+          "hand_id": "184619_6sQs",
+          "bb_delta": -1.0,
+          "cumulative": 305.15
+        },
+        {
+          "hand_id": "184626_7hKh",
+          "bb_delta": 1.0,
+          "cumulative": 306.15
+        },
+        {
+          "hand_id": "184632_8c8s",
+          "bb_delta": 0.5,
+          "cumulative": 306.65
+        },
+        {
+          "hand_id": "184643_9c7c",
+          "bb_delta": 1.0,
+          "cumulative": 307.65
+        },
+        {
+          "hand_id": "184648_Ac9s",
+          "bb_delta": -4.0,
+          "cumulative": 303.65
+        },
+        {
+          "hand_id": "184715_6d7h",
+          "bb_delta": -0.5,
+          "cumulative": 303.15
+        },
+        {
+          "hand_id": "184724_9h6c",
+          "bb_delta": -1.0,
+          "cumulative": 302.15
+        },
+        {
+          "hand_id": "184730_Tc4d",
+          "bb_delta": 1.0,
+          "cumulative": 303.15
+        },
+        {
+          "hand_id": "184737_Ad8c",
+          "bb_delta": -3.5,
+          "cumulative": 299.65
+        },
+        {
+          "hand_id": "184804_3s3h",
+          "bb_delta": 1.0,
+          "cumulative": 300.65
+        },
+        {
+          "hand_id": "184810_3sAh",
+          "bb_delta": -1.0,
+          "cumulative": 299.65
+        },
+        {
+          "hand_id": "184816_2cTc",
+          "bb_delta": 1.0,
+          "cumulative": 300.65
+        },
+        {
+          "hand_id": "184827_2sTd",
+          "bb_delta": -1.0,
+          "cumulative": 299.65
+        },
+        {
+          "hand_id": "184832_6cKh",
+          "bb_delta": 1.0,
+          "cumulative": 300.65
+        },
+        {
+          "hand_id": "184840_JsAc",
+          "bb_delta": 0.5,
+          "cumulative": 301.15
+        },
+        {
+          "hand_id": "184853_2dQc",
+          "bb_delta": -0.5,
+          "cumulative": 300.65
+        },
+        {
+          "hand_id": "184901_Kd7h",
+          "bb_delta": -1.0,
+          "cumulative": 299.65
+        },
+        {
+          "hand_id": "184906_6s7c",
+          "bb_delta": -0.5,
+          "cumulative": 299.15
+        },
+        {
+          "hand_id": "184917_4h9d",
+          "bb_delta": -1.0,
+          "cumulative": 298.15
+        },
+        {
+          "hand_id": "184923_6dTs",
+          "bb_delta": -0.5,
+          "cumulative": 297.65
+        },
+        {
+          "hand_id": "184933_4d8h",
+          "bb_delta": -1.0,
+          "cumulative": 296.65
+        },
+        {
+          "hand_id": "184939_7dKh",
+          "bb_delta": -0.5,
+          "cumulative": 296.15
+        },
+        {
+          "hand_id": "184950_Js9s",
+          "bb_delta": 0.5,
+          "cumulative": 296.65
+        },
+        {
+          "hand_id": "184959_6c4h",
+          "bb_delta": -0.5,
+          "cumulative": 296.15
+        },
+        {
+          "hand_id": "185008_JhQd",
+          "bb_delta": 0.5,
+          "cumulative": 296.65
+        },
+        {
+          "hand_id": "185019_2c2s",
+          "bb_delta": -0.5,
+          "cumulative": 296.15
+        },
+        {
+          "hand_id": "185027_7hKd",
+          "bb_delta": -1.0,
+          "cumulative": 295.15
+        },
+        {
+          "hand_id": "185032_4d6d",
+          "bb_delta": -0.5,
+          "cumulative": 294.65
+        },
+        {
+          "hand_id": "185042_2d3d",
+          "bb_delta": 0.5,
+          "cumulative": 295.15
+        },
+        {
+          "hand_id": "185053_Js5d",
+          "bb_delta": -0.5,
+          "cumulative": 294.65
+        },
+        {
+          "hand_id": "185103_3sTh",
+          "bb_delta": -1.0,
+          "cumulative": 293.65
+        },
+        {
+          "hand_id": "185109_4d8s",
+          "bb_delta": -0.5,
+          "cumulative": 293.15
+        },
+        {
+          "hand_id": "185120_7hJs",
+          "bb_delta": -1.0,
+          "cumulative": 292.15
+        },
+        {
+          "hand_id": "185126_7sTs",
+          "bb_delta": 1.0,
+          "cumulative": 293.15
+        },
+        {
+          "hand_id": "185132_Jc3c",
+          "bb_delta": -1.0,
+          "cumulative": 292.15
+        },
+        {
+          "hand_id": "185142_Td2d",
+          "bb_delta": 1.0,
+          "cumulative": 293.15
+        },
+        {
+          "hand_id": "185149_Ac4d",
+          "bb_delta": -40.75,
+          "cumulative": 252.4
+        },
+        {
+          "hand_id": "185228_3hJc",
+          "bb_delta": 1.0,
+          "cumulative": 253.4
+        },
+        {
+          "hand_id": "185235_6s4s",
+          "bb_delta": -1.0,
+          "cumulative": 252.4
+        },
+        {
+          "hand_id": "185240_QcTs",
+          "bb_delta": -0.5,
+          "cumulative": 251.9
+        },
+        {
+          "hand_id": "185250_6hQc",
+          "bb_delta": -1.0,
+          "cumulative": 250.9
+        },
+        {
+          "hand_id": "185256_JcAs",
+          "bb_delta": -0.5,
+          "cumulative": 250.4
+        },
+        {
+          "hand_id": "185310_Jh4d",
+          "bb_delta": -1.0,
+          "cumulative": 249.4
+        },
+        {
+          "hand_id": "185316_QdAs",
+          "bb_delta": 1.0,
+          "cumulative": 250.4
+        },
+        {
+          "hand_id": "185323_8hJc",
+          "bb_delta": 0.5,
+          "cumulative": 250.9
+        },
+        {
+          "hand_id": "185334_Ks3s",
+          "bb_delta": 1.0,
+          "cumulative": 251.9
+        },
+        {
+          "hand_id": "185339_Ts3h",
+          "bb_delta": -1.0,
+          "cumulative": 250.9
+        },
+        {
+          "hand_id": "185346_7cQs",
+          "bb_delta": 1.0,
+          "cumulative": 251.9
+        },
+        {
+          "hand_id": "185353_8h3c",
+          "bb_delta": -1.0,
+          "cumulative": 250.9
+        },
+        {
+          "hand_id": "185359_As3d",
+          "bb_delta": 1.0,
+          "cumulative": 251.9
+        },
+        {
+          "hand_id": "185405_4d3c",
+          "bb_delta": -1.0,
+          "cumulative": 250.9
+        },
+        {
+          "hand_id": "185411_ThQh",
+          "bb_delta": -0.5,
+          "cumulative": 250.4
+        },
+        {
+          "hand_id": "185421_KhJs",
+          "bb_delta": 0.5,
+          "cumulative": 250.9
+        },
+        {
+          "hand_id": "185431_Js8s",
+          "bb_delta": 1.0,
+          "cumulative": 251.9
+        },
+        {
+          "hand_id": "185437_4h2h",
+          "bb_delta": -1.0,
+          "cumulative": 250.9
+        },
+        {
+          "hand_id": "185443_4h8s",
+          "bb_delta": -0.5,
+          "cumulative": 250.4
+        },
+        {
+          "hand_id": "185454_5c2c",
+          "bb_delta": -1.0,
+          "cumulative": 249.4
+        },
+        {
+          "hand_id": "185500_Qh7d",
+          "bb_delta": -0.5,
+          "cumulative": 248.9
+        },
+        {
+          "hand_id": "185512_4s5c",
+          "bb_delta": -1.0,
+          "cumulative": 247.9
+        },
+        {
+          "hand_id": "185517_Js7s",
+          "bb_delta": 1.0,
+          "cumulative": 248.9
+        },
+        {
+          "hand_id": "185524_9cTh",
+          "bb_delta": 0.5,
+          "cumulative": 249.4
+        },
+        {
+          "hand_id": "185536_Qh2h",
+          "bb_delta": -0.5,
+          "cumulative": 248.9
+        },
+        {
+          "hand_id": "185544_7c5s",
+          "bb_delta": -1.0,
+          "cumulative": 247.9
+        },
+        {
+          "hand_id": "185551_3cJh",
+          "bb_delta": 1.0,
+          "cumulative": 248.9
+        },
+        {
+          "hand_id": "185557_8d6c",
+          "bb_delta": -1.0,
+          "cumulative": 247.9
+        },
+        {
+          "hand_id": "185606_As8c",
+          "bb_delta": -0.5,
+          "cumulative": 247.4
+        },
+        {
+          "hand_id": "185616_2c7s",
+          "bb_delta": -1.0,
+          "cumulative": 246.4
+        },
+        {
+          "hand_id": "185622_5d3h",
+          "bb_delta": 1.0,
+          "cumulative": 247.4
+        },
+        {
+          "hand_id": "185630_ThQh",
+          "bb_delta": 0.5,
+          "cumulative": 247.9
+        },
+        {
+          "hand_id": "185640_Jc5d",
+          "bb_delta": 1.0,
+          "cumulative": 248.9
+        },
+        {
+          "hand_id": "185646_Jh3s",
+          "bb_delta": -1.0,
+          "cumulative": 247.9
+        },
+        {
+          "hand_id": "185652_8c3c",
+          "bb_delta": -0.5,
+          "cumulative": 247.4
+        },
+        {
+          "hand_id": "185706_Jd9h",
+          "bb_delta": -1.0,
+          "cumulative": 246.4
+        },
+        {
+          "hand_id": "185712_3hTc",
+          "bb_delta": 1.0,
+          "cumulative": 247.4
+        },
+        {
+          "hand_id": "185719_7hJs",
+          "bb_delta": -1.0,
+          "cumulative": 246.4
+        },
+        {
+          "hand_id": "185724_Kd8h",
+          "bb_delta": -0.5,
+          "cumulative": 245.9
+        },
+        {
+          "hand_id": "185734_8sTc",
+          "bb_delta": -1.0,
+          "cumulative": 244.9
+        },
+        {
+          "hand_id": "185740_KhAd",
+          "bb_delta": 1.0,
+          "cumulative": 245.9
+        },
+        {
+          "hand_id": "185748_7c8h",
+          "bb_delta": -5.5,
+          "cumulative": 240.4
+        },
+        {
+          "hand_id": "185819_5s8d",
+          "bb_delta": 1.0,
+          "cumulative": 241.4
+        },
+        {
+          "hand_id": "185826_4cKs",
+          "bb_delta": 8.5,
+          "cumulative": 249.9
+        },
+        {
+          "hand_id": "185900_Tc4h",
+          "bb_delta": -0.5,
+          "cumulative": 249.4
+        },
+        {
+          "hand_id": "185911_3d4c",
+          "bb_delta": -1.0,
+          "cumulative": 248.4
+        },
+        {
+          "hand_id": "185916_8cKh",
+          "bb_delta": 1.0,
+          "cumulative": 249.4
+        },
+        {
+          "hand_id": "185924_KcQs",
+          "bb_delta": 7.6,
+          "cumulative": 257.0
+        },
+        {
+          "hand_id": "185954_Ts6s",
+          "bb_delta": -0.5,
+          "cumulative": 256.5
+        },
+        {
+          "hand_id": "190004_9d9s",
+          "bb_delta": 0.5,
+          "cumulative": 257.0
+        },
+        {
+          "hand_id": "190014_Kc8s",
+          "bb_delta": 1.0,
+          "cumulative": 258.0
+        },
+        {
+          "hand_id": "190019_AhJs",
+          "bb_delta": -3.5,
+          "cumulative": 254.5
+        },
+        {
+          "hand_id": "190047_4d5d",
+          "bb_delta": 1.0,
+          "cumulative": 255.5
+        },
+        {
+          "hand_id": "190054_3sTc",
+          "bb_delta": -1.0,
+          "cumulative": 254.5
+        },
+        {
+          "hand_id": "190101_2cJh",
+          "bb_delta": 1.0,
+          "cumulative": 255.5
+        },
+        {
+          "hand_id": "190108_7s4c",
+          "bb_delta": -1.0,
+          "cumulative": 254.5
+        },
+        {
+          "hand_id": "190114_6c4d",
+          "bb_delta": 1.0,
+          "cumulative": 255.5
+        },
+        {
+          "hand_id": "190121_9h7c",
+          "bb_delta": -1.0,
+          "cumulative": 254.5
+        },
+        {
+          "hand_id": "190130_Ts2c",
+          "bb_delta": 1.0,
+          "cumulative": 255.5
+        },
+        {
+          "hand_id": "190137_AdKh",
+          "bb_delta": 0.5,
+          "cumulative": 256.0
+        },
+        {
+          "hand_id": "190147_Jh4h",
+          "bb_delta": -0.5,
+          "cumulative": 255.5
+        },
+        {
+          "hand_id": "190157_4sTd",
+          "bb_delta": -1.0,
+          "cumulative": 254.5
+        },
+        {
+          "hand_id": "190203_7dTs",
+          "bb_delta": -0.5,
+          "cumulative": 254.0
+        },
+        {
+          "hand_id": "190211_3hAd",
+          "bb_delta": 2.5,
+          "cumulative": 256.5
+        },
+        {
+          "hand_id": "190239_4sJh",
+          "bb_delta": 1.0,
+          "cumulative": 257.5
+        },
+        {
+          "hand_id": "190249_4c6h",
+          "bb_delta": -1.0,
+          "cumulative": 256.5
+        },
+        {
+          "hand_id": "190255_3h9s",
+          "bb_delta": 1.0,
+          "cumulative": 257.5
+        },
+        {
+          "hand_id": "190301_2dQc",
+          "bb_delta": -1.0,
+          "cumulative": 256.5
+        },
+        {
+          "hand_id": "190308_Kc4c",
+          "bb_delta": -0.5,
+          "cumulative": 256.0
+        },
+        {
+          "hand_id": "190318_Qc6s",
+          "bb_delta": -1.0,
+          "cumulative": 255.0
+        },
+        {
+          "hand_id": "190324_8h4s",
+          "bb_delta": -0.5,
+          "cumulative": 254.5
+        },
+        {
+          "hand_id": "190334_7cKh",
+          "bb_delta": 0.5,
+          "cumulative": 255.0
+        },
+        {
+          "hand_id": "190345_5s6h",
+          "bb_delta": 1.0,
+          "cumulative": 256.0
+        },
+        {
+          "hand_id": "190349_4s2h",
+          "bb_delta": -1.0,
+          "cumulative": 255.0
+        },
+        {
+          "hand_id": "190355_7dAc",
+          "bb_delta": -0.5,
+          "cumulative": 254.5
+        },
+        {
+          "hand_id": "190404_TdAd",
+          "bb_delta": 0.5,
+          "cumulative": 255.0
+        },
+        {
+          "hand_id": "190413_4h7h",
+          "bb_delta": -0.5,
+          "cumulative": 254.5
+        },
+        {
+          "hand_id": "190421_4c3c",
+          "bb_delta": 0.5,
+          "cumulative": 255.0
+        },
+        {
+          "hand_id": "190431_5cQd",
+          "bb_delta": 1.0,
+          "cumulative": 256.0
+        },
+        {
+          "hand_id": "190438_Qd5h",
+          "bb_delta": -1.0,
+          "cumulative": 255.0
+        },
+        {
+          "hand_id": "190443_3dJc",
+          "bb_delta": -0.5,
+          "cumulative": 254.5
+        },
+        {
+          "hand_id": "190454_4c8c",
+          "bb_delta": -1.0,
+          "cumulative": 253.5
+        },
+        {
+          "hand_id": "190459_Kd2h",
+          "bb_delta": -0.5,
+          "cumulative": 253.0
+        },
+        {
+          "hand_id": "190509_5h7d",
+          "bb_delta": -1.0,
+          "cumulative": 252.0
+        },
+        {
+          "hand_id": "190516_As5h",
+          "bb_delta": 1.0,
+          "cumulative": 253.0
+        },
+        {
+          "hand_id": "190523_Ts8s",
+          "bb_delta": -0.5,
+          "cumulative": 252.5
+        },
+        {
+          "hand_id": "190554_6d8s",
+          "bb_delta": 1.0,
+          "cumulative": 253.5
+        },
+        {
+          "hand_id": "190601_6sTs",
+          "bb_delta": -1.0,
+          "cumulative": 252.5
+        },
+        {
+          "hand_id": "190610_9d7c",
+          "bb_delta": -0.5,
+          "cumulative": 252.0
+        },
+        {
+          "hand_id": "190621_3c6c",
+          "bb_delta": -1.0,
+          "cumulative": 251.0
+        },
+        {
+          "hand_id": "190626_Kc7d",
+          "bb_delta": 1.0,
+          "cumulative": 252.0
+        },
+        {
+          "hand_id": "190633_JhKd",
+          "bb_delta": 0.5,
+          "cumulative": 252.5
+        },
+        {
+          "hand_id": "190643_8s3d",
+          "bb_delta": 1.0,
+          "cumulative": 253.5
+        },
+        {
+          "hand_id": "190650_6hAd",
+          "bb_delta": 3.0,
+          "cumulative": 256.5
+        },
+        {
+          "hand_id": "190719_Tc4h",
+          "bb_delta": 1.0,
+          "cumulative": 257.5
+        },
+        {
+          "hand_id": "190728_Ks5s",
+          "bb_delta": -1.0,
+          "cumulative": 256.5
+        },
+        {
+          "hand_id": "190734_3s5c",
+          "bb_delta": 1.0,
+          "cumulative": 257.5
+        },
+        {
+          "hand_id": "190742_5hKh",
+          "bb_delta": 2.5,
+          "cumulative": 260.0
+        },
+        {
+          "hand_id": "190815_5d2s",
+          "bb_delta": 1.0,
+          "cumulative": 261.0
+        },
+        {
+          "hand_id": "190821_2h8s",
+          "bb_delta": 0.0,
+          "cumulative": 261.0
+        },
+        {
+          "hand_id": "untracked",
+          "bb_delta": -200.5,
+          "cumulative": 60.5
+        }
+      ],
+      "decisions_total": 674
+    },
+    {
+      "session_id": "2026-04-27_173742",
+      "date": "2026-04-27",
+      "version": "2.3",
+      "hands": 575,
+      "session_pnl_bb": 24.2,
+      "ledger_net_bb": 60.5,
+      "bb_per_100": 10.52,
+      "stack_change_bb": 24.2,
+      "untracked_jumps_bb": 0.0,
+      "untracked_jumps_count": 0,
+      "winrate": 0.489,
+      "wtsd": 0.038,
+      "flopped_rate": 0.068,
+      "hero_vpip": 0.263,
+      "hero_pfr": 0.205,
+      "hero_cbet": 0.0,
+      "cbet_opps": 6,
+      "source_counts": {
+        "preflop_gto": 431,
+        "monte_carlo": 6,
+        "solver": 37,
+        "turn_heuristic": 46,
+        "river_heuristic": 33
+      },
+      "phase_counts": {
+        "preflop": 431,
+        "flop": 43,
+        "turn": 46,
+        "river": 33
+      },
+      "phase_action": {
+        "preflop": {
+          "fold": 271,
+          "raise": 124,
+          "call": 36
+        },
+        "flop": {
+          "check": 37,
+          "fold": 2,
+          "raise": 3,
+          "call": 1
+        },
+        "turn": {
+          "raise": 12,
+          "check": 24,
+          "call": 3,
+          "fold": 7
+        },
+        "river": {
+          "check": 15,
+          "call": 2,
+          "raise": 8,
+          "fold": 8
+        }
+      },
+      "opponents": {
+        "jimbot": 575
+      },
+      "pnl_series": [
+        {
+          "hand_id": "173750_3d7d",
+          "bb_delta": -1.0,
+          "cumulative": -1.0
+        },
+        {
+          "hand_id": "173755_Jd6c",
+          "bb_delta": 1.0,
+          "cumulative": 0.0
+        },
+        {
+          "hand_id": "173801_Kd7s",
+          "bb_delta": -1.0,
+          "cumulative": -1.0
+        },
+        {
+          "hand_id": "173807_5dJd",
+          "bb_delta": -0.5,
+          "cumulative": -1.5
+        },
+        {
+          "hand_id": "173816_4cAc",
+          "bb_delta": 0.5,
+          "cumulative": -1.0
+        },
+        {
+          "hand_id": "173825_6hTh",
+          "bb_delta": -0.5,
+          "cumulative": -1.5
+        },
+        {
+          "hand_id": "173833_Js4h",
+          "bb_delta": -1.0,
+          "cumulative": -2.5
+        },
+        {
+          "hand_id": "173839_Jc8d",
+          "bb_delta": -0.5,
+          "cumulative": -3.0
+        },
+        {
+          "hand_id": "173849_6cTc",
+          "bb_delta": -1.0,
+          "cumulative": -4.0
+        },
+        {
+          "hand_id": "173855_6h9h",
+          "bb_delta": -0.5,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "173905_8d2d",
+          "bb_delta": -1.0,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "173912_Kc8h",
+          "bb_delta": -0.5,
+          "cumulative": -6.0
+        },
+        {
+          "hand_id": "173922_AdTh",
+          "bb_delta": 0.5,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "173934_3d4d",
+          "bb_delta": -0.5,
+          "cumulative": -6.0
+        },
+        {
+          "hand_id": "173943_Kc3s",
+          "bb_delta": -1.0,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "173949_4sQc",
+          "bb_delta": 1.0,
+          "cumulative": -6.0
+        },
+        {
+          "hand_id": "173956_Kc2h",
+          "bb_delta": -1.0,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "174002_JcTs",
+          "bb_delta": -0.5,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174013_9h6c",
+          "bb_delta": -1.0,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174018_5d9h",
+          "bb_delta": 1.0,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174026_4sKs",
+          "bb_delta": -1.0,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174032_Kh8h",
+          "bb_delta": 1.0,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174044_TsTh",
+          "bb_delta": 0.5,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "174054_Js6h",
+          "bb_delta": -0.5,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174102_4s7d",
+          "bb_delta": -1.0,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174109_5dAh",
+          "bb_delta": 1.0,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174116_QhAh",
+          "bb_delta": 0.5,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "174127_5sTh",
+          "bb_delta": -0.5,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174136_6sTh",
+          "bb_delta": 0.5,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "174146_Jh7c",
+          "bb_delta": 1.0,
+          "cumulative": -6.0
+        },
+        {
+          "hand_id": "174153_JcQd",
+          "bb_delta": 0.5,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "174202_9c3c",
+          "bb_delta": -0.5,
+          "cumulative": -6.0
+        },
+        {
+          "hand_id": "174210_QcQs",
+          "bb_delta": 0.5,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "174222_7hKh",
+          "bb_delta": 1.0,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "174228_3d6h",
+          "bb_delta": -1.0,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "174234_6cKd",
+          "bb_delta": -0.5,
+          "cumulative": -6.0
+        },
+        {
+          "hand_id": "174245_Kh4c",
+          "bb_delta": -1.0,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "174251_3s2h",
+          "bb_delta": -0.5,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174301_4hJc",
+          "bb_delta": -1.0,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174306_2h8d",
+          "bb_delta": -0.5,
+          "cumulative": -9.0
+        },
+        {
+          "hand_id": "174316_4s7s",
+          "bb_delta": -1.0,
+          "cumulative": -10.0
+        },
+        {
+          "hand_id": "174322_3h6d",
+          "bb_delta": 1.0,
+          "cumulative": -9.0
+        },
+        {
+          "hand_id": "174328_4s3s",
+          "bb_delta": -1.0,
+          "cumulative": -10.0
+        },
+        {
+          "hand_id": "174334_2s4d",
+          "bb_delta": 1.0,
+          "cumulative": -9.0
+        },
+        {
+          "hand_id": "174342_Ac2h",
+          "bb_delta": -1.0,
+          "cumulative": -10.0
+        },
+        {
+          "hand_id": "174347_AsJd",
+          "bb_delta": 1.0,
+          "cumulative": -9.0
+        },
+        {
+          "hand_id": "174354_KcJd",
+          "bb_delta": 0.5,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174405_JhQc",
+          "bb_delta": 1.0,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174411_JhAc",
+          "bb_delta": 0.5,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "174422_Jh6c",
+          "bb_delta": -0.5,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174431_AsQs",
+          "bb_delta": 0.5,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "174440_6d6h",
+          "bb_delta": 1.0,
+          "cumulative": -6.0
+        },
+        {
+          "hand_id": "174450_Kd4d",
+          "bb_delta": 0.5,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "174500_8hAc",
+          "bb_delta": 1.0,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "174505_9h5d",
+          "bb_delta": 0.5,
+          "cumulative": -4.0
+        },
+        {
+          "hand_id": "174516_4d6s",
+          "bb_delta": -0.5,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "174525_QsKc",
+          "bb_delta": 0.5,
+          "cumulative": -4.0
+        },
+        {
+          "hand_id": "174536_4h9h",
+          "bb_delta": 1.0,
+          "cumulative": -3.0
+        },
+        {
+          "hand_id": "174542_7dQc",
+          "bb_delta": -1.0,
+          "cumulative": -4.0
+        },
+        {
+          "hand_id": "174548_Ac8s",
+          "bb_delta": 1.0,
+          "cumulative": -3.0
+        },
+        {
+          "hand_id": "174555_9d4h",
+          "bb_delta": -1.0,
+          "cumulative": -4.0
+        },
+        {
+          "hand_id": "174600_5s9h",
+          "bb_delta": -0.5,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "174611_QsTd",
+          "bb_delta": 0.5,
+          "cumulative": -4.0
+        },
+        {
+          "hand_id": "174622_8c7s",
+          "bb_delta": -0.5,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "174632_Qh4d",
+          "bb_delta": -1.0,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "174637_Jd2c",
+          "bb_delta": 1.0,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "174644_4d3c",
+          "bb_delta": -1.0,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "174650_TdAh",
+          "bb_delta": 1.0,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "174658_Jd8d",
+          "bb_delta": 0.5,
+          "cumulative": -4.0
+        },
+        {
+          "hand_id": "174709_6c2s",
+          "bb_delta": -0.5,
+          "cumulative": -4.5
+        },
+        {
+          "hand_id": "174719_6c5s",
+          "bb_delta": -1.0,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "174725_7c3d",
+          "bb_delta": -0.5,
+          "cumulative": -6.0
+        },
+        {
+          "hand_id": "174735_2h6c",
+          "bb_delta": -1.0,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "174740_Jh5h",
+          "bb_delta": 1.0,
+          "cumulative": -6.0
+        },
+        {
+          "hand_id": "174747_3cKd",
+          "bb_delta": -1.0,
+          "cumulative": -7.0
+        },
+        {
+          "hand_id": "174753_2h5s",
+          "bb_delta": -0.5,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174803_2c5c",
+          "bb_delta": -1.0,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174808_3sAs",
+          "bb_delta": 1.0,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174815_Qs2d",
+          "bb_delta": -1.0,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174821_4dAd",
+          "bb_delta": 1.0,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174828_3s6c",
+          "bb_delta": -1.0,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174833_Jd7s",
+          "bb_delta": -0.5,
+          "cumulative": -9.0
+        },
+        {
+          "hand_id": "174845_9c8h",
+          "bb_delta": -1.0,
+          "cumulative": -10.0
+        },
+        {
+          "hand_id": "174850_Kh4h",
+          "bb_delta": 1.0,
+          "cumulative": -9.0
+        },
+        {
+          "hand_id": "174858_Ks2s",
+          "bb_delta": -1.0,
+          "cumulative": -10.0
+        },
+        {
+          "hand_id": "174903_3cAc",
+          "bb_delta": 1.0,
+          "cumulative": -9.0
+        },
+        {
+          "hand_id": "174910_Qd5d",
+          "bb_delta": -1.0,
+          "cumulative": -10.0
+        },
+        {
+          "hand_id": "174916_Ad2d",
+          "bb_delta": 1.0,
+          "cumulative": -9.0
+        },
+        {
+          "hand_id": "174923_6sAh",
+          "bb_delta": 0.5,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174933_4c7s",
+          "bb_delta": 1.0,
+          "cumulative": -7.5
+        },
+        {
+          "hand_id": "174939_4dJh",
+          "bb_delta": -1.0,
+          "cumulative": -8.5
+        },
+        {
+          "hand_id": "174944_3c8h",
+          "bb_delta": -0.5,
+          "cumulative": -9.0
+        },
+        {
+          "hand_id": "174954_Qc2s",
+          "bb_delta": -1.0,
+          "cumulative": -10.0
+        },
+        {
+          "hand_id": "175000_Kh5c",
+          "bb_delta": -0.5,
+          "cumulative": -10.5
+        },
+        {
+          "hand_id": "175010_9sJh",
+          "bb_delta": -1.0,
+          "cumulative": -11.5
+        },
+        {
+          "hand_id": "175016_9c5c",
+          "bb_delta": -0.5,
+          "cumulative": -12.0
+        },
+        {
+          "hand_id": "175025_Tc6s",
+          "bb_delta": -1.0,
+          "cumulative": -13.0
+        },
+        {
+          "hand_id": "175030_8h5h",
+          "bb_delta": -0.5,
+          "cumulative": -13.5
+        },
+        {
+          "hand_id": "175040_Ts2d",
+          "bb_delta": -1.0,
+          "cumulative": -14.5
+        },
+        {
+          "hand_id": "175045_Jc9d",
+          "bb_delta": 1.0,
+          "cumulative": -13.5
+        },
+        {
+          "hand_id": "175053_JhJs",
+          "bb_delta": 0.5,
+          "cumulative": -13.0
+        },
+        {
+          "hand_id": "175103_6s4c",
+          "bb_delta": -0.5,
+          "cumulative": -13.5
+        },
+        {
+          "hand_id": "175113_5sAc",
+          "bb_delta": 0.5,
+          "cumulative": -13.0
+        },
+        {
+          "hand_id": "175122_2dTd",
+          "bb_delta": 1.0,
+          "cumulative": -12.0
+        },
+        {
+          "hand_id": "175128_9cJd",
+          "bb_delta": -1.0,
+          "cumulative": -13.0
+        },
+        {
+          "hand_id": "175133_5d2h",
+          "bb_delta": -0.5,
+          "cumulative": -13.5
+        },
+        {
+          "hand_id": "175142_Qs4d",
+          "bb_delta": -1.0,
+          "cumulative": -14.5
+        },
+        {
+          "hand_id": "175148_4hTc",
+          "bb_delta": 1.0,
+          "cumulative": -13.5
+        },
+        {
+          "hand_id": "175154_Th7d",
+          "bb_delta": -1.0,
+          "cumulative": -14.5
+        },
+        {
+          "hand_id": "175200_5d7h",
+          "bb_delta": 1.0,
+          "cumulative": -13.5
+        },
+        {
+          "hand_id": "175208_JdAc",
+          "bb_delta": 0.5,
+          "cumulative": -13.0
+        },
+        {
+          "hand_id": "175217_2h5h",
+          "bb_delta": 1.0,
+          "cumulative": -12.0
+        },
+        {
+          "hand_id": "175227_8cAc",
+          "bb_delta": 0.5,
+          "cumulative": -11.5
+        },
+        {
+          "hand_id": "175238_6d3s",
+          "bb_delta": -0.5,
+          "cumulative": -12.0
+        },
+        {
+          "hand_id": "175248_Jh4h",
+          "bb_delta": -1.0,
+          "cumulative": -13.0
+        },
+        {
+          "hand_id": "175253_3hTs",
+          "bb_delta": -0.5,
+          "cumulative": -13.5
+        },
+        {
+          "hand_id": "175303_6s8c",
+          "bb_delta": -1.0,
+          "cumulative": -14.5
+        },
+        {
+          "hand_id": "175309_9s8s",
+          "bb_delta": 1.0,
+          "cumulative": -13.5
+        },
+        {
+          "hand_id": "175315_7s2d",
+          "bb_delta": -1.0,
+          "cumulative": -14.5
+        },
+        {
+          "hand_id": "175321_Jh5c",
+          "bb_delta": -0.5,
+          "cumulative": -15.0
+        },
+        {
+          "hand_id": "175332_8s4d",
+          "bb_delta": -1.0,
+          "cumulative": -16.0
+        },
+        {
+          "hand_id": "175338_AsTs",
+          "bb_delta": 1.0,
+          "cumulative": -15.0
+        },
+        {
+          "hand_id": "175344_Qh6s",
+          "bb_delta": -1.0,
+          "cumulative": -16.0
+        },
+        {
+          "hand_id": "175350_KsJh",
+          "bb_delta": -2.5,
+          "cumulative": -18.5
+        },
+        {
+          "hand_id": "175413_AdJc",
+          "bb_delta": 0.5,
+          "cumulative": -18.0
+        },
+        {
+          "hand_id": "175423_Td4d",
+          "bb_delta": -0.5,
+          "cumulative": -18.5
+        },
+        {
+          "hand_id": "175431_4dTs",
+          "bb_delta": -1.0,
+          "cumulative": -19.5
+        },
+        {
+          "hand_id": "175437_4hQc",
+          "bb_delta": 1.0,
+          "cumulative": -18.5
+        },
+        {
+          "hand_id": "175444_Td2c",
+          "bb_delta": -1.0,
+          "cumulative": -19.5
+        },
+        {
+          "hand_id": "175451_Kc3s",
+          "bb_delta": 1.0,
+          "cumulative": -18.5
+        },
+        {
+          "hand_id": "175457_3d3s",
+          "bb_delta": -4.0,
+          "cumulative": -22.5
+        },
+        {
+          "hand_id": "175511_7sQh",
+          "bb_delta": 1.0,
+          "cumulative": -21.5
+        },
+        {
+          "hand_id": "175517_TcJc",
+          "bb_delta": 0.5,
+          "cumulative": -21.0
+        },
+        {
+          "hand_id": "175527_7c2s",
+          "bb_delta": -0.5,
+          "cumulative": -21.5
+        },
+        {
+          "hand_id": "175538_2d4c",
+          "bb_delta": 0.5,
+          "cumulative": -21.0
+        },
+        {
+          "hand_id": "175549_Tc7h",
+          "bb_delta": -0.5,
+          "cumulative": -21.5
+        },
+        {
+          "hand_id": "175558_KdKs",
+          "bb_delta": 0.5,
+          "cumulative": -21.0
+        },
+        {
+          "hand_id": "175609_Ks8c",
+          "bb_delta": -0.5,
+          "cumulative": -21.5
+        },
+        {
+          "hand_id": "175617_6s3h",
+          "bb_delta": -1.0,
+          "cumulative": -22.5
+        },
+        {
+          "hand_id": "175623_Ah4c",
+          "bb_delta": -0.5,
+          "cumulative": -23.0
+        },
+        {
+          "hand_id": "175632_Kh5d",
+          "bb_delta": -1.0,
+          "cumulative": -24.0
+        },
+        {
+          "hand_id": "175639_4s2c",
+          "bb_delta": -0.5,
+          "cumulative": -24.5
+        },
+        {
+          "hand_id": "175651_7s9d",
+          "bb_delta": -1.0,
+          "cumulative": -25.5
+        },
+        {
+          "hand_id": "175657_KcJd",
+          "bb_delta": -22.7,
+          "cumulative": -48.2
+        },
+        {
+          "hand_id": "175735_5s3d",
+          "bb_delta": -1.0,
+          "cumulative": -49.2
+        },
+        {
+          "hand_id": "175741_KdAs",
+          "bb_delta": 4.5,
+          "cumulative": -44.7
+        },
+        {
+          "hand_id": "175755_7s4s",
+          "bb_delta": -1.0,
+          "cumulative": -45.7
+        },
+        {
+          "hand_id": "175801_TcJh",
+          "bb_delta": 4.0,
+          "cumulative": -41.7
+        },
+        {
+          "hand_id": "175825_8sKc",
+          "bb_delta": -1.0,
+          "cumulative": -42.7
+        },
+        {
+          "hand_id": "175831_7hJd",
+          "bb_delta": 1.0,
+          "cumulative": -41.7
+        },
+        {
+          "hand_id": "175838_9h9s",
+          "bb_delta": 0.5,
+          "cumulative": -41.2
+        },
+        {
+          "hand_id": "175847_3d6s",
+          "bb_delta": 1.0,
+          "cumulative": -40.2
+        },
+        {
+          "hand_id": "175853_Js9s",
+          "bb_delta": 8.25,
+          "cumulative": -31.95
+        },
+        {
+          "hand_id": "175928_9cAd",
+          "bb_delta": 1.0,
+          "cumulative": -30.95
+        },
+        {
+          "hand_id": "175934_Qh3d",
+          "bb_delta": -1.0,
+          "cumulative": -31.95
+        },
+        {
+          "hand_id": "175940_TcKh",
+          "bb_delta": -0.5,
+          "cumulative": -32.45
+        },
+        {
+          "hand_id": "175949_Kc6s",
+          "bb_delta": -1.0,
+          "cumulative": -33.45
+        },
+        {
+          "hand_id": "175955_9d8s",
+          "bb_delta": 1.0,
+          "cumulative": -32.45
+        },
+        {
+          "hand_id": "180003_8hTc",
+          "bb_delta": -1.0,
+          "cumulative": -33.45
+        },
+        {
+          "hand_id": "180010_2c2h",
+          "bb_delta": -2.5,
+          "cumulative": -35.95
+        },
+        {
+          "hand_id": "180045_5cAc",
+          "bb_delta": 0.5,
+          "cumulative": -35.45
+        },
+        {
+          "hand_id": "180054_5h5s",
+          "bb_delta": 4.0,
+          "cumulative": -31.45
+        },
+        {
+          "hand_id": "180117_6s9d",
+          "bb_delta": 0.5,
+          "cumulative": -30.95
+        },
+        {
+          "hand_id": "180126_Td3s",
+          "bb_delta": -0.5,
+          "cumulative": -31.45
+        },
+        {
+          "hand_id": "180135_Jd9h",
+          "bb_delta": -3.5,
+          "cumulative": -34.95
+        },
+        {
+          "hand_id": "180148_8dJd",
+          "bb_delta": -6.45,
+          "cumulative": -41.4
+        },
+        {
+          "hand_id": "180226_KcJh",
+          "bb_delta": 0.5,
+          "cumulative": -40.9
+        },
+        {
+          "hand_id": "180237_6d8h",
+          "bb_delta": 1.0,
+          "cumulative": -39.9
+        },
+        {
+          "hand_id": "180244_3c6d",
+          "bb_delta": -1.0,
+          "cumulative": -40.9
+        },
+        {
+          "hand_id": "180250_9cJs",
+          "bb_delta": 1.0,
+          "cumulative": -39.9
+        },
+        {
+          "hand_id": "180256_8hKd",
+          "bb_delta": -1.0,
+          "cumulative": -40.9
+        },
+        {
+          "hand_id": "180303_9c4s",
+          "bb_delta": 1.0,
+          "cumulative": -39.9
+        },
+        {
+          "hand_id": "180313_QcJd",
+          "bb_delta": 0.5,
+          "cumulative": -39.4
+        },
+        {
+          "hand_id": "180323_AdQc",
+          "bb_delta": 4.0,
+          "cumulative": -35.4
+        },
+        {
+          "hand_id": "180337_8c8s",
+          "bb_delta": 0.5,
+          "cumulative": -34.9
+        },
+        {
+          "hand_id": "180348_3cKd",
+          "bb_delta": -0.5,
+          "cumulative": -35.4
+        },
+        {
+          "hand_id": "180356_Kh5s",
+          "bb_delta": -1.0,
+          "cumulative": -36.4
+        },
+        {
+          "hand_id": "180402_JsKd",
+          "bb_delta": 1.0,
+          "cumulative": -35.4
+        },
+        {
+          "hand_id": "180409_6hAd",
+          "bb_delta": 0.5,
+          "cumulative": -34.9
+        },
+        {
+          "hand_id": "180420_JcAs",
+          "bb_delta": 1.0,
+          "cumulative": -33.9
+        },
+        {
+          "hand_id": "180425_8dTd",
+          "bb_delta": -9.5,
+          "cumulative": -43.4
+        },
+        {
+          "hand_id": "180451_6h5c",
+          "bb_delta": 1.0,
+          "cumulative": -42.4
+        },
+        {
+          "hand_id": "180458_8hKc",
+          "bb_delta": 0.5,
+          "cumulative": -41.9
+        },
+        {
+          "hand_id": "180508_6s8s",
+          "bb_delta": -2.5,
+          "cumulative": -44.4
+        },
+        {
+          "hand_id": "180539_2hQs",
+          "bb_delta": 0.5,
+          "cumulative": -43.9
+        },
+        {
+          "hand_id": "180548_3d7d",
+          "bb_delta": -0.5,
+          "cumulative": -44.4
+        },
+        {
+          "hand_id": "180558_Kc4s",
+          "bb_delta": 0.5,
+          "cumulative": -43.9
+        },
+        {
+          "hand_id": "180608_9c7d",
+          "bb_delta": -0.5,
+          "cumulative": -44.4
+        },
+        {
+          "hand_id": "180617_4cJd",
+          "bb_delta": -1.0,
+          "cumulative": -45.4
+        },
+        {
+          "hand_id": "180623_3cTs",
+          "bb_delta": 1.0,
+          "cumulative": -44.4
+        },
+        {
+          "hand_id": "180630_6cKd",
+          "bb_delta": -1.0,
+          "cumulative": -45.4
+        },
+        {
+          "hand_id": "180635_8d5s",
+          "bb_delta": 1.0,
+          "cumulative": -44.4
+        },
+        {
+          "hand_id": "180643_2h6d",
+          "bb_delta": -1.0,
+          "cumulative": -45.4
+        },
+        {
+          "hand_id": "180648_Ah8c",
+          "bb_delta": 1.0,
+          "cumulative": -44.4
+        },
+        {
+          "hand_id": "180654_9d6h",
+          "bb_delta": -1.0,
+          "cumulative": -45.4
+        },
+        {
+          "hand_id": "180700_QhKd",
+          "bb_delta": -3.5,
+          "cumulative": -48.9
+        },
+        {
+          "hand_id": "180732_8dKd",
+          "bb_delta": 0.5,
+          "cumulative": -48.4
+        },
+        {
+          "hand_id": "180742_5cAd",
+          "bb_delta": 1.0,
+          "cumulative": -47.4
+        },
+        {
+          "hand_id": "180749_2s6c",
+          "bb_delta": -1.0,
+          "cumulative": -48.4
+        },
+        {
+          "hand_id": "180754_3sTd",
+          "bb_delta": -0.5,
+          "cumulative": -48.9
+        },
+        {
+          "hand_id": "180802_TdTc",
+          "bb_delta": 0.5,
+          "cumulative": -48.4
+        },
+        {
+          "hand_id": "180812_6s3c",
+          "bb_delta": 1.0,
+          "cumulative": -47.4
+        },
+        {
+          "hand_id": "180822_8d7c",
+          "bb_delta": -1.0,
+          "cumulative": -48.4
+        },
+        {
+          "hand_id": "180828_9sQc",
+          "bb_delta": -0.5,
+          "cumulative": -48.9
+        },
+        {
+          "hand_id": "180839_7h5s",
+          "bb_delta": -1.0,
+          "cumulative": -49.9
+        },
+        {
+          "hand_id": "180845_Ah2d",
+          "bb_delta": 1.0,
+          "cumulative": -48.9
+        },
+        {
+          "hand_id": "180852_3hQd",
+          "bb_delta": -1.0,
+          "cumulative": -49.9
+        },
+        {
+          "hand_id": "180857_9s6c",
+          "bb_delta": -0.5,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "180908_2c3h",
+          "bb_delta": -1.0,
+          "cumulative": -51.4
+        },
+        {
+          "hand_id": "180914_Kc5d",
+          "bb_delta": -0.5,
+          "cumulative": -51.9
+        },
+        {
+          "hand_id": "180924_9hAs",
+          "bb_delta": 0.5,
+          "cumulative": -51.4
+        },
+        {
+          "hand_id": "180935_8hQs",
+          "bb_delta": 1.0,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "180941_3dQd",
+          "bb_delta": -1.0,
+          "cumulative": -51.4
+        },
+        {
+          "hand_id": "180947_Qc5d",
+          "bb_delta": 1.0,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "180955_Kc7c",
+          "bb_delta": 0.5,
+          "cumulative": -49.9
+        },
+        {
+          "hand_id": "181004_KsTc",
+          "bb_delta": -0.5,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "181012_Js8d",
+          "bb_delta": -1.0,
+          "cumulative": -51.4
+        },
+        {
+          "hand_id": "181018_Js4c",
+          "bb_delta": 1.0,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "181025_8s6s",
+          "bb_delta": 0.5,
+          "cumulative": -49.9
+        },
+        {
+          "hand_id": "181035_5h2c",
+          "bb_delta": -0.5,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "181044_7d5s",
+          "bb_delta": -1.0,
+          "cumulative": -51.4
+        },
+        {
+          "hand_id": "181050_6h2d",
+          "bb_delta": 1.0,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "181057_5s2h",
+          "bb_delta": -1.0,
+          "cumulative": -51.4
+        },
+        {
+          "hand_id": "181104_3dTh",
+          "bb_delta": -0.5,
+          "cumulative": -51.9
+        },
+        {
+          "hand_id": "181115_7cQs",
+          "bb_delta": -1.0,
+          "cumulative": -52.9
+        },
+        {
+          "hand_id": "181121_8d3d",
+          "bb_delta": -0.5,
+          "cumulative": -53.4
+        },
+        {
+          "hand_id": "181131_8d5c",
+          "bb_delta": -1.0,
+          "cumulative": -54.4
+        },
+        {
+          "hand_id": "181137_Kc2d",
+          "bb_delta": 1.0,
+          "cumulative": -53.4
+        },
+        {
+          "hand_id": "181144_7dJh",
+          "bb_delta": -1.0,
+          "cumulative": -54.4
+        },
+        {
+          "hand_id": "181149_8hQd",
+          "bb_delta": -0.5,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181159_Kh3c",
+          "bb_delta": -1.0,
+          "cumulative": -55.9
+        },
+        {
+          "hand_id": "181205_Js5d",
+          "bb_delta": 1.0,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181215_JhAc",
+          "bb_delta": 0.0,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181216_6hAc",
+          "bb_delta": 0.5,
+          "cumulative": -54.4
+        },
+        {
+          "hand_id": "181227_2c9c",
+          "bb_delta": 1.0,
+          "cumulative": -53.4
+        },
+        {
+          "hand_id": "181232_2h3d",
+          "bb_delta": -1.0,
+          "cumulative": -54.4
+        },
+        {
+          "hand_id": "181237_5d9s",
+          "bb_delta": -0.5,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181248_2s2c",
+          "bb_delta": 0.5,
+          "cumulative": -54.4
+        },
+        {
+          "hand_id": "181258_2dQc",
+          "bb_delta": -0.5,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181307_3hJc",
+          "bb_delta": -1.0,
+          "cumulative": -55.9
+        },
+        {
+          "hand_id": "181317_3dTd",
+          "bb_delta": 1.0,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181323_3d4s",
+          "bb_delta": -1.0,
+          "cumulative": -55.9
+        },
+        {
+          "hand_id": "181330_7s2c",
+          "bb_delta": 1.0,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181336_Ah4h",
+          "bb_delta": 0.5,
+          "cumulative": -54.4
+        },
+        {
+          "hand_id": "181345_2cAc",
+          "bb_delta": 1.0,
+          "cumulative": -53.4
+        },
+        {
+          "hand_id": "181352_4dJc",
+          "bb_delta": 0.5,
+          "cumulative": -52.9
+        },
+        {
+          "hand_id": "181401_KcAc",
+          "bb_delta": -5.5,
+          "cumulative": -58.4
+        },
+        {
+          "hand_id": "181430_TcQc",
+          "bb_delta": 7.5,
+          "cumulative": -50.9
+        },
+        {
+          "hand_id": "181502_3s7h",
+          "bb_delta": -0.5,
+          "cumulative": -51.4
+        },
+        {
+          "hand_id": "181510_3h9h",
+          "bb_delta": -1.0,
+          "cumulative": -52.4
+        },
+        {
+          "hand_id": "181515_8hAs",
+          "bb_delta": 1.0,
+          "cumulative": -51.4
+        },
+        {
+          "hand_id": "181521_Js6s",
+          "bb_delta": -1.0,
+          "cumulative": -52.4
+        },
+        {
+          "hand_id": "181527_JhTd",
+          "bb_delta": -3.0,
+          "cumulative": -55.4
+        },
+        {
+          "hand_id": "181554_QdAd",
+          "bb_delta": 0.5,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181604_3cTs",
+          "bb_delta": 1.0,
+          "cumulative": -53.9
+        },
+        {
+          "hand_id": "181609_2h8s",
+          "bb_delta": -1.0,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181616_9d3s",
+          "bb_delta": 1.0,
+          "cumulative": -53.9
+        },
+        {
+          "hand_id": "181623_Td5h",
+          "bb_delta": -1.0,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181628_5d7h",
+          "bb_delta": 1.0,
+          "cumulative": -53.9
+        },
+        {
+          "hand_id": "181634_Kh8s",
+          "bb_delta": 0.5,
+          "cumulative": -53.4
+        },
+        {
+          "hand_id": "181645_2h6s",
+          "bb_delta": 1.0,
+          "cumulative": -52.4
+        },
+        {
+          "hand_id": "181651_9d9h",
+          "bb_delta": 0.5,
+          "cumulative": -51.9
+        },
+        {
+          "hand_id": "181702_KdAs",
+          "bb_delta": 1.0,
+          "cumulative": -50.9
+        },
+        {
+          "hand_id": "181711_AcKs",
+          "bb_delta": 0.5,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "181721_TsAs",
+          "bb_delta": -3.0,
+          "cumulative": -53.4
+        },
+        {
+          "hand_id": "181753_6c3s",
+          "bb_delta": -1.0,
+          "cumulative": -54.4
+        },
+        {
+          "hand_id": "181800_8s4s",
+          "bb_delta": -0.5,
+          "cumulative": -54.9
+        },
+        {
+          "hand_id": "181810_5dAh",
+          "bb_delta": 0.5,
+          "cumulative": -54.4
+        },
+        {
+          "hand_id": "181819_Qs2d",
+          "bb_delta": 1.0,
+          "cumulative": -53.4
+        },
+        {
+          "hand_id": "181825_KcTh",
+          "bb_delta": 0.5,
+          "cumulative": -52.9
+        },
+        {
+          "hand_id": "181839_Js8s",
+          "bb_delta": 3.5,
+          "cumulative": -49.4
+        },
+        {
+          "hand_id": "181910_Jh3h",
+          "bb_delta": -1.0,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "181917_4hAc",
+          "bb_delta": 1.0,
+          "cumulative": -49.4
+        },
+        {
+          "hand_id": "181923_7s8d",
+          "bb_delta": -1.0,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "181929_2d8c",
+          "bb_delta": -0.5,
+          "cumulative": -50.9
+        },
+        {
+          "hand_id": "181938_Ad5s",
+          "bb_delta": 0.5,
+          "cumulative": -50.4
+        },
+        {
+          "hand_id": "181948_4d5h",
+          "bb_delta": 1.0,
+          "cumulative": -49.4
+        },
+        {
+          "hand_id": "181954_5d4d",
+          "bb_delta": 0.5,
+          "cumulative": -48.9
+        },
+        {
+          "hand_id": "182006_8cJd",
+          "bb_delta": 1.0,
+          "cumulative": -47.9
+        },
+        {
+          "hand_id": "182011_AcJs",
+          "bb_delta": 0.5,
+          "cumulative": -47.4
+        },
+        {
+          "hand_id": "182020_3s6c",
+          "bb_delta": -0.5,
+          "cumulative": -47.9
+        },
+        {
+          "hand_id": "182030_6h6d",
+          "bb_delta": 0.5,
+          "cumulative": -47.4
+        },
+        {
+          "hand_id": "182039_Kd8s",
+          "bb_delta": -0.5,
+          "cumulative": -47.9
+        },
+        {
+          "hand_id": "182049_7d4h",
+          "bb_delta": -1.0,
+          "cumulative": -48.9
+        },
+        {
+          "hand_id": "182055_Qh2h",
+          "bb_delta": 1.0,
+          "cumulative": -47.9
+        },
+        {
+          "hand_id": "182102_9cQs",
+          "bb_delta": -1.0,
+          "cumulative": -48.9
+        },
+        {
+          "hand_id": "182107_As4s",
+          "bb_delta": -8.25,
+          "cumulative": -57.15
+        },
+        {
+          "hand_id": "182127_7s2d",
+          "bb_delta": -1.0,
+          "cumulative": -58.15
+        },
+        {
+          "hand_id": "182133_Js9h",
+          "bb_delta": -0.5,
+          "cumulative": -58.65
+        },
+        {
+          "hand_id": "182143_7h3h",
+          "bb_delta": -1.0,
+          "cumulative": -59.65
+        },
+        {
+          "hand_id": "182149_2dTd",
+          "bb_delta": 1.0,
+          "cumulative": -58.65
+        },
+        {
+          "hand_id": "182156_2h9d",
+          "bb_delta": -1.0,
+          "cumulative": -59.65
+        },
+        {
+          "hand_id": "182203_6c2d",
+          "bb_delta": 1.0,
+          "cumulative": -58.65
+        },
+        {
+          "hand_id": "182213_Kh4s",
+          "bb_delta": -1.0,
+          "cumulative": -59.65
+        },
+        {
+          "hand_id": "182219_JdAs",
+          "bb_delta": 1.0,
+          "cumulative": -58.65
+        },
+        {
+          "hand_id": "182227_5c4c",
+          "bb_delta": 0.5,
+          "cumulative": -58.15
+        },
+        {
+          "hand_id": "182237_5cKd",
+          "bb_delta": 1.0,
+          "cumulative": -57.15
+        },
+        {
+          "hand_id": "182243_Kh2s",
+          "bb_delta": -1.0,
+          "cumulative": -58.15
+        },
+        {
+          "hand_id": "182249_Qd2h",
+          "bb_delta": 1.0,
+          "cumulative": -57.15
+        },
+        {
+          "hand_id": "182255_5c9c",
+          "bb_delta": -1.0,
+          "cumulative": -58.15
+        },
+        {
+          "hand_id": "182305_6s8h",
+          "bb_delta": -0.5,
+          "cumulative": -58.65
+        },
+        {
+          "hand_id": "182316_AsQs",
+          "bb_delta": 0.5,
+          "cumulative": -58.15
+        },
+        {
+          "hand_id": "182326_QcKd",
+          "bb_delta": -8.5,
+          "cumulative": -66.65
+        },
+        {
+          "hand_id": "182403_7s6d",
+          "bb_delta": 0.5,
+          "cumulative": -66.15
+        },
+        {
+          "hand_id": "182412_9c8s",
+          "bb_delta": 1.0,
+          "cumulative": -65.15
+        },
+        {
+          "hand_id": "182418_Js3h",
+          "bb_delta": -1.0,
+          "cumulative": -66.15
+        },
+        {
+          "hand_id": "182424_7s4c",
+          "bb_delta": 1.0,
+          "cumulative": -65.15
+        },
+        {
+          "hand_id": "182431_8c5d",
+          "bb_delta": -1.0,
+          "cumulative": -66.15
+        },
+        {
+          "hand_id": "182436_6h2d",
+          "bb_delta": 1.0,
+          "cumulative": -65.15
+        },
+        {
+          "hand_id": "182442_4d3s",
+          "bb_delta": -1.0,
+          "cumulative": -66.15
+        },
+        {
+          "hand_id": "182448_Ah4d",
+          "bb_delta": 1.0,
+          "cumulative": -65.15
+        },
+        {
+          "hand_id": "182455_9d3s",
+          "bb_delta": -1.0,
+          "cumulative": -66.15
+        },
+        {
+          "hand_id": "182501_8dJd",
+          "bb_delta": 1.0,
+          "cumulative": -65.15
+        },
+        {
+          "hand_id": "182508_Ac2d",
+          "bb_delta": -1.0,
+          "cumulative": -66.15
+        },
+        {
+          "hand_id": "182514_2hQd",
+          "bb_delta": -0.5,
+          "cumulative": -66.65
+        },
+        {
+          "hand_id": "182525_5dJh",
+          "bb_delta": -1.0,
+          "cumulative": -67.65
+        },
+        {
+          "hand_id": "182530_Th9d",
+          "bb_delta": -3.0,
+          "cumulative": -70.65
+        },
+        {
+          "hand_id": "182603_Ah2h",
+          "bb_delta": 0.5,
+          "cumulative": -70.15
+        },
+        {
+          "hand_id": "182614_4c5s",
+          "bb_delta": 1.0,
+          "cumulative": -69.15
+        },
+        {
+          "hand_id": "182620_5sQs",
+          "bb_delta": -1.0,
+          "cumulative": -70.15
+        },
+        {
+          "hand_id": "182625_JdTs",
+          "bb_delta": -2.5,
+          "cumulative": -72.65
+        },
+        {
+          "hand_id": "182657_QhAd",
+          "bb_delta": 0.5,
+          "cumulative": -72.15
+        },
+        {
+          "hand_id": "182707_9c9h",
+          "bb_delta": 8.6,
+          "cumulative": -63.55
+        },
+        {
+          "hand_id": "182735_5h9d",
+          "bb_delta": -1.0,
+          "cumulative": -64.55
+        },
+        {
+          "hand_id": "182742_7c4c",
+          "bb_delta": -0.5,
+          "cumulative": -65.05
+        },
+        {
+          "hand_id": "182753_7hAd",
+          "bb_delta": -4.5,
+          "cumulative": -69.55
+        },
+        {
+          "hand_id": "182809_8s3c",
+          "bb_delta": -0.5,
+          "cumulative": -70.05
+        },
+        {
+          "hand_id": "182818_Th2s",
+          "bb_delta": -1.0,
+          "cumulative": -71.05
+        },
+        {
+          "hand_id": "182823_6h5c",
+          "bb_delta": 1.0,
+          "cumulative": -70.05
+        },
+        {
+          "hand_id": "182830_6d9d",
+          "bb_delta": 0.5,
+          "cumulative": -69.55
+        },
+        {
+          "hand_id": "182843_2dAc",
+          "bb_delta": -0.5,
+          "cumulative": -70.05
+        },
+        {
+          "hand_id": "182853_3d5c",
+          "bb_delta": -1.0,
+          "cumulative": -71.05
+        },
+        {
+          "hand_id": "182859_7h4d",
+          "bb_delta": 1.0,
+          "cumulative": -70.05
+        },
+        {
+          "hand_id": "182906_TcAc",
+          "bb_delta": 0.5,
+          "cumulative": -69.55
+        },
+        {
+          "hand_id": "182917_6c6s",
+          "bb_delta": 1.0,
+          "cumulative": -68.55
+        },
+        {
+          "hand_id": "182923_4cTs",
+          "bb_delta": -1.0,
+          "cumulative": -69.55
+        },
+        {
+          "hand_id": "182929_Jh3c",
+          "bb_delta": -0.5,
+          "cumulative": -70.05
+        },
+        {
+          "hand_id": "182939_4h9c",
+          "bb_delta": -1.0,
+          "cumulative": -71.05
+        },
+        {
+          "hand_id": "182944_Ah9c",
+          "bb_delta": 4.0,
+          "cumulative": -67.05
+        },
+        {
+          "hand_id": "183013_2h3h",
+          "bb_delta": -1.0,
+          "cumulative": -68.05
+        },
+        {
+          "hand_id": "183019_9s5h",
+          "bb_delta": 1.0,
+          "cumulative": -67.05
+        },
+        {
+          "hand_id": "183026_9sKs",
+          "bb_delta": 0.5,
+          "cumulative": -66.55
+        },
+        {
+          "hand_id": "183036_Jd8d",
+          "bb_delta": -12.2,
+          "cumulative": -78.75
+        },
+        {
+          "hand_id": "183111_Qs3d",
+          "bb_delta": -1.0,
+          "cumulative": -79.75
+        },
+        {
+          "hand_id": "183117_7c7s",
+          "bb_delta": 4.5,
+          "cumulative": -75.25
+        },
+        {
+          "hand_id": "183141_4dKs",
+          "bb_delta": -1.0,
+          "cumulative": -76.25
+        },
+        {
+          "hand_id": "183148_6h8s",
+          "bb_delta": -0.5,
+          "cumulative": -76.75
+        },
+        {
+          "hand_id": "183158_6cTd",
+          "bb_delta": -1.0,
+          "cumulative": -77.75
+        },
+        {
+          "hand_id": "183204_AsKd",
+          "bb_delta": 3.5,
+          "cumulative": -74.25
+        },
+        {
+          "hand_id": "183219_KcTs",
+          "bb_delta": 0.5,
+          "cumulative": -73.75
+        },
+        {
+          "hand_id": "183228_7hQc",
+          "bb_delta": -0.5,
+          "cumulative": -74.25
+        },
+        {
+          "hand_id": "183238_KcJs",
+          "bb_delta": 0.5,
+          "cumulative": -73.75
+        },
+        {
+          "hand_id": "183248_4s7h",
+          "bb_delta": -0.5,
+          "cumulative": -74.25
+        },
+        {
+          "hand_id": "183302_6c3h",
+          "bb_delta": -1.0,
+          "cumulative": -75.25
+        },
+        {
+          "hand_id": "183309_Js4d",
+          "bb_delta": -0.5,
+          "cumulative": -75.75
+        },
+        {
+          "hand_id": "183318_Kd6h",
+          "bb_delta": -4.5,
+          "cumulative": -80.25
+        },
+        {
+          "hand_id": "183331_Qs7c",
+          "bb_delta": -0.5,
+          "cumulative": -80.75
+        },
+        {
+          "hand_id": "183340_3cJd",
+          "bb_delta": -1.0,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183346_6s3d",
+          "bb_delta": 1.0,
+          "cumulative": -80.75
+        },
+        {
+          "hand_id": "183352_6cTh",
+          "bb_delta": -1.0,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183403_Kc9c",
+          "bb_delta": 1.0,
+          "cumulative": -80.75
+        },
+        {
+          "hand_id": "183409_6sJs",
+          "bb_delta": -1.0,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183414_2hKc",
+          "bb_delta": 1.0,
+          "cumulative": -80.75
+        },
+        {
+          "hand_id": "183421_3sQs",
+          "bb_delta": -1.0,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183428_6d8h",
+          "bb_delta": 1.0,
+          "cumulative": -80.75
+        },
+        {
+          "hand_id": "183435_6s4h",
+          "bb_delta": -1.0,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183441_2h7d",
+          "bb_delta": -0.5,
+          "cumulative": -82.25
+        },
+        {
+          "hand_id": "183451_8sAs",
+          "bb_delta": 0.5,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183502_5sKh",
+          "bb_delta": -0.5,
+          "cumulative": -82.25
+        },
+        {
+          "hand_id": "183510_TdQh",
+          "bb_delta": 0.5,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183519_8sJd",
+          "bb_delta": 1.0,
+          "cumulative": -80.75
+        },
+        {
+          "hand_id": "183525_4cTd",
+          "bb_delta": -1.0,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183530_4c8h",
+          "bb_delta": -0.5,
+          "cumulative": -82.25
+        },
+        {
+          "hand_id": "183539_Jh2c",
+          "bb_delta": -1.0,
+          "cumulative": -83.25
+        },
+        {
+          "hand_id": "183544_6dAs",
+          "bb_delta": -0.5,
+          "cumulative": -83.75
+        },
+        {
+          "hand_id": "183556_8d5h",
+          "bb_delta": -1.0,
+          "cumulative": -84.75
+        },
+        {
+          "hand_id": "183603_2cTc",
+          "bb_delta": 1.0,
+          "cumulative": -83.75
+        },
+        {
+          "hand_id": "183609_7h3h",
+          "bb_delta": 0.5,
+          "cumulative": -83.25
+        },
+        {
+          "hand_id": "183619_TcQh",
+          "bb_delta": 1.0,
+          "cumulative": -82.25
+        },
+        {
+          "hand_id": "183624_Qs8d",
+          "bb_delta": 0.5,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183634_4d6h",
+          "bb_delta": -0.5,
+          "cumulative": -82.25
+        },
+        {
+          "hand_id": "183644_5s8s",
+          "bb_delta": 0.5,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183654_2h6s",
+          "bb_delta": 1.0,
+          "cumulative": -80.75
+        },
+        {
+          "hand_id": "183703_Kh5s",
+          "bb_delta": -1.0,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183708_3c6s",
+          "bb_delta": 1.0,
+          "cumulative": -80.75
+        },
+        {
+          "hand_id": "183716_Ad4c",
+          "bb_delta": -1.0,
+          "cumulative": -81.75
+        },
+        {
+          "hand_id": "183722_3hTs",
+          "bb_delta": -0.5,
+          "cumulative": -82.25
+        },
+        {
+          "hand_id": "183732_Th8c",
+          "bb_delta": -1.0,
+          "cumulative": -83.25
+        },
+        {
+          "hand_id": "183738_6c4s",
+          "bb_delta": 1.0,
+          "cumulative": -82.25
+        },
+        {
+          "hand_id": "183745_Ks5h",
+          "bb_delta": -1.0,
+          "cumulative": -83.25
+        },
+        {
+          "hand_id": "183755_KhKd",
+          "bb_delta": -5.5,
+          "cumulative": -88.75
+        },
+        {
+          "hand_id": "183824_AhTc",
+          "bb_delta": 0.5,
+          "cumulative": -88.25
+        },
+        {
+          "hand_id": "183836_3cAs",
+          "bb_delta": 1.0,
+          "cumulative": -87.25
+        },
+        {
+          "hand_id": "183841_7h8c",
+          "bb_delta": -1.0,
+          "cumulative": -88.25
+        },
+        {
+          "hand_id": "183847_QcAs",
+          "bb_delta": 1.0,
+          "cumulative": -87.25
+        },
+        {
+          "hand_id": "183853_AhAs",
+          "bb_delta": 0.5,
+          "cumulative": -86.75
+        },
+        {
+          "hand_id": "183904_Kd2d",
+          "bb_delta": 1.0,
+          "cumulative": -85.75
+        },
+        {
+          "hand_id": "183909_Kc9d",
+          "bb_delta": 0.5,
+          "cumulative": -85.25
+        },
+        {
+          "hand_id": "183920_Ac8d",
+          "bb_delta": 1.0,
+          "cumulative": -84.25
+        },
+        {
+          "hand_id": "183925_5sTs",
+          "bb_delta": -1.0,
+          "cumulative": -85.25
+        },
+        {
+          "hand_id": "183931_Th9c",
+          "bb_delta": 4.0,
+          "cumulative": -81.25
+        },
+        {
+          "hand_id": "183954_Js3d",
+          "bb_delta": -1.0,
+          "cumulative": -82.25
+        },
+        {
+          "hand_id": "183959_JdJc",
+          "bb_delta": 3.5,
+          "cumulative": -78.75
+        },
+        {
+          "hand_id": "184016_7d5s",
+          "bb_delta": -1.0,
+          "cumulative": -79.75
+        },
+        {
+          "hand_id": "184022_6s6h",
+          "bb_delta": 1.0,
+          "cumulative": -78.75
+        },
+        {
+          "hand_id": "184029_6s2d",
+          "bb_delta": -1.0,
+          "cumulative": -79.75
+        },
+        {
+          "hand_id": "184034_4d2d",
+          "bb_delta": 1.0,
+          "cumulative": -78.75
+        },
+        {
+          "hand_id": "184042_JcTs",
+          "bb_delta": 0.5,
+          "cumulative": -78.25
+        },
+        {
+          "hand_id": "184052_6s3c",
+          "bb_delta": 1.0,
+          "cumulative": -77.25
+        },
+        {
+          "hand_id": "184057_QhJh",
+          "bb_delta": 0.5,
+          "cumulative": -76.75
+        },
+        {
+          "hand_id": "184106_3h7h",
+          "bb_delta": 1.0,
+          "cumulative": -75.75
+        },
+        {
+          "hand_id": "184111_Ac3h",
+          "bb_delta": -1.0,
+          "cumulative": -76.75
+        },
+        {
+          "hand_id": "184117_8cTh",
+          "bb_delta": 1.0,
+          "cumulative": -75.75
+        },
+        {
+          "hand_id": "184129_QsKs",
+          "bb_delta": 0.5,
+          "cumulative": -75.25
+        },
+        {
+          "hand_id": "184138_AcJc",
+          "bb_delta": 6.3,
+          "cumulative": -68.95
+        },
+        {
+          "hand_id": "184211_5c8s",
+          "bb_delta": -1.0,
+          "cumulative": -69.95
+        },
+        {
+          "hand_id": "184217_AsKh",
+          "bb_delta": 15.5,
+          "cumulative": -54.45
+        },
+        {
+          "hand_id": "184238_Ad7h",
+          "bb_delta": 0.5,
+          "cumulative": -53.95
+        },
+        {
+          "hand_id": "184248_Ts6d",
+          "bb_delta": 1.0,
+          "cumulative": -52.95
+        },
+        {
+          "hand_id": "184254_Jh3c",
+          "bb_delta": -1.0,
+          "cumulative": -53.95
+        },
+        {
+          "hand_id": "184304_3h2s",
+          "bb_delta": -0.5,
+          "cumulative": -54.45
+        },
+        {
+          "hand_id": "184313_2c3h",
+          "bb_delta": -1.0,
+          "cumulative": -55.45
+        },
+        {
+          "hand_id": "184319_5h6h",
+          "bb_delta": 37.0,
+          "cumulative": -18.45
+        },
+        {
+          "hand_id": "184359_Qh4c",
+          "bb_delta": -1.0,
+          "cumulative": -19.45
+        },
+        {
+          "hand_id": "184404_Ah2c",
+          "bb_delta": -0.5,
+          "cumulative": -19.95
+        },
+        {
+          "hand_id": "184415_5d5h",
+          "bb_delta": 0.5,
+          "cumulative": -19.45
+        },
+        {
+          "hand_id": "184426_QcJc",
+          "bb_delta": 1.0,
+          "cumulative": -18.45
+        },
+        {
+          "hand_id": "184431_Ac2h",
+          "bb_delta": -1.0,
+          "cumulative": -19.45
+        },
+        {
+          "hand_id": "184438_Ah8d",
+          "bb_delta": 3.5,
+          "cumulative": -15.95
+        },
+        {
+          "hand_id": "184503_Qh4d",
+          "bb_delta": 0.5,
+          "cumulative": -15.45
+        },
+        {
+          "hand_id": "184514_8d9h",
+          "bb_delta": 1.0,
+          "cumulative": -14.45
+        },
+        {
+          "hand_id": "184519_7s6h",
+          "bb_delta": -1.0,
+          "cumulative": -15.45
+        },
+        {
+          "hand_id": "184525_5dJd",
+          "bb_delta": 1.0,
+          "cumulative": -14.45
+        },
+        {
+          "hand_id": "184531_4hAs",
+          "bb_delta": -1.0,
+          "cumulative": -15.45
+        },
+        {
+          "hand_id": "184536_6d6c",
+          "bb_delta": -3.0,
+          "cumulative": -18.45
+        },
+        {
+          "hand_id": "184558_2dTd",
+          "bb_delta": -1.0,
+          "cumulative": -19.45
+        },
+        {
+          "hand_id": "184604_3sKh",
+          "bb_delta": -0.5,
+          "cumulative": -19.95
+        },
+        {
+          "hand_id": "184613_3s5s",
+          "bb_delta": -1.0,
+          "cumulative": -20.95
+        },
+        {
+          "hand_id": "184619_JhKs",
+          "bb_delta": 1.0,
+          "cumulative": -19.95
+        },
+        {
+          "hand_id": "184626_6sTh",
+          "bb_delta": -1.0,
+          "cumulative": -20.95
+        },
+        {
+          "hand_id": "184632_Td7s",
+          "bb_delta": -0.5,
+          "cumulative": -21.45
+        },
+        {
+          "hand_id": "184642_2d9h",
+          "bb_delta": -1.0,
+          "cumulative": -22.45
+        },
+        {
+          "hand_id": "184647_8c8s",
+          "bb_delta": 4.0,
+          "cumulative": -18.45
+        },
+        {
+          "hand_id": "184715_8s9s",
+          "bb_delta": 0.5,
+          "cumulative": -17.95
+        },
+        {
+          "hand_id": "184725_5h3d",
+          "bb_delta": 1.0,
+          "cumulative": -16.95
+        },
+        {
+          "hand_id": "184730_5h9s",
+          "bb_delta": -1.0,
+          "cumulative": -17.95
+        },
+        {
+          "hand_id": "184737_AhTc",
+          "bb_delta": 3.5,
+          "cumulative": -14.45
+        },
+        {
+          "hand_id": "184804_Ts5h",
+          "bb_delta": -1.0,
+          "cumulative": -15.45
+        },
+        {
+          "hand_id": "184810_8cAc",
+          "bb_delta": 1.0,
+          "cumulative": -14.45
+        },
+        {
+          "hand_id": "184816_3h4d",
+          "bb_delta": -1.0,
+          "cumulative": -15.45
+        },
+        {
+          "hand_id": "184826_3dKh",
+          "bb_delta": 1.0,
+          "cumulative": -14.45
+        },
+        {
+          "hand_id": "184833_Jc3h",
+          "bb_delta": -1.0,
+          "cumulative": -15.45
+        },
+        {
+          "hand_id": "184839_JcTs",
+          "bb_delta": -0.5,
+          "cumulative": -15.95
+        },
+        {
+          "hand_id": "184852_9sTh",
+          "bb_delta": 0.5,
+          "cumulative": -15.45
+        },
+        {
+          "hand_id": "184901_7cQc",
+          "bb_delta": 1.0,
+          "cumulative": -14.45
+        },
+        {
+          "hand_id": "184907_QsKc",
+          "bb_delta": 0.5,
+          "cumulative": -13.95
+        },
+        {
+          "hand_id": "184918_KcAs",
+          "bb_delta": 1.0,
+          "cumulative": -12.95
+        },
+        {
+          "hand_id": "184924_AsJs",
+          "bb_delta": 0.5,
+          "cumulative": -12.45
+        },
+        {
+          "hand_id": "184934_6s4s",
+          "bb_delta": 1.0,
+          "cumulative": -11.45
+        },
+        {
+          "hand_id": "184940_9s9d",
+          "bb_delta": 0.5,
+          "cumulative": -10.95
+        },
+        {
+          "hand_id": "184950_Qh7s",
+          "bb_delta": -0.5,
+          "cumulative": -11.45
+        },
+        {
+          "hand_id": "184959_JcJd",
+          "bb_delta": 0.5,
+          "cumulative": -10.95
+        },
+        {
+          "hand_id": "185008_2h8s",
+          "bb_delta": -0.5,
+          "cumulative": -11.45
+        },
+        {
+          "hand_id": "185018_9hTd",
+          "bb_delta": 0.5,
+          "cumulative": -10.95
+        },
+        {
+          "hand_id": "185028_9dAc",
+          "bb_delta": 1.0,
+          "cumulative": -9.95
+        },
+        {
+          "hand_id": "185033_QhAd",
+          "bb_delta": 0.5,
+          "cumulative": -9.45
+        },
+        {
+          "hand_id": "185042_Kd7s",
+          "bb_delta": -0.5,
+          "cumulative": -9.95
+        },
+        {
+          "hand_id": "185053_Kc4s",
+          "bb_delta": 0.5,
+          "cumulative": -9.45
+        },
+        {
+          "hand_id": "185103_6c6h",
+          "bb_delta": 1.0,
+          "cumulative": -8.45
+        },
+        {
+          "hand_id": "185110_TdKc",
+          "bb_delta": 0.5,
+          "cumulative": -7.95
+        },
+        {
+          "hand_id": "185120_4c5c",
+          "bb_delta": 1.0,
+          "cumulative": -6.95
+        },
+        {
+          "hand_id": "185127_Kd4s",
+          "bb_delta": -1.0,
+          "cumulative": -7.95
+        },
+        {
+          "hand_id": "185132_8d4h",
+          "bb_delta": 1.0,
+          "cumulative": -6.95
+        },
+        {
+          "hand_id": "185142_4s9d",
+          "bb_delta": -1.0,
+          "cumulative": -7.95
+        },
+        {
+          "hand_id": "185148_Td8d",
+          "bb_delta": 40.75,
+          "cumulative": 32.8
+        },
+        {
+          "hand_id": "185228_9s8h",
+          "bb_delta": -1.0,
+          "cumulative": 31.8
+        },
+        {
+          "hand_id": "185234_6d5s",
+          "bb_delta": 1.0,
+          "cumulative": 32.8
+        },
+        {
+          "hand_id": "185240_AdTc",
+          "bb_delta": 0.5,
+          "cumulative": 33.3
+        },
+        {
+          "hand_id": "185251_2sQd",
+          "bb_delta": 1.0,
+          "cumulative": 34.3
+        },
+        {
+          "hand_id": "185256_QcKs",
+          "bb_delta": 0.5,
+          "cumulative": 34.8
+        },
+        {
+          "hand_id": "185311_AcJd",
+          "bb_delta": 1.0,
+          "cumulative": 35.8
+        },
+        {
+          "hand_id": "185316_6s2d",
+          "bb_delta": -1.0,
+          "cumulative": 34.8
+        },
+        {
+          "hand_id": "185323_Ad4c",
+          "bb_delta": -0.5,
+          "cumulative": 34.3
+        },
+        {
+          "hand_id": "185333_Qs4c",
+          "bb_delta": -1.0,
+          "cumulative": 33.3
+        },
+        {
+          "hand_id": "185339_QdJd",
+          "bb_delta": 1.0,
+          "cumulative": 34.3
+        },
+        {
+          "hand_id": "185346_Jd3c",
+          "bb_delta": -1.0,
+          "cumulative": 33.3
+        },
+        {
+          "hand_id": "185352_8sTh",
+          "bb_delta": 1.0,
+          "cumulative": 34.3
+        },
+        {
+          "hand_id": "185359_9h7d",
+          "bb_delta": -1.0,
+          "cumulative": 33.3
+        },
+        {
+          "hand_id": "185406_AdJd",
+          "bb_delta": 1.0,
+          "cumulative": 34.3
+        },
+        {
+          "hand_id": "185412_Ad8h",
+          "bb_delta": 0.5,
+          "cumulative": 34.8
+        },
+        {
+          "hand_id": "185421_8s7d",
+          "bb_delta": -0.5,
+          "cumulative": 34.3
+        },
+        {
+          "hand_id": "185430_Th3c",
+          "bb_delta": -1.0,
+          "cumulative": 33.3
+        },
+        {
+          "hand_id": "185437_4sAc",
+          "bb_delta": 1.0,
+          "cumulative": 34.3
+        },
+        {
+          "hand_id": "185443_6s7h",
+          "bb_delta": 0.5,
+          "cumulative": 34.8
+        },
+        {
+          "hand_id": "185454_8d8h",
+          "bb_delta": 1.0,
+          "cumulative": 35.8
+        },
+        {
+          "hand_id": "185500_QdAs",
+          "bb_delta": 0.5,
+          "cumulative": 36.3
+        },
+        {
+          "hand_id": "185513_4cQc",
+          "bb_delta": 1.0,
+          "cumulative": 37.3
+        },
+        {
+          "hand_id": "185517_6s9c",
+          "bb_delta": -1.0,
+          "cumulative": 36.3
+        },
+        {
+          "hand_id": "185523_5cAh",
+          "bb_delta": -0.5,
+          "cumulative": 35.8
+        },
+        {
+          "hand_id": "185535_3hJh",
+          "bb_delta": 0.5,
+          "cumulative": 36.3
+        },
+        {
+          "hand_id": "185545_AcKc",
+          "bb_delta": 1.0,
+          "cumulative": 37.3
+        },
+        {
+          "hand_id": "185551_4s9s",
+          "bb_delta": -1.0,
+          "cumulative": 36.3
+        },
+        {
+          "hand_id": "185557_AhKc",
+          "bb_delta": 1.0,
+          "cumulative": 37.3
+        },
+        {
+          "hand_id": "185607_2d4c",
+          "bb_delta": 0.5,
+          "cumulative": 37.8
+        },
+        {
+          "hand_id": "185617_Jd5c",
+          "bb_delta": 1.0,
+          "cumulative": 38.8
+        },
+        {
+          "hand_id": "185623_8dKh",
+          "bb_delta": -1.0,
+          "cumulative": 37.8
+        },
+        {
+          "hand_id": "185629_3d4c",
+          "bb_delta": -0.5,
+          "cumulative": 37.3
+        },
+        {
+          "hand_id": "185640_2cQc",
+          "bb_delta": -1.0,
+          "cumulative": 36.3
+        },
+        {
+          "hand_id": "185645_Th6d",
+          "bb_delta": 1.0,
+          "cumulative": 37.3
+        },
+        {
+          "hand_id": "185653_9hAh",
+          "bb_delta": 0.5,
+          "cumulative": 37.8
+        },
+        {
+          "hand_id": "185706_Qd7h",
+          "bb_delta": 1.0,
+          "cumulative": 38.8
+        },
+        {
+          "hand_id": "185712_6c8d",
+          "bb_delta": -1.0,
+          "cumulative": 37.8
+        },
+        {
+          "hand_id": "185718_KsAc",
+          "bb_delta": 1.0,
+          "cumulative": 38.8
+        },
+        {
+          "hand_id": "185724_Ah5h",
+          "bb_delta": 0.5,
+          "cumulative": 39.3
+        },
+        {
+          "hand_id": "185735_Jd9h",
+          "bb_delta": 1.0,
+          "cumulative": 40.3
+        },
+        {
+          "hand_id": "185741_Jd5s",
+          "bb_delta": -1.0,
+          "cumulative": 39.3
+        },
+        {
+          "hand_id": "185747_8d9d",
+          "bb_delta": 5.5,
+          "cumulative": 44.8
+        },
+        {
+          "hand_id": "185820_9h4d",
+          "bb_delta": -1.0,
+          "cumulative": 43.8
+        },
+        {
+          "hand_id": "185826_KdJs",
+          "bb_delta": -8.5,
+          "cumulative": 35.3
+        },
+        {
+          "hand_id": "185900_9dTs",
+          "bb_delta": 0.5,
+          "cumulative": 35.8
+        },
+        {
+          "hand_id": "185911_Kc9h",
+          "bb_delta": 1.0,
+          "cumulative": 36.8
+        },
+        {
+          "hand_id": "185917_Tc3h",
+          "bb_delta": -1.0,
+          "cumulative": 35.8
+        },
+        {
+          "hand_id": "185923_7dAc",
+          "bb_delta": -7.6,
+          "cumulative": 28.2
+        },
+        {
+          "hand_id": "185953_QcTd",
+          "bb_delta": 0.5,
+          "cumulative": 28.7
+        },
+        {
+          "hand_id": "190005_8c4c",
+          "bb_delta": -0.5,
+          "cumulative": 28.2
+        },
+        {
+          "hand_id": "190014_Qs6s",
+          "bb_delta": -1.0,
+          "cumulative": 27.2
+        },
+        {
+          "hand_id": "190019_7c7s",
+          "bb_delta": 3.5,
+          "cumulative": 30.7
+        },
+        {
+          "hand_id": "190048_4sJs",
+          "bb_delta": -1.0,
+          "cumulative": 29.7
+        },
+        {
+          "hand_id": "190053_8hQh",
+          "bb_delta": 1.0,
+          "cumulative": 30.7
+        },
+        {
+          "hand_id": "190102_2hKc",
+          "bb_delta": -1.0,
+          "cumulative": 29.7
+        },
+        {
+          "hand_id": "190108_4h9s",
+          "bb_delta": 1.0,
+          "cumulative": 30.7
+        },
+        {
+          "hand_id": "190114_Qh8c",
+          "bb_delta": -1.0,
+          "cumulative": 29.7
+        },
+        {
+          "hand_id": "190120_Tc6h",
+          "bb_delta": 1.0,
+          "cumulative": 30.7
+        },
+        {
+          "hand_id": "190131_2sQs",
+          "bb_delta": -1.0,
+          "cumulative": 29.7
+        },
+        {
+          "hand_id": "190137_2s8d",
+          "bb_delta": -0.5,
+          "cumulative": 29.2
+        },
+        {
+          "hand_id": "190147_2sQh",
+          "bb_delta": 0.5,
+          "cumulative": 29.7
+        },
+        {
+          "hand_id": "190157_As9d",
+          "bb_delta": 1.0,
+          "cumulative": 30.7
+        },
+        {
+          "hand_id": "190203_9sTh",
+          "bb_delta": 0.5,
+          "cumulative": 31.2
+        },
+        {
+          "hand_id": "190212_6d8d",
+          "bb_delta": -2.5,
+          "cumulative": 28.7
+        },
+        {
+          "hand_id": "190239_Jd4d",
+          "bb_delta": -1.0,
+          "cumulative": 27.7
+        },
+        {
+          "hand_id": "190248_Ts5c",
+          "bb_delta": 1.0,
+          "cumulative": 28.7
+        },
+        {
+          "hand_id": "190255_6h7s",
+          "bb_delta": -1.0,
+          "cumulative": 27.7
+        },
+        {
+          "hand_id": "190301_8dKd",
+          "bb_delta": 1.0,
+          "cumulative": 28.7
+        },
+        {
+          "hand_id": "190308_Ad2h",
+          "bb_delta": 0.5,
+          "cumulative": 29.2
+        },
+        {
+          "hand_id": "190319_Jc3c",
+          "bb_delta": 1.0,
+          "cumulative": 30.2
+        },
+        {
+          "hand_id": "190324_TdQc",
+          "bb_delta": 0.5,
+          "cumulative": 30.7
+        },
+        {
+          "hand_id": "190334_6d4c",
+          "bb_delta": -0.5,
+          "cumulative": 30.2
+        },
+        {
+          "hand_id": "190344_7c2h",
+          "bb_delta": -1.0,
+          "cumulative": 29.2
+        },
+        {
+          "hand_id": "190349_9s5d",
+          "bb_delta": 1.0,
+          "cumulative": 30.2
+        },
+        {
+          "hand_id": "190355_TdJs",
+          "bb_delta": 0.5,
+          "cumulative": 30.7
+        },
+        {
+          "hand_id": "190404_4dKs",
+          "bb_delta": -0.5,
+          "cumulative": 30.2
+        },
+        {
+          "hand_id": "190412_TsTc",
+          "bb_delta": 0.5,
+          "cumulative": 30.7
+        },
+        {
+          "hand_id": "190422_Ad5c",
+          "bb_delta": -0.5,
+          "cumulative": 30.2
+        },
+        {
+          "hand_id": "190431_4d7c",
+          "bb_delta": -1.0,
+          "cumulative": 29.2
+        },
+        {
+          "hand_id": "190437_4dTh",
+          "bb_delta": 1.0,
+          "cumulative": 30.2
+        },
+        {
+          "hand_id": "190444_7hKh",
+          "bb_delta": 0.5,
+          "cumulative": 30.7
+        },
+        {
+          "hand_id": "190455_3s5h",
+          "bb_delta": 1.0,
+          "cumulative": 31.7
+        },
+        {
+          "hand_id": "190500_AdTc",
+          "bb_delta": 0.5,
+          "cumulative": 32.2
+        },
+        {
+          "hand_id": "190510_9h2h",
+          "bb_delta": 1.0,
+          "cumulative": 33.2
+        },
+        {
+          "hand_id": "190516_Kd3d",
+          "bb_delta": -1.0,
+          "cumulative": 32.2
+        },
+        {
+          "hand_id": "190523_Tc8c",
+          "bb_delta": 0.5,
+          "cumulative": 32.7
+        },
+        {
+          "hand_id": "190555_Qs6c",
+          "bb_delta": -1.0,
+          "cumulative": 31.7
+        },
+        {
+          "hand_id": "190600_4s6d",
+          "bb_delta": 1.0,
+          "cumulative": 32.7
+        },
+        {
+          "hand_id": "190611_9cKc",
+          "bb_delta": 0.5,
+          "cumulative": 33.2
+        },
+        {
+          "hand_id": "190621_2c9c",
+          "bb_delta": 1.0,
+          "cumulative": 34.2
+        },
+        {
+          "hand_id": "190627_6c2c",
+          "bb_delta": -1.0,
+          "cumulative": 33.2
+        },
+        {
+          "hand_id": "190632_Qc9h",
+          "bb_delta": -0.5,
+          "cumulative": 32.7
+        },
+        {
+          "hand_id": "190643_Kd8h",
+          "bb_delta": -1.0,
+          "cumulative": 31.7
+        },
+        {
+          "hand_id": "190649_QhJh",
+          "bb_delta": -3.0,
+          "cumulative": 28.7
+        },
+        {
+          "hand_id": "190718_7dTd",
+          "bb_delta": -1.0,
+          "cumulative": 27.7
+        },
+        {
+          "hand_id": "190728_ThAc",
+          "bb_delta": 1.0,
+          "cumulative": 28.7
+        },
+        {
+          "hand_id": "190735_6dAs",
+          "bb_delta": -1.0,
+          "cumulative": 27.7
+        },
+        {
+          "hand_id": "190741_QsAh",
+          "bb_delta": -2.5,
+          "cumulative": 25.2
+        },
+        {
+          "hand_id": "190815_4s7c",
+          "bb_delta": -1.0,
+          "cumulative": 24.2
+        },
+        {
+          "hand_id": "190821_JcQc",
+          "bb_delta": 0.0,
+          "cumulative": 24.2
+        },
+        {
+          "hand_id": "untracked",
+          "bb_delta": 36.3,
+          "cumulative": 60.5
+        }
+      ],
+      "decisions_total": 553
     }
   ]
 }
