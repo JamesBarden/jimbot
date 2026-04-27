@@ -118,6 +118,18 @@ class HandContext:
     # when narrowing villain's preflop action.
     villain_position: str = "unknown"
 
+    # Phase 4: chained preflop narrowing. Detect each villain re-raise (3-bet,
+    # 5-bet, etc.) by comparing state.to_call to the snapshot taken after our
+    # last action. Each detected re-raise narrows villain on VS_RAISE('raise').
+    # Without this, narrowing fires only once at the first observed open and
+    # multi-bet pots end up with stale-wide villain ranges, inflating
+    # range-vs-range equity and triggering bad bluff-raises (cf. 2026-04-27
+    # QcAc hand: 4-bet pot, modeled villain stayed "wide" because the 3-bet
+    # and call-of-4-bet were never narrowed).
+    _preflop_to_call_snapshot: float = 0.0
+    _preflop_observed:         bool  = False
+    villain_preflop_raises:    int   = 0   # count of re-raises beyond the open
+
     # ── range initialisation ──────────────────────────────────────────────────
 
     def init_ranges(self, hero_cards: list):
@@ -179,13 +191,35 @@ class HandContext:
             elif state.can_check:
                 rec.villain_checks += 1
 
-        # Preflop aggression tracking: if to_call > bb on our first look, someone raised.
-        # Also narrow villain's preflop range here since we've just observed an open/raise.
-        if s == "preflop" and self.preflop_aggressor is None:
-            if state.to_call > self.bb * 1.2:    # allow float slop on tiny-blind games
-                self.preflop_aggressor = "villain"
-                if self.villain_range is not None:
-                    self._narrow_villain_preflop_open(state)
+        # Phase 4: chained preflop villain narrowing.
+        #
+        # Two detection paths:
+        #   (a) First preflop observation already shows to_call > BB → villain
+        #       opened before our turn. Narrow on RFI('raise').
+        #   (b) On a subsequent preflop observation, state.to_call has gone up
+        #       since our last action's snapshot → villain re-raised since.
+        #       Narrow on VS_RAISE('raise'). Repeats for every 3-bet/4-bet/etc.
+        #
+        # `_preflop_to_call_snapshot` is reset to 0 in record_hero() right
+        # after each hero action so the next villain action is always
+        # detectable as state.to_call > snapshot.
+        if s == "preflop":
+            if not self._preflop_observed:
+                self._preflop_observed = True
+                self._preflop_to_call_snapshot = state.to_call
+                if state.to_call > self.bb * 1.2:
+                    self.preflop_aggressor = "villain"
+                    if self.villain_range is not None:
+                        self._narrow_villain_preflop_open(state)
+            else:
+                # Subsequent preflop observation
+                if state.to_call > self._preflop_to_call_snapshot + 1e-6:
+                    # to_call increased since our last action → villain re-raised
+                    self.preflop_aggressor = "villain"
+                    self.villain_preflop_raises += 1
+                    if self.villain_range is not None:
+                        self._narrow_villain_preflop_reraise(state)
+                    self._preflop_to_call_snapshot = state.to_call
 
         self._last_to_call_per_street[s] = state.to_call
 
@@ -221,6 +255,13 @@ class HandContext:
             rec.hero_checked = True
         elif action == "fold":
             rec.hero_folded = True
+
+        # Phase 4: after every hero preflop action, reset the to_call snapshot
+        # so the next preflop observation can detect a fresh villain raise via
+        # state.to_call > snapshot. We just matched/raised so our outstanding
+        # to_call is 0 from villain's next perspective.
+        if street == "preflop":
+            self._preflop_to_call_snapshot = 0.0
 
         # Narrow hero_range on the action we just took, if range tracking is on.
         if self.hero_range is not None and state is not None:
@@ -270,21 +311,61 @@ class HandContext:
             return range_
         return range_
 
+    def _hu_villain_position(self, state: GameState) -> str:
+        """
+        Best-effort villain-position label for HU narrowing.
+
+        In HU the dealer button is the small blind. The scraper labels hero's
+        position as either 'BTN' (when hero has the button = hero is SB) or
+        'BB' (when hero is the big blind). Either way, villain is the OTHER
+        blind. Mapping:
+          hero='BTN' or 'SB'  →  villain is BB
+          hero='BB'           →  villain is SB
+          anything else / multiway → 'unknown' (caller can fall back)
+        """
+        if state.num_opponents != 1:
+            return "unknown"
+        if state.position in ("BTN", "SB"):
+            return "BB"
+        if state.position == "BB":
+            return "SB"
+        return "unknown"
+
     def _narrow_villain_preflop_open(self, state: GameState):
         """Narrow villain on a preflop open/raise inferred from to_call > BB."""
         if self.villain_range is None:
             return
-        # Best-effort villain position. HU: villain is whichever blind we aren't.
-        if state.num_opponents == 1:
-            v_pos = "BB" if state.position == "SB" else "SB"
-        else:
-            v_pos = "unknown"
+        v_pos = self._hu_villain_position(state)
         self.villain_position = v_pos
         try:
             self.villain_range = narrow_on_preflop_action(
                 self.villain_range,
                 position     = v_pos,
                 facing_raise = False,   # villain is the one opening
+                num_players  = state.num_opponents + 1,
+                action       = "raise",
+            )
+        except Exception:
+            pass
+
+    def _narrow_villain_preflop_reraise(self, state: GameState):
+        """
+        Narrow villain on a preflop re-raise (3-bet, 5-bet, etc.) detected via
+        state.to_call increasing since our last action's snapshot.
+
+        Uses the VS_RAISE table's 'raise' frequencies — i.e. each combo's
+        probability of 3-betting a single open from this position. Applied
+        repeatedly across multi-bet pots, this approximates the actual
+        narrowing posterior (P(open) × P(3bet | open) × ... ).
+        """
+        if self.villain_range is None:
+            return
+        v_pos = self.villain_position or self._hu_villain_position(state)
+        try:
+            self.villain_range = narrow_on_preflop_action(
+                self.villain_range,
+                position     = v_pos,
+                facing_raise = True,    # villain is re-raising over a prior raise
                 num_players  = state.num_opponents + 1,
                 action       = "raise",
             )
@@ -346,7 +427,12 @@ class HandContext:
         # Best-effort villain position for postflop heuristic narrowing.
         v_pos = self.villain_position
         if v_pos == "unknown" and self.num_opponents == 1:
-            v_pos = "BB" if self.position == "SB" else "SB"
+            # Same HU mapping as _hu_villain_position(); using self.position
+            # since we don't carry a fresh state into this code path.
+            if self.position in ("BTN", "SB"):
+                v_pos = "BB"
+            elif self.position == "BB":
+                v_pos = "SB"
 
         try:
             spr = (snap_state.my_stack / snap_state.pot) if snap_state.pot > 0 else 5.0

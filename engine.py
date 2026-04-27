@@ -246,18 +246,26 @@ def decide(state: GameState, opponent_tier: str = "random",
     source = "monte_carlo"
     log: list[str] = []
 
-    # Phase 3: prefer range-derived villain tier when range tracking is on.
-    # The legacy hand_tracker tier is coarser (binned on to_call/BB ratios)
-    # and stale through the streets; villain_range.to_tier() reflects the
-    # accumulated narrowing through every observed action so far.
+    # Tier blend: take whichever of legacy / range is tighter. Legacy
+    # HandTracker tightens correctly on each preflop raise via to_call/BB
+    # ratios; range tracking would dominate but currently misses 3-bet/4-bet
+    # chained narrowing (see Phase 4 changes in tracking/hand_context). Until
+    # that chain is fully accurate, taking the min protects multi-bet-pot
+    # decisions from a stale-wide range.
+    _TIER_ORDER = ("premium", "tight", "medium", "wide", "random")
     legacy_tier = opponent_tier
     if context is not None:
         vr_for_tier = getattr(context, "villain_range", None)
         if vr_for_tier is not None and vr_for_tier.total() > 0:
             range_tier = vr_for_tier.to_tier()
-            if range_tier != opponent_tier:
-                log.append(f"  Tier override: {opponent_tier} (legacy) → {range_tier} (range)")
-            opponent_tier = range_tier
+            try:
+                final_tier = _TIER_ORDER[min(_TIER_ORDER.index(legacy_tier),
+                                             _TIER_ORDER.index(range_tier))]
+            except ValueError:
+                final_tier = range_tier
+            if final_tier != legacy_tier or range_tier != legacy_tier:
+                log.append(f"  Tier blend  legacy={legacy_tier}  range={range_tier}  → {final_tier}")
+            opponent_tier = final_tier
 
     # Cross-street context snapshot (used by heuristics + logged)
     ctx_summary = {}
@@ -518,7 +526,12 @@ def decide(state: GameState, opponent_tier: str = "random",
             _hclass_mod = classify(state.hole_cards, state.board_cards)
         except Exception:
             _hclass_mod = "?"
-        if _hclass_mod in {"air", "weak_draw", "draw"}:
+        # Bluff modulation only fires when we're betting into a checked-to-us
+        # spot. When facing a bet, villain's action itself signals a tightened
+        # range — adding +rvr-adj on top is the wrong direction (it caused
+        # spurious bluff-raises in 4-bet pots like the 2026-04-27 QcAc hand
+        # where AQ raised a pot-size turn bet on KT82 with weak_draw).
+        if _hclass_mod in {"air", "weak_draw", "draw"} and state.to_call == 0:
             # ±15% raise-freq swing across a 30-pp rvr range centered at 50%.
             # rvr=0.65 → +0.045, rvr=0.35 → −0.045, capped at ±0.15.
             adj = max(-0.15, min(0.15, (rvr - 0.5) * 0.30))
