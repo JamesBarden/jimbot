@@ -131,22 +131,49 @@ class Range:
         """Combos sorted by weight, descending. Useful for debugging."""
         return sorted(self.weights.items(), key=lambda x: -x[1])[:n]
 
+    def effective_combos(self) -> float:
+        """
+        Simpson's-diversity effective number of combos: (Σw)² / Σw².
+
+        Better than raw `num_combos()` when weights vary, especially for HU
+        ranges where the SH floor (0.20) keeps every combo non-zero —
+        num_combos() would say 1326 even though the weighted distribution
+        is heavily concentrated on premium hands. Effective combos collapses
+        to the count for uniform distributions and shrinks toward the number
+        of "high-weight" combos as the distribution sharpens.
+
+        Examples:
+          - all 1326 at weight 1.0      → eff = 1326   (random)
+          - 30 at 1.0, rest at 0        → eff = 30     (premium)
+          - 200 at 1.0, 1126 at 0.20    → eff ≈ 738    (wide)
+        """
+        weights = self.weights.values()
+        s  = 0.0
+        s2 = 0.0
+        for w in weights:
+            s  += w
+            s2 += w * w
+        if s2 <= 0:
+            return 0.0
+        return (s * s) / s2
+
     def to_tier(self) -> str:
         """
-        Backward-compat: derive a coarse 5-tier label from current range size.
+        Coarse 5-tier label, derived from the *effective* number of combos
+        (Simpson's diversity) rather than raw combo count. Same thresholds
+        as the legacy version — only the input changes.
 
-        Calibrated against typical narrowed ranges:
-          - premium (≤50 combos):  3-bet/4-bet ranges (TT+, AKs/AKo)
-          - tight   (≤150 combos): tight UTG opens (88+, AJ+, KQ)
-          - medium  (≤400 combos): standard CO/HJ opens
-          - wide    (≤900 combos): BTN opens, BB defends
-          - random  (>900):        unfiltered or near-unfiltered
+          - premium (≤ 50):  3-bet/4-bet ranges (TT+, AKs/AKo)
+          - tight   (≤ 150): tight UTG opens
+          - medium  (≤ 400): standard CO/HJ opens
+          - wide    (≤ 900): BTN opens, BB defends
+          - random  (> 900): unfiltered or near-unfiltered
         """
-        n = self.num_combos()
-        if n <= 50:   return "premium"
-        if n <= 150:  return "tight"
-        if n <= 400:  return "medium"
-        if n <= 900:  return "wide"
+        eff = self.effective_combos()
+        if eff <= 50:   return "premium"
+        if eff <= 150:  return "tight"
+        if eff <= 400:  return "medium"
+        if eff <= 900:  return "wide"
         return "random"
 
     def __repr__(self) -> str:

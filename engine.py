@@ -246,6 +246,19 @@ def decide(state: GameState, opponent_tier: str = "random",
     source = "monte_carlo"
     log: list[str] = []
 
+    # Phase 3: prefer range-derived villain tier when range tracking is on.
+    # The legacy hand_tracker tier is coarser (binned on to_call/BB ratios)
+    # and stale through the streets; villain_range.to_tier() reflects the
+    # accumulated narrowing through every observed action so far.
+    legacy_tier = opponent_tier
+    if context is not None:
+        vr_for_tier = getattr(context, "villain_range", None)
+        if vr_for_tier is not None and vr_for_tier.total() > 0:
+            range_tier = vr_for_tier.to_tier()
+            if range_tier != opponent_tier:
+                log.append(f"  Tier override: {opponent_tier} (legacy) → {range_tier} (range)")
+            opponent_tier = range_tier
+
     # Cross-street context snapshot (used by heuristics + logged)
     ctx_summary = {}
     if context is not None:
@@ -487,6 +500,91 @@ def decide(state: GameState, opponent_tier: str = "random",
         eq_label = "range_eq" if used_range else "tier_eq"
         log.append(f"  {eq_label}={equity:.1%}   raise_thresh={strong_threshold:.2f}"
                    f"   call_thresh={call_threshold:.2f}{spr_adj_applied}")
+
+    # ── Range-advantage bluff/value modulation (postflop) ────────────────────
+    # When our range outperforms villain's on this board, our bluff candidates
+    # become more profitable to fire (villain has fewer made hands, our bluffs
+    # have more fold equity). Conversely, on boards where villain has range
+    # advantage, bluffing into a stronger range is a leak.
+    #
+    # This adjustment ONLY applies to bluff-class hands (air, weak_draw,
+    # draw). Value hands keep their source-specific freqs — we don't want to
+    # under-bet aces just because we're on a low connected board.
+    if (state.phase != "preflop"
+            and range_telemetry is not None
+            and range_telemetry.get("range_vs_range_equity") is not None):
+        rvr = range_telemetry["range_vs_range_equity"]
+        try:
+            _hclass_mod = classify(state.hole_cards, state.board_cards)
+        except Exception:
+            _hclass_mod = "?"
+        if _hclass_mod in {"air", "weak_draw", "draw"}:
+            # ±15% raise-freq swing across a 30-pp rvr range centered at 50%.
+            # rvr=0.65 → +0.045, rvr=0.35 → −0.045, capped at ±0.15.
+            adj = max(-0.15, min(0.15, (rvr - 0.5) * 0.30))
+            old_raise = raise_freq
+            raise_freq = max(0.0, min(1.0, raise_freq + adj))
+            delta = raise_freq - old_raise
+            if delta > 0:
+                # Pull from call+fold proportionally so we don't fold more
+                # just because we're bluffing more.
+                source_pool = call_freq + fold_freq
+                if source_pool > 0:
+                    take = min(delta, source_pool)
+                    call_freq -= take * (call_freq / source_pool)
+                    fold_freq -= take * (fold_freq / source_pool)
+            elif delta < 0:
+                # Less bluffing → those frequencies become checks/calls,
+                # not folds. Push the difference into call.
+                call_freq -= delta   # delta is negative → this is +|delta|
+            if abs(adj) > 0.005:
+                log.append(f"  Range mod  rvr={rvr:.0%}  hclass={_hclass_mod}  "
+                           f"adj={adj:+.0%}  →  R={raise_freq:.0%} "
+                           f"C={call_freq:.0%} F={fold_freq:.0%}")
+
+    # ── Big-call sanity check ────────────────────────────────────────────────
+    # Source tables (solver / heuristic) can suggest calling marginal hands at
+    # surprising frequencies in spots where actual hand-vs-range equity is
+    # awful. Validate the call against the real equity of *this specific
+    # holding* vs villain's narrowed range whenever we're committing real
+    # money — pot-size+ bets, river calls (no implied odds), or stack-deep
+    # commits. This is the user's "still consider actual holding for big
+    # bets" rule — range-advantage drives bluffs, the actual hand has the
+    # final say on big calls.
+    #
+    # Note on threshold: state.to_call / effective_pot caps at 1.0 even for
+    # jam-overbets (effective_pot includes to_call), so 0.50 corresponds to
+    # a pot-size bet by traditional reckoning. Rivers always check.
+    _bigcall_size = (state.to_call > 0 and effective_pot > 0
+                     and state.to_call >= 0.50 * effective_pot)
+    _bigcall_river = state.phase == "river" and state.to_call > 0
+    _bigcall_commit = (state.to_call > 0 and state.my_stack > 0
+                       and state.to_call >= 0.30 * state.my_stack)
+    if (state.phase != "preflop"
+            and (_bigcall_size or _bigcall_river or _bigcall_commit)
+            and context is not None
+            and getattr(context, "villain_range", None) is not None
+            and context.villain_range.total() > 0
+            and call_freq > 0.05):
+        try:
+            actual_eq = hand_vs_range_equity(
+                state.hole_cards, context.villain_range, state.board_cards,
+                num_sims=1500,
+            )
+        except Exception:
+            actual_eq = None
+        if actual_eq is not None:
+            pot_odds_frac = state.to_call / (state.to_call + effective_pot)
+            required = pot_odds_frac + 0.03
+            if actual_eq < required:
+                deficit    = required - actual_eq
+                fold_boost = min(0.30, deficit * 1.5)
+                transferred = min(call_freq, fold_boost)
+                call_freq -= transferred
+                fold_freq += transferred
+                log.append(f"  Big-call check  to_call={state.to_call/effective_pot:.0%}pot  "
+                           f"actual_eq={actual_eq:.0%} req={required:.0%}  "
+                           f"→ +{transferred:.0%} fold")
 
     # ── Postflop re-raise guard ───────────────────────────────────────────────
     # If we already raised this street and now face another bet, villain has
