@@ -240,11 +240,25 @@ _FOLD = (0.0, 0.0, 1.0)
 
 # ── Short-handed adjustments ──────────────────────────────────────────────────
 # Fewer players = wider ranges. Applied as multipliers on listed frequencies,
-# with a floor open freq for unlisted hands at very short tables.
+# with a floor open / defend freq for unlisted hands at very short tables.
+#
+# Calibrated against approximate GTO frequencies per BTN / BB-defending:
+#   6-max BTN ~28% open / BB defends ~30%   → no boost, no floor
+#   5-max BTN ~35% / BB defends ~33%        → boost 1.20 / 1.15, floor 0.05 / 0.00
+#   4-max BTN ~45% / BB defends ~37%        → boost 1.40 / 1.30, floor 0.15 / 0.05
+#   3-max BTN ~55% / BB defends ~42%        → boost 1.65 / 1.50, floor 0.25 / 0.15
+#   HU  BTN  ~75% / BB defends ~50%        → boost 2.00 / 1.80, floor 0.55 / 0.30
+#
+# CALL_FLOOR is new in v2.4: VS_RAISE table omits offsuit broadway / gappers
+# entirely (e.g. K5o, 87o, T6o aren't listed) so they would fold 100% even
+# with CALL_BOOST applied to listed entries. The floor lets unlisted hands
+# defend at a baseline frequency in short-handed games, where BB defense
+# should be much wider than 6-max baseline.
 
-_SH_RFI_BOOST  = {6: 1.00, 5: 1.10, 4: 1.20, 3: 1.35, 2: 1.55}
-_SH_RFI_FLOOR  = {6: 0.00, 5: 0.00, 4: 0.05, 3: 0.10, 2: 0.10}
-_SH_CALL_BOOST = {6: 1.00, 5: 1.05, 4: 1.10, 3: 1.20, 2: 1.35}
+_SH_RFI_BOOST  = {6: 1.00, 5: 1.20, 4: 1.40, 3: 1.65, 2: 2.00}
+_SH_RFI_FLOOR  = {6: 0.00, 5: 0.05, 4: 0.15, 3: 0.25, 2: 0.55}
+_SH_CALL_BOOST = {6: 1.00, 5: 1.15, 4: 1.30, 3: 1.50, 2: 1.80}
+_SH_CALL_FLOOR = {6: 0.00, 5: 0.00, 4: 0.05, 3: 0.15, 2: 0.30}
 
 
 def lookup(hole_cards: list, position: str, facing_raise: bool,
@@ -262,10 +276,17 @@ def lookup(hole_cards: list, position: str, facing_raise: bool,
     base = table.get(key, None)
 
     if facing_raise:
+        boost = _SH_CALL_BOOST.get(np, 1.0)
+        floor = _SH_CALL_FLOOR.get(np, 0.0)
         if base is None:
+            # Hand not in VS_RAISE table. In short-handed games, defend at the
+            # configured floor frequency rather than folding 100%; this picks
+            # up offsuit broadway / gappers (K5o, 87o, T6o, etc.) that the
+            # base table omits but HU/3-max BB defending ranges should include.
+            if floor > 0.0:
+                return (0.0, round(floor, 4), round(1.0 - floor, 4))
             return _FOLD
         r, c, f = base
-        boost = _SH_CALL_BOOST.get(np, 1.0)
         if boost > 1.0 and c > 0:
             new_c = min(c * boost, 1.0 - r)
             return (r, round(new_c, 4), round(max(0.0, 1.0 - r - new_c), 4))
@@ -274,11 +295,16 @@ def lookup(hole_cards: list, position: str, facing_raise: bool,
         boost = _SH_RFI_BOOST.get(np, 1.0)
         floor = _SH_RFI_FLOOR.get(np, 0.0)
         if base is None:
+            # Unlisted hand: open at the floor frequency.
             if floor > 0.0:
-                return (floor, 0.0, round(1.0 - floor, 4))
+                return (round(floor, 4), 0.0, round(1.0 - floor, 4))
             return _FOLD
         r, _c, _f = base
-        if boost > 1.0:
-            new_r = min(r * boost, 1.0)
+        # Treat floor as a minimum open frequency for short-handed games:
+        # hands listed at low 6-max frequencies (e.g. A2o at 0.2) should still
+        # open at HU baseline. Apply the boost first, then floor as min.
+        new_r = min(r * boost, 1.0) if boost > 1.0 else r
+        new_r = max(new_r, floor)
+        if new_r != r:
             return (round(new_r, 4), 0.0, round(1.0 - new_r, 4))
         return base

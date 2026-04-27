@@ -246,25 +246,42 @@ def decide(state: GameState, opponent_tier: str = "random",
     source = "monte_carlo"
     log: list[str] = []
 
-    # Tier blend: take whichever of legacy / range is tighter. Legacy
-    # HandTracker tightens correctly on each preflop raise via to_call/BB
-    # ratios; range tracking would dominate but currently misses 3-bet/4-bet
-    # chained narrowing (see Phase 4 changes in tracking/hand_context). Until
-    # that chain is fully accurate, taking the min protects multi-bet-pot
-    # decisions from a stale-wide range.
+    # Tier blend (v2.4): take min(legacy, range) only when villain has shown
+    # preflop aggression (3-bet+). In single-raised pots — where villain just
+    # called our open — the range tracker collapses villain to a tight-looking
+    # ~90 effective combos, which kills the solver's +25% exploit boost (it
+    # only fires for wide/random tiers). The legacy HandTracker correctly
+    # reads single-raised pots as `wide` from the start. So:
+    #   - villain 3-bet (or beyond): take min — protects against the v2.1
+    #     QcAc-style 4-bet pot leak where range tracking missed a chained raise
+    #   - villain just called our open: trust the range tier — it correctly
+    #     reflects which combos are in BB's defending range, but solver
+    #     exploit logic still wants the wider tier label for HU dynamics.
+    #
+    # The bot-vs-bot 575-hand session showed avg air-bet freq drop to 2% with
+    # the unconditional min; this conditional restores closer to the intended
+    # ~32% on dry boards by re-enabling the exploit boost when applicable.
     _TIER_ORDER = ("premium", "tight", "medium", "wide", "random")
     legacy_tier = opponent_tier
     if context is not None:
         vr_for_tier = getattr(context, "villain_range", None)
         if vr_for_tier is not None and vr_for_tier.total() > 0:
             range_tier = vr_for_tier.to_tier()
+            v_was_aggressive_pre = getattr(context, "villain_preflop_raises", 0) > 0
             try:
-                final_tier = _TIER_ORDER[min(_TIER_ORDER.index(legacy_tier),
-                                             _TIER_ORDER.index(range_tier))]
+                if v_was_aggressive_pre:
+                    final_tier = _TIER_ORDER[min(_TIER_ORDER.index(legacy_tier),
+                                                 _TIER_ORDER.index(range_tier))]
+                    blend_mode = "min"
+                else:
+                    final_tier = range_tier
+                    blend_mode = "range"
             except ValueError:
                 final_tier = range_tier
+                blend_mode = "range"
             if final_tier != legacy_tier or range_tier != legacy_tier:
-                log.append(f"  Tier blend  legacy={legacy_tier}  range={range_tier}  → {final_tier}")
+                log.append(f"  Tier blend ({blend_mode})  legacy={legacy_tier}  "
+                           f"range={range_tier}  → {final_tier}")
             opponent_tier = final_tier
 
     # Cross-street context snapshot (used by heuristics + logged)
