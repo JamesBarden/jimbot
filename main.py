@@ -193,8 +193,13 @@ async def run(url: str, no_deploy: bool = False):
                             last_state_str   = ""
                             last_acted_str   = None
                             none_streak      = 0
-                            tracker = HandTracker()
-                            hand_ctx = None
+                            # Preserve hand_ctx and tracker across the reload —
+                            # the stuck timeout often fires on legitimate slow
+                            # play, not a broken DOM. Wiping them here drops
+                            # range tracking and per-hand tier inference for
+                            # the rest of the hand. New-hand detection
+                            # (hole_key change) below resets them cleanly when
+                            # the reload actually lands us in a new hand.
                             await asyncio.sleep(3)
                         else:
                             await asyncio.sleep(POLL_INTERVAL)
@@ -239,8 +244,11 @@ async def run(url: str, no_deploy: bool = False):
                             last_state_str   = ""
                             last_acted_str   = None
                             last_change_time = time.time()
-                            tracker = HandTracker()
-                            hand_ctx = None
+                            # Preserve the just-created hand_ctx + tracker for
+                            # the same reason as the stuck-timeout reload: the
+                            # reload is mechanical, the hand identity hasn't
+                            # changed, and wiping context would leave us with
+                            # no range tracking for the rest of this hand.
                             await asyncio.sleep(3)
                             continue
 
@@ -271,8 +279,9 @@ async def run(url: str, no_deploy: bool = False):
                         last_heartbeat   = time.time()
                         last_state_str   = ""
                         last_acted_str   = None
-                        tracker = HandTracker()
-                        hand_ctx = None
+                        # See note above: preserve hand_ctx + tracker so range
+                        # tracking and tier inference survive a reload that
+                        # was actually triggered by slow play, not a stuck DOM.
                         await asyncio.sleep(3)
                         continue
 
