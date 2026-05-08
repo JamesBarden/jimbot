@@ -1,50 +1,50 @@
 {
-  "generated_at": "2026-04-27T19:08:29",
+  "generated_at": "2026-05-08T19:21:10",
   "overall": {
-    "hands": 1819,
-    "session_pnl_bb": 9588.2,
-    "bb_per_100": 527.11,
-    "ledgered_sessions": 9,
-    "sessions": 17,
+    "hands": 1999,
+    "session_pnl_bb": 9384.5,
+    "bb_per_100": 469.46,
+    "ledgered_sessions": 10,
+    "sessions": 19,
     "winning_sessions": 8,
-    "losing_sessions": 7,
+    "losing_sessions": 9,
     "source_counts": {
-      "preflop_gto": 1455,
-      "solver": 243,
-      "turn_heuristic": 216,
-      "river_heuristic": 129,
-      "monte_carlo": 42
+      "preflop_gto": 1636,
+      "solver": 331,
+      "turn_heuristic": 286,
+      "river_heuristic": 178,
+      "monte_carlo": 63
     },
     "phase_counts": {
-      "preflop": 1455,
-      "flop": 285,
-      "turn": 216,
-      "river": 129
+      "preflop": 1636,
+      "flop": 394,
+      "turn": 286,
+      "river": 178
     },
     "phase_action": {
       "preflop": {
-        "fold": 884,
-        "call": 97,
-        "raise": 458,
-        "check": 16
+        "fold": 942,
+        "call": 126,
+        "raise": 539,
+        "check": 29
       },
       "flop": {
-        "check": 164,
-        "call": 24,
-        "raise": 81,
-        "fold": 16
+        "check": 208,
+        "call": 39,
+        "raise": 122,
+        "fold": 25
       },
       "turn": {
-        "raise": 62,
-        "check": 86,
-        "fold": 38,
-        "call": 30
+        "raise": 76,
+        "check": 120,
+        "fold": 49,
+        "call": 41
       },
       "river": {
-        "check": 57,
-        "fold": 30,
-        "raise": 32,
-        "call": 10
+        "check": 81,
+        "fold": 36,
+        "raise": 46,
+        "call": 15
       }
     },
     "top_opponents": [
@@ -61,18 +61,26 @@
         "hands": 548
       },
       {
+        "name": "Idobot",
+        "hands": 173
+      },
+      {
         "name": "I\u2019doooo",
         "hands": 82
       },
       {
         "name": "Hunter",
         "hands": 40
+      },
+      {
+        "name": "logbot",
+        "hands": 4
       }
     ],
-    "hero_vpip_avg": 0.234,
-    "hero_pfr_avg": 0.177,
-    "hero_cbet_avg": 0.294,
-    "wtsd_avg": 0.078
+    "hero_vpip_avg": 0.274,
+    "hero_pfr_avg": 0.204,
+    "hero_cbet_avg": 0.312,
+    "wtsd_avg": 0.096
   },
   "versions": [
     {
@@ -230,6 +238,18 @@
       "hero_vpip": 0.223,
       "hero_pfr": 0.202,
       "hero_cbet": 0.401
+    },
+    {
+      "version": "2.4",
+      "sessions": 2,
+      "hands": 180,
+      "session_pnl_bb": -203.7,
+      "bb_per_100": -113.17,
+      "winrate": 0.463,
+      "wtsd": 0.25,
+      "hero_vpip": 0.613,
+      "hero_pfr": 0.434,
+      "hero_cbet": 0.468
     },
     {
       "version": "unknown",
@@ -10346,6 +10366,1031 @@
         }
       ],
       "decisions_total": 553
+    },
+    {
+      "session_id": "2026-04-29_211619",
+      "date": "2026-04-29",
+      "version": "2.4",
+      "hands": 176,
+      "session_pnl_bb": -195.7,
+      "ledger_net_bb": null,
+      "bb_per_100": -111.19,
+      "stack_change_bb": -195.7,
+      "untracked_jumps_bb": 0.0,
+      "untracked_jumps_count": 0,
+      "winrate": 0.426,
+      "wtsd": 0.25,
+      "flopped_rate": 0.443,
+      "hero_vpip": 0.477,
+      "hero_pfr": 0.369,
+      "hero_cbet": 0.435,
+      "cbet_opps": 46,
+      "source_counts": {
+        "preflop_gto": 178,
+        "monte_carlo": 21,
+        "turn_heuristic": 67,
+        "river_heuristic": 47,
+        "solver": 85
+      },
+      "phase_counts": {
+        "preflop": 178,
+        "flop": 106,
+        "turn": 67,
+        "river": 47
+      },
+      "phase_action": {
+        "preflop": {
+          "call": 28,
+          "raise": 79,
+          "fold": 58,
+          "check": 13
+        },
+        "flop": {
+          "check": 42,
+          "call": 15,
+          "raise": 40,
+          "fold": 9
+        },
+        "turn": {
+          "check": 33,
+          "call": 10,
+          "raise": 13,
+          "fold": 11
+        },
+        "river": {
+          "check": 23,
+          "raise": 14,
+          "fold": 5,
+          "call": 5
+        }
+      },
+      "opponents": {
+        "Idobot": 173
+      },
+      "pnl_series": [
+        {
+          "hand_id": "211633_9dTd",
+          "bb_delta": 4.2,
+          "cumulative": 4.2
+        },
+        {
+          "hand_id": "211701_5dTs",
+          "bb_delta": -14.0,
+          "cumulative": -9.8
+        },
+        {
+          "hand_id": "211729_Kc5s",
+          "bb_delta": -0.5,
+          "cumulative": -10.3
+        },
+        {
+          "hand_id": "211736_5sTd",
+          "bb_delta": -3.5,
+          "cumulative": -13.8
+        },
+        {
+          "hand_id": "211749_4cQd",
+          "bb_delta": -0.5,
+          "cumulative": -14.3
+        },
+        {
+          "hand_id": "211758_6hTc",
+          "bb_delta": -26.7,
+          "cumulative": -41.0
+        },
+        {
+          "hand_id": "211829_5h7c",
+          "bb_delta": 0.5,
+          "cumulative": -40.5
+        },
+        {
+          "hand_id": "211858_Qc5d",
+          "bb_delta": -14.9,
+          "cumulative": -55.4
+        },
+        {
+          "hand_id": "211917_8hTh",
+          "bb_delta": -17.0,
+          "cumulative": -72.4
+        },
+        {
+          "hand_id": "211945_6c4c",
+          "bb_delta": -1.0,
+          "cumulative": -73.4
+        },
+        {
+          "hand_id": "211951_3hQh",
+          "bb_delta": 12.5,
+          "cumulative": -60.9
+        },
+        {
+          "hand_id": "212009_JdQc",
+          "bb_delta": -4.0,
+          "cumulative": -64.9
+        },
+        {
+          "hand_id": "212020_9h6c",
+          "bb_delta": -0.5,
+          "cumulative": -65.4
+        },
+        {
+          "hand_id": "212028_6c9c",
+          "bb_delta": -1.0,
+          "cumulative": -66.4
+        },
+        {
+          "hand_id": "212033_QsKh",
+          "bb_delta": -9.0,
+          "cumulative": -75.4
+        },
+        {
+          "hand_id": "212058_Td8h",
+          "bb_delta": -1.0,
+          "cumulative": -76.4
+        },
+        {
+          "hand_id": "212104_4cJd",
+          "bb_delta": -2.5,
+          "cumulative": -78.9
+        },
+        {
+          "hand_id": "212124_Th9s",
+          "bb_delta": -68.0,
+          "cumulative": -146.9
+        },
+        {
+          "hand_id": "212156_Kd5d",
+          "bb_delta": 1.5,
+          "cumulative": -145.4
+        },
+        {
+          "hand_id": "212205_9d3s",
+          "bb_delta": 7.5,
+          "cumulative": -137.9
+        },
+        {
+          "hand_id": "212220_Ad8c",
+          "bb_delta": -3.2,
+          "cumulative": -141.1
+        },
+        {
+          "hand_id": "212247_2hTh",
+          "bb_delta": -4.5,
+          "cumulative": -145.6
+        },
+        {
+          "hand_id": "212259_Ac8d",
+          "bb_delta": -4.5,
+          "cumulative": -150.1
+        },
+        {
+          "hand_id": "212324_QcKc",
+          "bb_delta": 0.5,
+          "cumulative": -149.6
+        },
+        {
+          "hand_id": "212331_6cTc",
+          "bb_delta": 1.0,
+          "cumulative": -148.6
+        },
+        {
+          "hand_id": "212335_Kd8c",
+          "bb_delta": 0.5,
+          "cumulative": -148.1
+        },
+        {
+          "hand_id": "212342_4c7c",
+          "bb_delta": -0.5,
+          "cumulative": -148.6
+        },
+        {
+          "hand_id": "212350_5c7s",
+          "bb_delta": -1.0,
+          "cumulative": -149.6
+        },
+        {
+          "hand_id": "212356_Th7s",
+          "bb_delta": -0.5,
+          "cumulative": -150.1
+        },
+        {
+          "hand_id": "212405_Qh6c",
+          "bb_delta": -1.0,
+          "cumulative": -151.1
+        },
+        {
+          "hand_id": "212436_Kc9d",
+          "bb_delta": -2.0,
+          "cumulative": -153.1
+        },
+        {
+          "hand_id": "212458_7s9s",
+          "bb_delta": -4.0,
+          "cumulative": -157.1
+        },
+        {
+          "hand_id": "212510_7d9h",
+          "bb_delta": 4.0,
+          "cumulative": -153.1
+        },
+        {
+          "hand_id": "212523_4d7h",
+          "bb_delta": -1.0,
+          "cumulative": -154.1
+        },
+        {
+          "hand_id": "212529_Js4s",
+          "bb_delta": -0.5,
+          "cumulative": -154.6
+        },
+        {
+          "hand_id": "212538_Ts5d",
+          "bb_delta": -35.3,
+          "cumulative": -189.9
+        },
+        {
+          "hand_id": "212607_3cJs",
+          "bb_delta": -1.5,
+          "cumulative": -191.4
+        },
+        {
+          "hand_id": "212633_3d7d",
+          "bb_delta": 191.9,
+          "cumulative": 0.5
+        },
+        {
+          "hand_id": "212838_Kh2s",
+          "bb_delta": -1.0,
+          "cumulative": -0.5
+        },
+        {
+          "hand_id": "212844_6c2s",
+          "bb_delta": 1.0,
+          "cumulative": 0.5
+        },
+        {
+          "hand_id": "212848_Qh9d",
+          "bb_delta": 0.5,
+          "cumulative": 1.0
+        },
+        {
+          "hand_id": "212856_Jh4s",
+          "bb_delta": 0.5,
+          "cumulative": 1.5
+        },
+        {
+          "hand_id": "212918_5s3c",
+          "bb_delta": 18.5,
+          "cumulative": 20.0
+        },
+        {
+          "hand_id": "212944_5c3h",
+          "bb_delta": 1.5,
+          "cumulative": 21.5
+        },
+        {
+          "hand_id": "212957_5sQc",
+          "bb_delta": 0.5,
+          "cumulative": 22.0
+        },
+        {
+          "hand_id": "213006_Kh2h",
+          "bb_delta": 1.5,
+          "cumulative": 23.5
+        },
+        {
+          "hand_id": "213027_Kh6s",
+          "bb_delta": -1.0,
+          "cumulative": 22.5
+        },
+        {
+          "hand_id": "213033_6h7c",
+          "bb_delta": -0.5,
+          "cumulative": 22.0
+        },
+        {
+          "hand_id": "213041_AhTd",
+          "bb_delta": 4.0,
+          "cumulative": 26.0
+        },
+        {
+          "hand_id": "213056_Ad7s",
+          "bb_delta": -3.0,
+          "cumulative": 23.0
+        },
+        {
+          "hand_id": "213117_9hTs",
+          "bb_delta": -3.5,
+          "cumulative": 19.5
+        },
+        {
+          "hand_id": "213127_Th4d",
+          "bb_delta": 1.0,
+          "cumulative": 20.5
+        },
+        {
+          "hand_id": "213131_Th2d",
+          "bb_delta": -1.0,
+          "cumulative": 19.5
+        },
+        {
+          "hand_id": "213137_AhJd",
+          "bb_delta": 1.0,
+          "cumulative": 20.5
+        },
+        {
+          "hand_id": "213143_3c4h",
+          "bb_delta": -1.0,
+          "cumulative": 19.5
+        },
+        {
+          "hand_id": "213148_Ts8d",
+          "bb_delta": 3.0,
+          "cumulative": 22.5
+        },
+        {
+          "hand_id": "213208_3s3h",
+          "bb_delta": 0.5,
+          "cumulative": 23.0
+        },
+        {
+          "hand_id": "213216_5h6s",
+          "bb_delta": 1.0,
+          "cumulative": 24.0
+        },
+        {
+          "hand_id": "213221_Ah7d",
+          "bb_delta": -16.2,
+          "cumulative": 7.8
+        },
+        {
+          "hand_id": "213244_Kc9c",
+          "bb_delta": 2.5,
+          "cumulative": 10.3
+        },
+        {
+          "hand_id": "213324_9d7c",
+          "bb_delta": -1.0,
+          "cumulative": 9.3
+        },
+        {
+          "hand_id": "213329_9c8h",
+          "bb_delta": -0.5,
+          "cumulative": 8.8
+        },
+        {
+          "hand_id": "213337_Ah8d",
+          "bb_delta": 29.0,
+          "cumulative": 37.8
+        },
+        {
+          "hand_id": "213407_QhJs",
+          "bb_delta": 1.0,
+          "cumulative": 38.8
+        },
+        {
+          "hand_id": "213412_3s4c",
+          "bb_delta": 0.5,
+          "cumulative": 39.3
+        },
+        {
+          "hand_id": "213419_9hTd",
+          "bb_delta": 25.0,
+          "cumulative": 64.3
+        },
+        {
+          "hand_id": "213447_9h2d",
+          "bb_delta": 0.5,
+          "cumulative": 64.8
+        },
+        {
+          "hand_id": "213456_9d3s",
+          "bb_delta": -0.5,
+          "cumulative": 64.3
+        },
+        {
+          "hand_id": "213505_8s4h",
+          "bb_delta": -19.7,
+          "cumulative": 44.6
+        },
+        {
+          "hand_id": "213525_Th6c",
+          "bb_delta": -0.5,
+          "cumulative": 44.1
+        },
+        {
+          "hand_id": "213533_QsKd",
+          "bb_delta": -139.7,
+          "cumulative": -95.6
+        },
+        {
+          "hand_id": "213603_5c2d",
+          "bb_delta": 1.0,
+          "cumulative": -94.6
+        },
+        {
+          "hand_id": "213608_5s7s",
+          "bb_delta": -11.4,
+          "cumulative": -106.0
+        },
+        {
+          "hand_id": "213629_9d8c",
+          "bb_delta": -0.5,
+          "cumulative": -106.5
+        },
+        {
+          "hand_id": "213636_As6c",
+          "bb_delta": -11.0,
+          "cumulative": -117.5
+        },
+        {
+          "hand_id": "213710_Qh4s",
+          "bb_delta": 1.0,
+          "cumulative": -116.5
+        },
+        {
+          "hand_id": "213715_JsQd",
+          "bb_delta": 4.5,
+          "cumulative": -112.0
+        },
+        {
+          "hand_id": "213744_9dKc",
+          "bb_delta": -2.0,
+          "cumulative": -114.0
+        },
+        {
+          "hand_id": "213804_7h5s",
+          "bb_delta": -3.5,
+          "cumulative": -117.5
+        },
+        {
+          "hand_id": "213817_Jc2h",
+          "bb_delta": -13.4,
+          "cumulative": -130.9
+        },
+        {
+          "hand_id": "213845_Ts6h",
+          "bb_delta": -1.0,
+          "cumulative": -131.9
+        },
+        {
+          "hand_id": "213851_Qs5s",
+          "bb_delta": -2.0,
+          "cumulative": -133.9
+        },
+        {
+          "hand_id": "213919_8dKh",
+          "bb_delta": 0.5,
+          "cumulative": -133.4
+        },
+        {
+          "hand_id": "213926_KsJd",
+          "bb_delta": 3.0,
+          "cumulative": -130.4
+        },
+        {
+          "hand_id": "213945_3s8s",
+          "bb_delta": -3.5,
+          "cumulative": -133.9
+        },
+        {
+          "hand_id": "213958_9d6h",
+          "bb_delta": -0.5,
+          "cumulative": -134.4
+        },
+        {
+          "hand_id": "214005_Jh4d",
+          "bb_delta": -11.4,
+          "cumulative": -145.8
+        },
+        {
+          "hand_id": "214026_Tc7d",
+          "bb_delta": -0.5,
+          "cumulative": -146.3
+        },
+        {
+          "hand_id": "214034_2sAc",
+          "bb_delta": -1.0,
+          "cumulative": -147.3
+        },
+        {
+          "hand_id": "214039_5cQc",
+          "bb_delta": 1.0,
+          "cumulative": -146.3
+        },
+        {
+          "hand_id": "214112_JhQs",
+          "bb_delta": -12.4,
+          "cumulative": -158.7
+        },
+        {
+          "hand_id": "214132_4hTh",
+          "bb_delta": -0.5,
+          "cumulative": -159.2
+        },
+        {
+          "hand_id": "214140_5hTs",
+          "bb_delta": -3.5,
+          "cumulative": -162.7
+        },
+        {
+          "hand_id": "214152_AcJh",
+          "bb_delta": -4.7,
+          "cumulative": -167.4
+        },
+        {
+          "hand_id": "214223_7d7h",
+          "bb_delta": 0.5,
+          "cumulative": -166.9
+        },
+        {
+          "hand_id": "214231_8h7s",
+          "bb_delta": 1.0,
+          "cumulative": -165.9
+        },
+        {
+          "hand_id": "214235_3c2d",
+          "bb_delta": 0.5,
+          "cumulative": -165.4
+        },
+        {
+          "hand_id": "214244_6c2h",
+          "bb_delta": -0.5,
+          "cumulative": -165.9
+        },
+        {
+          "hand_id": "214306_Td3c",
+          "bb_delta": -1.0,
+          "cumulative": -166.9
+        },
+        {
+          "hand_id": "214312_2dTd",
+          "bb_delta": 4.0,
+          "cumulative": -162.9
+        },
+        {
+          "hand_id": "214337_7d3c",
+          "bb_delta": 0.5,
+          "cumulative": -162.4
+        },
+        {
+          "hand_id": "214344_2c5c",
+          "bb_delta": 2.5,
+          "cumulative": -159.9
+        },
+        {
+          "hand_id": "214358_Tc4s",
+          "bb_delta": 31.0,
+          "cumulative": -128.9
+        },
+        {
+          "hand_id": "214428_7hKd",
+          "bb_delta": -4.7,
+          "cumulative": -133.6
+        },
+        {
+          "hand_id": "214453_6hJc",
+          "bb_delta": -1.0,
+          "cumulative": -134.6
+        },
+        {
+          "hand_id": "214500_KhJc",
+          "bb_delta": -2.0,
+          "cumulative": -136.6
+        },
+        {
+          "hand_id": "214517_KsTc",
+          "bb_delta": 5.5,
+          "cumulative": -131.1
+        },
+        {
+          "hand_id": "214543_9dTd",
+          "bb_delta": -28.6,
+          "cumulative": -159.7
+        },
+        {
+          "hand_id": "214611_TsTh",
+          "bb_delta": 11.5,
+          "cumulative": -148.2
+        },
+        {
+          "hand_id": "214631_8sQc",
+          "bb_delta": -0.5,
+          "cumulative": -148.7
+        },
+        {
+          "hand_id": "214638_5d3c",
+          "bb_delta": 0.5,
+          "cumulative": -148.2
+        },
+        {
+          "hand_id": "214647_4h8s",
+          "bb_delta": -0.5,
+          "cumulative": -148.7
+        },
+        {
+          "hand_id": "214655_Tc9d",
+          "bb_delta": 5.5,
+          "cumulative": -143.2
+        },
+        {
+          "hand_id": "214709_Kd3c",
+          "bb_delta": -1.5,
+          "cumulative": -144.7
+        },
+        {
+          "hand_id": "214731_7s8s",
+          "bb_delta": -24.5,
+          "cumulative": -169.2
+        },
+        {
+          "hand_id": "214803_ThAs",
+          "bb_delta": 9.2,
+          "cumulative": -160.0
+        },
+        {
+          "hand_id": "214822_JsKd",
+          "bb_delta": 14.5,
+          "cumulative": -145.5
+        },
+        {
+          "hand_id": "214850_3h9h",
+          "bb_delta": -0.5,
+          "cumulative": -146.0
+        },
+        {
+          "hand_id": "214858_2s7s",
+          "bb_delta": -1.0,
+          "cumulative": -147.0
+        },
+        {
+          "hand_id": "214904_KsTc",
+          "bb_delta": 4.0,
+          "cumulative": -143.0
+        },
+        {
+          "hand_id": "214939_Qc9h",
+          "bb_delta": 42.7,
+          "cumulative": -100.3
+        },
+        {
+          "hand_id": "215009_5cKs",
+          "bb_delta": 1.0,
+          "cumulative": -99.3
+        },
+        {
+          "hand_id": "215014_Qc2d",
+          "bb_delta": -1.0,
+          "cumulative": -100.3
+        },
+        {
+          "hand_id": "215019_Td3d",
+          "bb_delta": 5.0,
+          "cumulative": -95.3
+        },
+        {
+          "hand_id": "215037_6d5c",
+          "bb_delta": -1.0,
+          "cumulative": -96.3
+        },
+        {
+          "hand_id": "215043_4h2h",
+          "bb_delta": -5.2,
+          "cumulative": -101.5
+        },
+        {
+          "hand_id": "215115_TdJh",
+          "bb_delta": -21.5,
+          "cumulative": -123.0
+        },
+        {
+          "hand_id": "215135_Td3c",
+          "bb_delta": 1.0,
+          "cumulative": -122.0
+        },
+        {
+          "hand_id": "215140_Th2c",
+          "bb_delta": -4.5,
+          "cumulative": -126.5
+        },
+        {
+          "hand_id": "215200_QcAs",
+          "bb_delta": 9.3,
+          "cumulative": -117.2
+        },
+        {
+          "hand_id": "215225_Js8h",
+          "bb_delta": 29.5,
+          "cumulative": -87.7
+        },
+        {
+          "hand_id": "215253_Ts6c",
+          "bb_delta": 1.0,
+          "cumulative": -86.7
+        },
+        {
+          "hand_id": "215259_2cAs",
+          "bb_delta": -4.0,
+          "cumulative": -90.7
+        },
+        {
+          "hand_id": "215310_7dAd",
+          "bb_delta": 1.5,
+          "cumulative": -89.2
+        },
+        {
+          "hand_id": "215318_Qs3h",
+          "bb_delta": 0.5,
+          "cumulative": -88.7
+        },
+        {
+          "hand_id": "215326_Ad5h",
+          "bb_delta": -0.5,
+          "cumulative": -89.2
+        },
+        {
+          "hand_id": "215335_2c5h",
+          "bb_delta": -3.5,
+          "cumulative": -92.7
+        },
+        {
+          "hand_id": "215359_5d4d",
+          "bb_delta": 98.5,
+          "cumulative": 5.8
+        },
+        {
+          "hand_id": "215430_7cJs",
+          "bb_delta": 0.5,
+          "cumulative": 6.3
+        },
+        {
+          "hand_id": "215439_7cKh",
+          "bb_delta": 0.0,
+          "cumulative": 6.3
+        },
+        {
+          "hand_id": "215440_8dKh",
+          "bb_delta": 1.0,
+          "cumulative": 7.3
+        },
+        {
+          "hand_id": "215444_5d9h",
+          "bb_delta": -1.0,
+          "cumulative": 6.3
+        },
+        {
+          "hand_id": "215449_ThQd",
+          "bb_delta": 3.0,
+          "cumulative": 9.3
+        },
+        {
+          "hand_id": "215514_9cTh",
+          "bb_delta": 36.7,
+          "cumulative": 46.0
+        },
+        {
+          "hand_id": "215544_5c6h",
+          "bb_delta": 1.5,
+          "cumulative": 47.5
+        },
+        {
+          "hand_id": "215553_Ac3h",
+          "bb_delta": -3.5,
+          "cumulative": 44.0
+        },
+        {
+          "hand_id": "215605_2h5h",
+          "bb_delta": -0.5,
+          "cumulative": 43.5
+        },
+        {
+          "hand_id": "215614_2dKc",
+          "bb_delta": -14.5,
+          "cumulative": 29.0
+        },
+        {
+          "hand_id": "215637_4sQd",
+          "bb_delta": 3.0,
+          "cumulative": 32.0
+        },
+        {
+          "hand_id": "215654_6hKd",
+          "bb_delta": -1.0,
+          "cumulative": 31.0
+        },
+        {
+          "hand_id": "215708_Jh5c",
+          "bb_delta": -0.5,
+          "cumulative": 30.5
+        },
+        {
+          "hand_id": "215717_Ks4d",
+          "bb_delta": -8.6,
+          "cumulative": 21.9
+        },
+        {
+          "hand_id": "215737_3s7c",
+          "bb_delta": 4.5,
+          "cumulative": 26.4
+        },
+        {
+          "hand_id": "215758_2sJs",
+          "bb_delta": -1.0,
+          "cumulative": 25.4
+        },
+        {
+          "hand_id": "215804_8c3d",
+          "bb_delta": 1.0,
+          "cumulative": 26.4
+        },
+        {
+          "hand_id": "215809_2hTd",
+          "bb_delta": -1.0,
+          "cumulative": 25.4
+        },
+        {
+          "hand_id": "215816_5c6h",
+          "bb_delta": 1.0,
+          "cumulative": 26.4
+        },
+        {
+          "hand_id": "215820_2d5c",
+          "bb_delta": -1.0,
+          "cumulative": 25.4
+        },
+        {
+          "hand_id": "215826_Ac5c",
+          "bb_delta": -174.1,
+          "cumulative": -148.7
+        },
+        {
+          "hand_id": "215926_2c7h",
+          "bb_delta": -3.5,
+          "cumulative": -152.2
+        },
+        {
+          "hand_id": "215938_4h7c",
+          "bb_delta": 1.0,
+          "cumulative": -151.2
+        },
+        {
+          "hand_id": "215943_4s6s",
+          "bb_delta": 13.3,
+          "cumulative": -137.9
+        },
+        {
+          "hand_id": "220014_Qs5c",
+          "bb_delta": -0.5,
+          "cumulative": -138.4
+        },
+        {
+          "hand_id": "220024_4s5s",
+          "bb_delta": 0.5,
+          "cumulative": -137.9
+        },
+        {
+          "hand_id": "220033_2d9h",
+          "bb_delta": 1.0,
+          "cumulative": -136.9
+        },
+        {
+          "hand_id": "220038_4s4d",
+          "bb_delta": -4.0,
+          "cumulative": -140.9
+        },
+        {
+          "hand_id": "220050_Th2c",
+          "bb_delta": 1.0,
+          "cumulative": -139.9
+        },
+        {
+          "hand_id": "220055_2h3d",
+          "bb_delta": -1.0,
+          "cumulative": -140.9
+        },
+        {
+          "hand_id": "220101_2h7s",
+          "bb_delta": -0.5,
+          "cumulative": -141.4
+        },
+        {
+          "hand_id": "220110_8c5s",
+          "bb_delta": -1.0,
+          "cumulative": -142.4
+        },
+        {
+          "hand_id": "220116_TsAd",
+          "bb_delta": -3.0,
+          "cumulative": -145.4
+        },
+        {
+          "hand_id": "220140_Jd2s",
+          "bb_delta": -1.0,
+          "cumulative": -146.4
+        },
+        {
+          "hand_id": "220146_5cAs",
+          "bb_delta": -22.1,
+          "cumulative": -168.5
+        },
+        {
+          "hand_id": "220207_JsJh",
+          "bb_delta": 0.5,
+          "cumulative": -168.0
+        },
+        {
+          "hand_id": "220215_4h8c",
+          "bb_delta": 1.0,
+          "cumulative": -167.0
+        },
+        {
+          "hand_id": "220221_JhTd",
+          "bb_delta": -28.7,
+          "cumulative": -195.7
+        }
+      ],
+      "decisions_total": 398
+    },
+    {
+      "session_id": "2026-05-08_191729",
+      "date": "2026-05-08",
+      "version": "2.4",
+      "hands": 4,
+      "session_pnl_bb": -10.0,
+      "ledger_net_bb": -8.0,
+      "bb_per_100": -200.0,
+      "stack_change_bb": -10.0,
+      "untracked_jumps_bb": 0.0,
+      "untracked_jumps_count": 0,
+      "winrate": 0.5,
+      "wtsd": 0.25,
+      "flopped_rate": 0.75,
+      "hero_vpip": 0.75,
+      "hero_pfr": 0.5,
+      "hero_cbet": 0.5,
+      "cbet_opps": 2,
+      "source_counts": {
+        "preflop_gto": 3,
+        "solver": 3,
+        "turn_heuristic": 3,
+        "river_heuristic": 2
+      },
+      "phase_counts": {
+        "preflop": 3,
+        "flop": 3,
+        "turn": 3,
+        "river": 2
+      },
+      "phase_action": {
+        "preflop": {
+          "call": 1,
+          "raise": 2
+        },
+        "flop": {
+          "check": 2,
+          "raise": 1
+        },
+        "turn": {
+          "check": 1,
+          "call": 1,
+          "raise": 1
+        },
+        "river": {
+          "check": 1,
+          "fold": 1
+        }
+      },
+      "opponents": {
+        "logbot": 4
+      },
+      "pnl_series": [
+        {
+          "hand_id": "191729_QhTc",
+          "bb_delta": -8.0,
+          "cumulative": -8.0
+        },
+        {
+          "hand_id": "191758_Tc9s",
+          "bb_delta": 1.5,
+          "cumulative": -6.5
+        },
+        {
+          "hand_id": "191830_2s3h",
+          "bb_delta": 1.0,
+          "cumulative": -5.5
+        },
+        {
+          "hand_id": "191834_8d7s",
+          "bb_delta": -4.5,
+          "cumulative": -10.0
+        },
+        {
+          "hand_id": "untracked",
+          "bb_delta": 2.0,
+          "cumulative": -8.0
+        }
+      ],
+      "decisions_total": 11
     }
   ]
 }
